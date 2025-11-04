@@ -1,0 +1,45 @@
+.linkbar-wrapper {
+    position: fixed;
+    right: 100px;
+    padding: 10px;
+    bottom: 40px;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.linkbar {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.linkbar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 20px;
+
+    transition: all 0.2s ease-in-out;
+    opacity: 50%;
+
+    &:hover {
+        scale: 1.1;
+        opacity: 90%;
+    }
+
+    .github&:hover {
+        color: black;
+    }
+
+    .instagram&:hover {
+        color: rgb(232, 58, 255);
+    }
+
+    .mail&:hover {
+        color: red;
+    }
+}
