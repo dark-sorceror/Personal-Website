@@ -1,7 +1,8 @@
+@import '../../index.css';
+
 nav {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
     height: 70px;
     align-items: center;
     padding: 20px 20px;
@@ -21,15 +22,18 @@ nav {
     width: 300px;
 }
 
+body.dark-mode .hotlinks a {
+    color: var(--dark-mode-text-color);
+}
+
 .hotlinks a {
-    color: black;
     text-decoration: none;
     opacity: 40%;
-
+    color: var(--light-mode-text-color);
     transition: all 0.2s ease-in-out;
 
     &:hover {
-        scale: 1.1;
+        scale: 1.03;
         opacity: 100%;
     }
 }

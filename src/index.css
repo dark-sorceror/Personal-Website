@@ -9,19 +9,43 @@
     color-scheme: light dark;
     /*color: rgba(255, 255, 255, 0.87);*/
     /*background-color: #242424;*/
-    color: black;
-    background-color: rgb(248, 248, 248);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
+    
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    --light-mode-bg-color: #f8f8f8;
+    --light-mode-text-color: #000000;
+
+    --dark-mode-bg-color: #242424;;
+    --dark-mode-text-color: #ffffffde;
 }
 
 body {
     margin: 0;
     display: flex;
     justify-content: center;
+
+    transition: all 0.2s ease-in-out;
+    background-color: var(--light-mode-bg-color);
+}
+
+body.dark-mode {
+    background-color: var(--dark-mode-bg-color);
+
+    .lucide-moon {
+        display: none;
+    }
+
+    .lucide-sun {
+        display: flex;
+    }
+
+    #root {
+        color: var(--dark-mode-text-color);
+    }
 }
 
 #root {
