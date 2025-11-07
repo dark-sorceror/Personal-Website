@@ -5,7 +5,9 @@ export default function Home() {
                 <div className="p1w">
                     <div className="top">Hi, my name is</div>
                     <div className="name">Hao Yan.</div>
-                    <div className="tagline">Bridging intelligence and autonomy.</div>
+                    <div className="tagline">
+                        Bridging intelligence and autonomy.
+                    </div>
                     <div className="desc">
                         A university student interested in AI/ML and robotics
                     </div>

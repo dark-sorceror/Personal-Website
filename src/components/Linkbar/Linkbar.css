@@ -1,4 +1,4 @@
-@import '../../index.css';
+@import "../../index.css";
 
 .linkbar-wrapper {
     position: fixed;
@@ -88,7 +88,7 @@ body.dark-mode a.github:hover {
         svg {
             stroke-width: 2.3px;
         }
-        
+
         scale: 1.07;
         opacity: 90%;
     }

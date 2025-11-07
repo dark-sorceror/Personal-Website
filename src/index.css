@@ -12,14 +12,14 @@
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
-    
+
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
     --light-mode-bg-color: #f8f8f8;
     --light-mode-text-color: #000000;
 
-    --dark-mode-bg-color: #242424;;
+    --dark-mode-bg-color: #242424;
     --dark-mode-text-color: #ffffffde;
 }
 
