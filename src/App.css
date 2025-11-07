@@ -2,11 +2,12 @@
 
 .wrapper {
     width: 100%;
-    height: 1500px;
+    height: 3200px;
 }
 
 .p1,
-.p2 {
+.p2,
+.p3 {
     display: flex;
     width: 100%;
     height: calc(100vh - 250px);
@@ -15,7 +16,9 @@
     position: relative;
 }
 
-.p1w {
+.p1w,
+.p2w,
+.p3w {
     width: 70%;
     display: flex;
     height: max-content;
@@ -106,6 +109,108 @@ body.dark-mode .name {
     font-size: 20px;
     font-weight: 400;
     animation: fadeUp 1s ease-out 0.8s forwards;
+}
+
+.p2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: fit-content;
+    margin-top: 400px;
+}
+
+.p2header {
+    font-size: 50px;
+    font-weight: 600;
+}
+
+.p2w {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.p2e1,
+.p2e2,
+.p2e3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 100px;
+    width: 100%;
+    height: 100%;
+}
+
+.details {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    padding: 30px;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.placeholder {
+    width: 400px;
+    height: 250px;
+    background-color: black;
+    opacity: 50%;
+    border: 2px solid black;
+    border-radius: 20px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        scale: 1.02;
+        opacity: 40%;
+    }
+}
+
+.p3 {
+    margin-top: 200px;
+    height: 200px;
+}
+
+.p3w {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.p3header {
+    font-weight: 600;
+    font-size: 40px;
+    margin-bottom: 30px;
+}
+
+.p3a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 50%;
+}
+
+.p3a button {
+    all: unset;
+    transition: all 0.2s ease-in-out;
+    padding: 10px 30px;
+    background-color: lightcoral;
+    border-radius: 10px;
+    margin-left: 20px;
+
+    &:hover {
+        transform: scale(1.02);
+    }
+}
+
+.p3a input {
+    padding: 10px;
 }
 
 @keyframes fadeUp {

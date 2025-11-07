@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import "./Linkbar.css";
 
 export default function Linkbar() {
-    const [darkMode, setDarkMode] = useState(() => {
+    const [ darkMode, setDarkMode ] = useState(() => {
         const userDefault = localStorage.getItem("darkMode");
 
         return userDefault === "true";
@@ -11,8 +11,8 @@ export default function Linkbar() {
 
     useEffect(() => {
         document.body.classList.toggle("dark-mode", darkMode);
-        localStorage.setItem("darkMode", `${darkMode}`);
-    }, [darkMode]);
+        localStorage.setItem("darkMode", `${ darkMode }`);
+    }, [ darkMode ]);
 
     const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
@@ -76,7 +76,7 @@ export default function Linkbar() {
                     </svg>
                 </a>
                 <div className="border"></div>
-                <button className="ld-mode" onClick={toggleDarkMode}>
+                <button className="ld-mode" onClick={ toggleDarkMode }>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
