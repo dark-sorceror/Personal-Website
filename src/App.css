@@ -2,7 +2,7 @@
 
 .wrapper {
     width: 100%;
-    height: 3150px;
+    height: 3250px;
 }
 
 .p1,
@@ -34,7 +34,6 @@
     visibility: hidden;
     opacity: 0;
     transform: translateY(20px);
-    animation-fill-mode: forwards;
     animation: fadeUp 1s ease-out 1s forwards;
 }
 
@@ -47,6 +46,7 @@
     background-repeat: no-repeat;
     left: 1000px;
     top: 330px;
+    scale: 1.2;
 }
 
 body.dark-mode .background-dots div {
@@ -69,7 +69,7 @@ body.dark-mode .background-dots div {
 }
 
 body.dark-mode .top {
-    color: var(--dark-mode-text-color);
+    color: #f0f0f0a1;
     opacity: 70%;
 }
 
@@ -143,6 +143,10 @@ body.dark-mode .name {
     border-radius: 10px;
 }
 
+body.dark-mode .p2w::before {
+    background: rgba(141, 141, 141, 0.548);
+}
+
 .p2e1,
 .p2e2,
 .p2e3 {
@@ -153,6 +157,12 @@ body.dark-mode .name {
     width: 100%;
     height: 100%;
     position: relative;
+}
+
+body.dark-mode .p2e1::before,
+body.dark-mode .p2e2::before,
+body.dark-mode .p2e3::before {
+    background: rgba(141, 141, 141, 0.548);
 }
 
 .p2e1::before,
@@ -207,8 +217,8 @@ body.dark-mode .name {
 }
 
 .tag {
-    padding: 5px 15px;
-    background-color: lightcoral;
+    padding: 2px 10px;
+    background-color: rgba(240, 128, 128, 0.514);
     border-radius: 10px;
     margin-right: 10px;
     font-weight: 600;
@@ -234,18 +244,34 @@ body.dark-mode .name {
     margin-left: 10px;
 }
 
+.plink {
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    top: 20px;
+    right: 20px;
+    position: absolute;
+}
+
 .placeholder {
-    width: 400px;
-    height: 250px;
+    width: 450px;
+    height: 300px;
     background-color: black;
     opacity: 50%;
     border: 2px solid black;
     border-radius: 20px;
     transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 50px #5a4fcf9f;
+
+    position: relative;
 
     &:hover {
         scale: 1.02;
         opacity: 40%;
+        .plink {
+            opacity: 1;
+            visibility: visible;
+        }
     }
 }
 
@@ -262,8 +288,8 @@ body.dark-mode .name {
 }
 
 .p3header {
-    font-weight: 600;
-    font-size: 40px;
+    font-size: 50px;
+    font-weight: 700;
     margin-bottom: 30px;
 }
 
@@ -278,18 +304,56 @@ body.dark-mode .name {
 .p3a button {
     all: unset;
     transition: all 0.2s ease-in-out;
-    padding: 10px 30px;
-    background-color: lightcoral;
+    padding: 10px 35px;
     border-radius: 10px;
     margin-left: 20px;
+    font-weight: 600;
+    background-color: rgba(32, 32, 32, 0.267);
 
     &:hover {
         transform: scale(1.02);
+        background-color: rgba(240, 128, 128, 0.514);
     }
 }
 
+body.dark-mode .p3a button {
+    background-color: rgba(141, 141, 141, 0.548);
+}
+
+body.dark-mode .p3a input {
+    background-color: rgba(32, 32, 32, 0.267);
+    color: white;
+}
+
+.p3a input:hover {
+    outline-color: #d8d8d8;
+}
+
 .p3a input {
-    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    height: 35px;
+    padding-left: 10px;
+    font-size: 16px;
+    display: flex;
+    flex-grow: 1;
+    background-color: transparent;
+    font-family: "Montserrat", sans-serif;
+    outline: 2px rgba(141, 141, 141, 0.164) solid;
+    transition: all 0.2s ease-in-out;
+    color: black;
+}
+
+body.dark-mode .p3a input:hover {
+    outline-color: rgb(189, 189, 189);
+}
+
+.p3a input:focus {
+    box-shadow: 0 2px 10px #5a4fcf9f;
+}
+
+body.dark-mode .p3a input:focus {
+    outline-color: rgb(189, 189, 189);
 }
 
 @keyframes fadeUp {

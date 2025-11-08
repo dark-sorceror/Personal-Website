@@ -55,10 +55,44 @@ export default function Home() {
                             </div>
                             <div className="p2edesc">Desc</div>
                         </div>
-                        <div className="placeholder"></div>
+                        <div className="placeholder">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                className="plink"
+                            >
+                                <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                                <path d="m21 3-9 9" />
+                                <path d="M15 3h6v6" />
+                            </svg>
+                        </div>
                     </div>
                     <div className="p2e2">
-                        <div className="placeholder"></div>
+                        <div className="placeholder">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                className="plink"
+                            >
+                                <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                                <path d="m21 3-9 9" />
+                                <path d="M15 3h6v6" />
+                            </svg>
+                        </div>
                         <div className="details">
                             <div className="title">Title</div>
                             <div className="second">
@@ -131,7 +165,24 @@ export default function Home() {
                             </div>
                             <div className="p2edesc">Desc</div>
                         </div>
-                        <div className="placeholder"></div>
+                        <div className="placeholder">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                className="plink"
+                            >
+                                <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                                <path d="m21 3-9 9" />
+                                <path d="M15 3h6v6" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -139,8 +190,8 @@ export default function Home() {
                 <div className="p3w">
                     <div className="p3header">Let's get in touch</div>
                     <div className="p3a">
-                        <input type="text" />
-                        <button>ok</button>
+                        <input type="text" placeholder="yourname@gmail.com" />
+                        <button>Submit</button>
                     </div>
                 </div>
             </section>
