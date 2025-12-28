@@ -1,268 +1,109 @@
 export default function Home() {
     return (
         <div className="wrapper">
-            <section className="p1">
-                <div className="p1w">
-                    <div className="top">Hi, my name is</div>
-                    <div className="name">Hao Yan.</div>
-                    <div className="tagline">
-                        Bridging intelligence and autonomy.
-                    </div>
-                    <div className="desc">
-                        A university student interested in AI/ML and robotics
-                    </div>
-                </div>
-                <div className="background-dots">
-                    <div></div>
-                </div>
-            </section>
-             <section className="p2">
-                <div className="p2w">
-                    <div className="p2header">About me</div>
-                </div>
-            </section>
-            <section className="p3">
-                <div className="p3w">
-                    <div className="p3header">Experience</div>
-                    <div className="p3grid">
-                        <div className="p3e1">
-                            <div className="placeholder">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="plink"
-                                >
-                                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                                    <path d="m21 3-9 9" />
-                                    <path d="M15 3h6v6" />
-                                </svg>
-                            </div>
-                            <div className="details">
-                                <div className="title">Title</div>
+            <a
+                className="headline bubble"
+                href="https://github.com/dark-sorceror/Neurinese"
+                target="_blank"
+            >
+                Check out my new project: Neurinese
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    id="Layer_1"
+                    viewBox="0 0 24 24"
+                    data-name="Layer 1"
+                >
+                    <defs>
+                        <linearGradient
+                            id="p3-gradient"
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                        >
+                            <stop
+                                offset="0%"
+                                stopColor="color(display-p3 0.6196 0.4784 1 / 1)"
+                            />
+                            <stop
+                                offset="33.33%"
+                                stopColor="color(display-p3 0.9961 0.5451 0.7333 / 1)"
+                            />
+                            <stop
+                                offset="66.67%"
+                                stopColor="color(display-p3 1 0.7412 0.4784 / 1)"
+                            />
+                            <stop
+                                offset="100%"
+                                stopColor="color(display-p3 0.9725 0.9176 0.7647 / 1)"
+                            />
+                        </linearGradient>
+                    </defs>
+                    <path
+                        fill="white"
+                        stroke="url(#p3-gradient)"
+                        d="m22.937 14.059c-.22 3.749-.93 7.019-.96 7.156-.083.381-.381.679-.762.762-.19.042-4.713 1.023-9.214 1.023s-9.024-.981-9.214-1.023c-.381-.083-.679-.381-.762-.762-.042-.19-1.023-4.713-1.023-9.214s.979-9.025 1.021-9.215c.083-.381.381-.679.762-.762.137-.03 3.407-.741 7.156-.96.563-.04 1.025.389 1.057.939.033.551-.388 1.024-.939 1.057-2.644.155-5.092.577-6.209.79-.265 1.386-.849 4.824-.849 8.151s.584 6.765.849 8.151c1.386.265 4.824.849 8.151.849s6.765-.584 8.151-.849c.213-1.117.635-3.566.79-6.209.032-.552.5-.988 1.057-.939.551.032.972.505.939 1.057zm-8.732-10.674c1.786-.375 3.555-.461 5.285-.289l-10.197 10.197c-.391.391-.391 1.023 0 1.414.195.195.451.293.707.293s.512-.098.707-.293l10.197-10.197c.172 1.73.085 3.499-.289 5.285-.113.541.233 1.071.774 1.184.527.113 1.073-.23 1.184-.774.569-2.721.568-5.417-.002-8.014-.083-.381-.381-.678-.762-.762-2.597-.571-5.292-.572-8.014-.002-.541.113-.887.643-.774 1.184.114.54.641.884 1.184.774z"
+                    />
+                </svg>
+            </a>
+            <section className="s1">
+                <div className="planet"></div>
 
-                                <div className="date">
-                                    <i>Ongoing</i>
-                                </div>
-
-                                <div className="p2edesc">Desc</div>
-                            </div>
-                            <div className="bottom">
-                                <div className="location">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                                        <path d="M2 12h20" />
-                                    </svg>
-                                    <span>Canada</span>
-                                </div>
-                                <div className="tags">
-                                    <div className="tag">
-                                        <span>tag 1</span>
-                                    </div>
-                                    <div className="tag">
-                                        <span>tag 2</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p3e2">
-                            <div className="placeholder">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="plink"
-                                >
-                                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                                    <path d="m21 3-9 9" />
-                                    <path d="M15 3h6v6" />
-                                </svg>
-                            </div>
-                            <div className="details">
-                                <div className="title">Title</div>
-
-                                <div className="date">
-                                    <i>Ongoing</i>
-                                </div>
-
-                                <div className="p2edesc">Desc</div>
-                            </div>
-                            <div className="bottom">
-                                <div className="location">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                                        <path d="M2 12h20" />
-                                    </svg>
-                                    <span>Canada</span>
-                                </div>
-                                <div className="tags">
-                                    <div className="tag">
-                                        <span>tag 1</span>
-                                    </div>
-                                    <div className="tag">
-                                        <span>tag 2</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                         <div className="p3e3">
-                            <div className="placeholder">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="plink"
-                                >
-                                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                                    <path d="m21 3-9 9" />
-                                    <path d="M15 3h6v6" />
-                                </svg>
-                            </div>
-                            <div className="details">
-                                <div className="title">Title</div>
-
-                                <div className="date">
-                                    <i>Ongoing</i>
-                                </div>
-
-                                <div className="p2edesc">Desc</div>
-                            </div>
-                            <div className="bottom">
-                                <div className="location">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                                        <path d="M2 12h20" />
-                                    </svg>
-                                    <span>Canada</span>
-                                </div>
-                                <div className="tags">
-                                    <div className="tag">
-                                        <span>tag 1</span>
-                                    </div>
-                                    <div className="tag">
-                                        <span>tag 2</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                         <div className="p3e4">
-                            <div className="placeholder">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="plink"
-                                >
-                                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                                    <path d="m21 3-9 9" />
-                                    <path d="M15 3h6v6" />
-                                </svg>
-                            </div>
-                            <div className="details">
-                                <div className="title">Title</div>
-
-                                <div className="date">
-                                    <i>Ongoing</i>
-                                </div>
-
-                                <div className="p2edesc">Desc</div>
-                            </div>
-                            <div className="bottom">
-                                <div className="location">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                                        <path d="M2 12h20" />
-                                    </svg>
-                                    <span>Canada</span>
-                                </div>
-                                <div className="tags">
-                                    <div className="tag">
-                                        <span>tag 1</span>
-                                    </div>
-                                    <div className="tag">
-                                        <span>tag 2</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div className="name">
+                    <div className="pre">
+                        Hi, my name is
+                        <br />
+                        <span className="n">Hao Yan</span>
+                        <br />
+                        <br />
+                        <span className="desc">
+                            A university student interested in AI/ML and
+                            robotics
+                        </span>
                     </div>
                 </div>
-            </section>
-            <section className="p4">
-                <div className="p4w">
-                    <div className="p4header">Let's get in touch</div>
-                    <div className="p4a">
-                        <input type="text" placeholder="yourname@gmail.com" />
-                        <button>Submit</button>
-                    </div>
+                <div className="down bubble">
+                    Check out my experiences
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        id="Outline"
+                        viewBox="0 0 24 24"
+                        width="15"
+                        height="15"
+                    >
+                        <defs>
+                            <linearGradient
+                                id="p3-gradient"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                            >
+                                <stop
+                                    offset="0%"
+                                    stopColor="color(display-p3 0.6196 0.4784 1 / 1)"
+                                />
+                                <stop
+                                    offset="33.33%"
+                                    stopColor="color(display-p3 0.9961 0.5451 0.7333 / 1)"
+                                />
+                                <stop
+                                    offset="66.67%"
+                                    stopColor="color(display-p3 1 0.7412 0.4784 / 1)"
+                                />
+                                <stop
+                                    offset="100%"
+                                    stopColor="color(display-p3 0.9725 0.9176 0.7647 / 1)"
+                                />
+                            </linearGradient>
+                        </defs>
+                        <path
+                            stroke-width="2"
+                            fill="none"
+                            stroke="url(#p3-gradient)"
+                            d="M18.71,8.21a1,1,0,0,0-1.42,0l-4.58,4.58a1,1,0,0,1-1.42,0L6.71,8.21a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41l4.59,4.59a3,3,0,0,0,4.24,0l4.59-4.59A1,1,0,0,0,18.71,8.21Z"
+                        />
+                    </svg>
                 </div>
             </section>
         </div>

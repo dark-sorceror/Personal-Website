@@ -28,6 +28,10 @@
     transition: all 0.2s ease-in-out;
     opacity: 50%;
 
+    svg {
+        color: white;
+    }
+
     &:hover {
         svg {
             stroke-width: 2.3px;
@@ -47,45 +51,5 @@
 
     .mail&:hover {
         color: rgb(255, 98, 98);
-    }
-}
-
-body.dark-mode a.github:hover {
-    color: rgb(206, 206, 206);
-}
-
-.linkbar .border {
-    background-color: rgba(0, 0, 0, 0.521);
-    width: 2px;
-    opacity: 50%;
-    height: 30px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.linkbar button {
-    all: unset;
-    transition: all 0.2s ease-in-out;
-    opacity: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-
-    .lucide-moon {
-        display: flex;
-    }
-
-    .lucide-sun {
-        display: none;
-    }
-
-    &:hover {
-        svg {
-            stroke-width: 2.3px;
-        }
-
-        scale: 1.07;
-        opacity: 90%;
     }
 }
