@@ -20,11 +20,6 @@ html {
     height: 100%;
 }
 
-span,
-a {
-    margin-top: 2px;
-}
-
 body {
     background-image: linear-gradient(#000000, #292929);
     margin: 0;

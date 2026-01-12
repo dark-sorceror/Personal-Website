@@ -1,16 +1,20 @@
 import Home from "./Home";
 
 import Linkbar from "./components/Linkbar/Linkbar";
+import Navbar from "./components/Navbar/Navbar";
+import StarBackground from "./components/StarBackground";
 
 import "./App.css";
-import Navbar from "./components/Navbar/Navbar";
 
 function App() {
     return (
         <>
+            <StarBackground />
             <Navbar />
             <Linkbar />
-            <Home />
+            <div className="content">
+                <Home />
+            </div>
         </>
     );
 }
