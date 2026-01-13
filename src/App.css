@@ -1,3 +1,5 @@
+@import url("./index.css");
+
 #root {
     height: 100%;
 }
@@ -10,30 +12,33 @@
     flex-direction: column;
 }
 
-.s1 {
+.s {
     width: fit-content;
     height: fit-content;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 300px;
+    width: 100%;
+    height: 100%;
 }
 
-.planet {
-    position: fixed;
-    bottom: -150vh;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120vw;
-    aspect-ratio: 1 / 1;
-    background-color: #1a1a1a;
-    box-shadow: 0px -2px 10px rgba(255, 255, 255, 0.1),
-        0px -20px 80px rgba(168, 85, 247, 0.4);
-    border-radius: 50%;
-    z-index: 10;
-    pointer-events: none;
-    z-index: 20;
+.s-c {
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 400px;
+    width: 1000px;
+}
+
+.head {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: fit-content;
 }
 
 .name {
@@ -42,7 +47,8 @@
     font-size: 15px;
     display: flex;
     flex-direction: column;
-    text-align: center;
+    text-align: left;
+    justify-content: center;
 }
 
 .name span.n {
@@ -147,5 +153,142 @@
 
     svg {
         margin-left: 5px;
+    }
+}
+
+.s4-content {
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 300px;
+}
+
+.s4-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+
+    .title {
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .desc {
+        margin-top: 0px;
+        font-weight: 600;
+        font-size: 20px;
+        opacity: 60%;
+    }
+}
+
+.chat-wrapper {
+    width: 700px;
+    height: 500px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid rgba(226, 226, 226, 0.644);
+    transition: all 0.2s ease-in-out;
+    border-radius: 15px;
+    box-shadow: 0 2px 30px rgba(202, 202, 202, 0.644);
+    background-color: rgba(44, 44, 44, 0.733);
+}
+
+.chat {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.chat-area {
+    height: 100px;
+    width: 100%;
+    border-radius: 10px;
+    border: 3px solid transparent;
+
+    display: flex;
+    padding: 16px;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+
+    background: linear-gradient(rgba(37, 37, 37, 0.74), rgba(46, 46, 46, 0.74))
+            padding-box,
+        repeating-linear-gradient(
+                20deg,
+                color(display-p3 0.6196 0.4784 1) 0px,
+                color(display-p3 0.9961 0.5451 0.7333) 150px,
+                color(display-p3 1 0.7412 0.4784) 300px,
+                color(display-p3 0.9725 0.9176 0.7647) 450px,
+                color(display-p3 0.6196 0.4784 1) 600px
+            )
+            border-box;
+
+    background-size: auto, 1750px 100%;
+    background-position: 0 0, 0 50%;
+    background-repeat: repeat;
+
+    animation: shift-gradient 15s linear infinite;
+}
+
+@keyframes shift-gradient {
+    from {
+        background-position-x: 0px, 0px;
+    }
+    to {
+        background-position-x: 0px, 1750px;
+    }
+}
+
+.chat-box {
+    width: 100%;
+    height: 100%;
+    white-space: pre-wrap;
+    resize: none;
+    overflow-y: auto;
+    outline: none;
+    font-weight: 600;
+    border: none;
+    display: flex;
+    color: white;
+
+    &::placeholder {
+        color: white;
+        font-weight: 600;
+    }
+}
+
+.chat-box::-webkit-scrollbar {
+    width: 10px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.send-button {
+    background-color: black;
+    padding: 5px;
+    top: 55px;
+    right: 11px;
+    border-radius: 10px;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    align-self: flex-end;
+    border: 2px solid white;
+
+    svg {
+        width: 20px;
+        fill: white;
     }
 }

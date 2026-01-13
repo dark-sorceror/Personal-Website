@@ -12,9 +12,7 @@ function App() {
             <StarBackground />
             <Navbar />
             <Linkbar />
-            <div className="content">
-                <Home />
-            </div>
+            <Home />
         </>
     );
 }

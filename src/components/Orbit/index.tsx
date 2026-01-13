@@ -1,0 +1,196 @@
+import { useEffect, useRef } from "react";
+
+type Vec = { x: number; y: number };
+
+type Node = {
+    pos: Vec;
+    vel: Vec;
+    radius: number;
+    mass: number;
+
+    orbitRadius: number;
+    orbitAngle: number;
+};
+
+const NODE_COUNT = 50;
+const ORBIT_SPEED = 0.0009;
+const MOUSE_RADIUS = 100;
+const MOUSE_FORCE = 0.008;
+const DAMPING = 0.98;
+
+function createNodes(canvas: HTMLCanvasElement) {
+    const nodes = [];
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    for (let i = 0; i < NODE_COUNT; i++) {
+        const angle = (i / NODE_COUNT) * Math.PI * 2;
+        const orbitRadius = 100 + Math.random() * 40;
+
+        nodes.push({
+            pos: {
+                x: cx + Math.cos(angle) * orbitRadius,
+                y: cy + Math.sin(angle) * orbitRadius,
+            },
+            vel: { x: 0, y: 0 },
+            radius: 3.5,
+            mass: 1,
+            orbitRadius,
+            orbitAngle: angle,
+        });
+    }
+
+    return nodes;
+}
+
+function resize(canvas: HTMLCanvasElement) {
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+}
+
+export default function LatentField() {
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const nodesRef = useRef<Node[]>([]);
+    const mouseRef = useRef<Vec | null>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current!;
+        const ctx = canvas.getContext("2d")!;
+
+        resize(canvas);
+
+        nodesRef.current = createNodes(canvas);
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("resize", () => resize(canvas));
+
+        let animationId: number;
+
+        const animate = () => {
+            update(nodesRef.current, canvas);
+            draw(ctx, nodesRef.current, canvas);
+            animationId = requestAnimationFrame(animate);
+        };
+
+        animate();
+
+        return () => {
+            cancelAnimationFrame(animationId);
+
+            window.removeEventListener("mousemove", onMouseMove);
+        };
+    }, []);
+
+    function onMouseMove(e: MouseEvent) {
+        const canvas = canvasRef.current;
+
+        if (!canvas) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio;
+
+        mouseRef.current = {
+            x: (e.clientX - rect.left) * dpr,
+            y: (e.clientY - rect.top) * dpr,
+        };
+    }
+
+    function update(nodes: Node[], canvas: HTMLCanvasElement) {
+        const center = { x: canvas.width / 2, y: canvas.height / 2 };
+
+        for (const node of nodes) {
+            const targetX =
+                center.x + Math.cos(node.orbitAngle) * node.orbitRadius;
+            const targetY =
+                center.y + Math.sin(node.orbitAngle) * node.orbitRadius;
+
+            const SPRING_STRENGTH = 0.000004;
+
+            node.vel.x += (targetX - node.pos.x) * SPRING_STRENGTH;
+            node.vel.y += (targetY - node.pos.y) * SPRING_STRENGTH;
+
+            node.vel.x += (targetX - node.pos.x) * 0.002;
+            node.vel.y += (targetY - node.pos.y) * 0.002;
+
+            if (mouseRef.current) {
+                const mx = mouseRef.current.x;
+                const my = mouseRef.current.y;
+                const mdx = mx - node.pos.x;
+                const mdy = my - node.pos.y;
+                const mDist = Math.hypot(mdx, mdy);
+
+                if (mDist < MOUSE_RADIUS) {
+                    const strength = (1 - mDist / MOUSE_RADIUS) * MOUSE_FORCE;
+
+                    node.vel.x += mdx * strength;
+                    node.vel.y += mdy * strength;
+
+                    node.vel.x *= 0.92;
+                    node.vel.y *= 0.92;
+                }
+            }
+
+            node.vel.x *= DAMPING;
+            node.vel.y *= DAMPING;
+
+            node.pos.x += node.vel.x;
+            node.pos.y += node.vel.y;
+
+            node.orbitAngle += ORBIT_SPEED;
+        }
+
+        resolveCollisions(nodes);
+    }
+
+    function resolveCollisions(nodes: Node[]) {
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const a = nodes[i];
+                const b = nodes[j];
+
+                const dx = b.pos.x - a.pos.x;
+                const dy = b.pos.y - a.pos.y;
+                const dist = Math.hypot(dx, dy);
+                const minDist = a.radius + b.radius;
+
+                if (dist < minDist && dist > 0) {
+                    const overlap = minDist - dist;
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+
+                    a.pos.x -= nx * overlap * 0.5;
+                    a.pos.y -= ny * overlap * 0.5;
+                    b.pos.x += nx * overlap * 0.5;
+                    b.pos.y += ny * overlap * 0.5;
+                }
+            }
+        }
+    }
+
+    function draw(
+        ctx: CanvasRenderingContext2D,
+        nodes: Node[],
+        canvas: HTMLCanvasElement
+    ) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
+
+        for (const node of nodes) {
+            ctx.beginPath();
+            ctx.arc(node.pos.x, node.pos.y, node.radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    return (
+        <canvas
+            ref={canvasRef}
+            style={{
+                height: "fit-content",
+                aspectRatio: 1 / 1,
+                pointerEvents: "none",
+            }}
+        />
+    );
+}
