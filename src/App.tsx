@@ -1,10 +1,11 @@
 import Home from "./Home";
 
-import Linkbar from "./components/Linkbar/Linkbar";
-import Navbar from "./components/Navbar/Navbar";
+import Linkbar from "./components/Linkbar";
+import Navbar from "./components/Navbar";
 import StarBackground from "./components/StarBackground";
 
 import "./App.css";
+import BTT from "./components/BTT";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
             <Navbar />
             <Linkbar />
             <Home />
+            <BTT />
         </>
     );
 }

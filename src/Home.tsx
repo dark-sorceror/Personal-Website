@@ -3,7 +3,7 @@ import LatentField from "./components/Orbit";
 export default function Home() {
     return (
         <div className="wrapper">
-            <section className="s1 s">
+            <section className="s1 s" id="top">
                 <div className="s1-content s-c">
                     <div className="head">
                         <div className="name">
@@ -67,56 +67,38 @@ export default function Home() {
                             />
                         </svg>
                     </a>
-                    <div className="down">
-                        Check out my experiences
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            id="Outline"
-                            viewBox="0 0 24 24"
-                            width="15"
-                            height="15"
-                        >
-                            <defs>
-                                <linearGradient
-                                    id="p3-gradient"
-                                    x1="0%"
-                                    y1="0%"
-                                    x2="100%"
-                                    y2="100%"
-                                >
-                                    <stop
-                                        offset="0%"
-                                        stopColor="color(display-p3 0.6196 0.4784 1 / 1)"
-                                    />
-                                    <stop
-                                        offset="33.33%"
-                                        stopColor="color(display-p3 0.9961 0.5451 0.7333 / 1)"
-                                    />
-                                    <stop
-                                        offset="66.67%"
-                                        stopColor="color(display-p3 1 0.7412 0.4784 / 1)"
-                                    />
-                                    <stop
-                                        offset="100%"
-                                        stopColor="color(display-p3 0.9725 0.9176 0.7647 / 1)"
-                                    />
-                                </linearGradient>
-                            </defs>
-                            <path
-                                stroke-width="2"
-                                fill="none"
-                                stroke="url(#p3-gradient)"
-                                d="M18.71,8.21a1,1,0,0,0-1.42,0l-4.58,4.58a1,1,0,0,1-1.42,0L6.71,8.21a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41l4.59,4.59a3,3,0,0,0,4.24,0l4.59-4.59A1,1,0,0,0,18.71,8.21Z"
-                            />
-                        </svg>
+                </div>
+            </section>
+            <section className="s2 s" id="about-me">
+                <div className="s2-content s-c">
+                    <div className="s-head">
+                        <span className="title">About Me</span>
+
+                        <span className="desc">a</span>
                     </div>
                 </div>
             </section>
-            <section className="s2 s"></section>
-            <section className="s3 s"></section>
-            <section className="s4 s">
+            <section className="s3 s" id="experience">
+                <div className="s3-content s-c">
+                    <div className="s-head">
+                        <span className="title">Experiences</span>
+
+                        <span className="desc">a</span>
+                    </div>
+                </div>
+            </section>
+            <section className="s4 s" id="projects">
                 <div className="s4-content s-c">
-                    <div className="s4-head">
+                    <div className="s-head">
+                        <span className="title">Projects</span>
+
+                        <span className="desc">b</span>
+                    </div>
+                </div>
+            </section>
+            <section className="s5 s" id="contact">
+                <div className="s5-content s-c">
+                    <div className="s-head">
                         <span className="title">Chat With Me</span>
 
                         <span className="desc">

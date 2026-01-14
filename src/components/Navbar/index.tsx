@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-import "./Navbar.css";
+import "./index.css";
 
 const tabs = ["About Me", "Experience", "Projects", "Contact"];
 
@@ -9,6 +9,25 @@ export default function Navbar() {
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
 
     const tabsRef = useRef<(HTMLAnchorElement | null)[]>([]);
+
+    const handleScroll = (
+        e: React.MouseEvent<HTMLAnchorElement>,
+        index: number,
+        tab: string
+    ) => {
+        e.preventDefault();
+        setActiveIndex(index);
+
+        const targetId = tab.toLowerCase().replace(/\s+/g, "-");
+        const element = document.getElementById(targetId);
+
+        if (element) {
+            element.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    };
 
     useEffect(() => {
         const currentTab = tabsRef.current[activeIndex];
@@ -41,7 +60,8 @@ export default function Navbar() {
                         className={`nav-item ${
                             activeIndex === index ? "active" : ""
                         }`}
-                        onClick={() => setActiveIndex(index)}
+                        onClick={(e) => handleScroll(e, index, tab)}
+                        href={`#${tab.toLowerCase().replace(/\s+/g, "-")}`}
                     >
                         {tab}
                     </a>

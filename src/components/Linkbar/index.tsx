@@ -1,10 +1,14 @@
-import "./Linkbar.css";
+import "./index.css";
 
 export default function Linkbar() {
     return (
         <div className="linkbar-wrapper">
             <div className="linkbar">
-                <a className="github">
+                <a
+                    className="github"
+                    target="_blank"
+                    href="https://github.com/dark-sorceror"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -20,7 +24,11 @@ export default function Linkbar() {
                         <path d="M9 18c-4.51 2-5-2-7-2" />
                     </svg>
                 </a>
-                <a className="instagram">
+                <a
+                    className="instagram"
+                    target="_blank"
+                    href="https://www.instagram.com/haoyyyyyyyyyyyyyyyyyyyyyyyyy/?hl=en"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -44,7 +52,7 @@ export default function Linkbar() {
                         <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                     </svg>
                 </a>
-                <a className="mail">
+                <a className="mail" href="mailto:haoyan160@gmail.com">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
