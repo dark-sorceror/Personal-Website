@@ -36,10 +36,10 @@
 }
 
 .head {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    height: 400px;
 }
 
 .name {
@@ -68,6 +68,10 @@
 }
 
 .name span.desc {
+    .desc-white {
+        color: white;
+    }
+
     opacity: 60%;
     font-size: 20px;
 }
@@ -128,7 +132,7 @@
         color(display-p3 1 0.7412 0.4784 / 1) 66.67%,
         color(display-p3 0.9725 0.9176 0.7647 / 1) 100%
     );
-    opacity: 30%;
+    opacity: 25%;
     z-index: -2;
     pointer-events: none;
 }
@@ -140,8 +144,10 @@
     margin-top: 130px;
 
     svg {
-        margin-left: 8px;
-        width: 15px;
+        margin-left: 2px;
+        width: 17px;
+        stroke-width: 1px;
+        stroke: white;
     }
 }
 

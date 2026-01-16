@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+import "./index.css";
+
 type Vec = { x: number; y: number };
 
 type Node = {
@@ -12,30 +14,45 @@ type Node = {
     orbitAngle: number;
 };
 
-const NODE_COUNT = 50;
-const ORBIT_SPEED = 0.0009;
+const TOTAL_NODE_COUNT = 200;
+const ORBIT_SPEED = 0.0005;
 const MOUSE_RADIUS = 100;
 const MOUSE_FORCE = 0.008;
 const DAMPING = 0.98;
+const MAX_RADIUS = 200;
+const COUNT = 100;
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const MIN_NODE_RADIUS = 4;
+const MAX_NODE_RADIUS = 14;
+
+function lerp(a: number, b: number, t: number) {
+    return a + (b - a) * t;
+}
 
 function createNodes(canvas: HTMLCanvasElement) {
-    const nodes = [];
+    const nodes: Node[] = [];
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
 
-    for (let i = 0; i < NODE_COUNT; i++) {
-        const angle = (i / NODE_COUNT) * Math.PI * 2;
-        const orbitRadius = 100 + Math.random() * 40;
+    for (let i = 0; i < COUNT; i++) {
+        const radius = Math.sqrt(i / COUNT) * MAX_RADIUS;
+        const angle = i * GOLDEN_ANGLE;
+
+        const sizeBias = Math.pow(i / COUNT, 0.7);
+
+        const size =
+            lerp(MIN_NODE_RADIUS, MAX_NODE_RADIUS, sizeBias) *
+            (0.75 + Math.random() * 0.5);
 
         nodes.push({
             pos: {
-                x: cx + Math.cos(angle) * orbitRadius,
-                y: cy + Math.sin(angle) * orbitRadius,
+                x: cx + Math.cos(angle) * radius,
+                y: cy + Math.sin(angle) * radius,
             },
             vel: { x: 0, y: 0 },
-            radius: 3.5,
-            mass: 1,
-            orbitRadius,
+            radius: size,
+            mass: size,
+            orbitRadius: radius,
             orbitAngle: angle,
         });
     }
@@ -174,7 +191,7 @@ export default function LatentField() {
     ) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
 
         for (const node of nodes) {
             ctx.beginPath();
@@ -184,13 +201,8 @@ export default function LatentField() {
     }
 
     return (
-        <canvas
-            ref={canvasRef}
-            style={{
-                height: "fit-content",
-                aspectRatio: 1 / 1,
-                pointerEvents: "none",
-            }}
-        />
+        <div className="canvas-wrap">
+            <canvas ref={canvasRef} className="orbit" />
+        </div>
     );
 }
