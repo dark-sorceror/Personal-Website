@@ -53,8 +53,22 @@ export default function Home() {
                     <div className="s-head">
                         <span className="title">About Me</span>
 
-                        <span className="desc">a</span>
+                        <span className="desc">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Nullam varius libero dui, sed bibendum eros
+                            sagittis et. Nulla lacinia efficitur ipsum, eu
+                            imperdiet arcu blandit a. Praesent lacinia tincidunt
+                            dolor non ultrices. Etiam ullamcorper, odio at
+                            semper elementum, erat risus commodo turpis, eget
+                            fermentum dolor orci sed quam. Nullam sed justo
+                            faucibus, ullamcorper purus eget, consequat mauris.
+                            Etiam condimentum urna a magna sodales, ac viverra
+                            ipsum cursus. Interdum et malesuada fames ac ante
+                            ipsum primis in faucibus. Etiam fermentum nulla
+                            vitae aliquet maximus.
+                        </span>
                     </div>
+                    <div className="photo">phooto</div>
                 </div>
             </section>
             <section className="s3 s" id="experience">
