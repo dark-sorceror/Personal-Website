@@ -1,6 +1,48 @@
 .wrapper {
+    height: 100%;
+    overflow: auto;
+}
+
+.home-area {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin-top: 150px;
+    justify-content: center;
+}
+
+.home {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.desc {
+    ul {
+        line-height: 25px;
+    }
+
+    a {
+        color: lightblue;
+    }
+}
+
+.linkbar-area {
+    margin-top: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.linkbar {
+    gap: 20px;
+    display: flex;
+
+    svg {
+        color: white;
+    }
 }

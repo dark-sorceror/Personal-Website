@@ -1,12 +1,20 @@
-import Home from "./Home";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import "./App.css";
+import Home from "./Home";
+import Experience from "./Experience";
+
+import Navbar from "./components/Navbar";
 
 function App() {
     return (
-        <>
-            <Home />
-        </>
+        <Router>
+            <Navbar />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/experience" element={<Experience />} />
+                <Route path="*" element={"error"} />
+            </Routes>
+        </Router>
     );
 }
 
