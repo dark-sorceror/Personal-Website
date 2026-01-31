@@ -8,6 +8,16 @@
     align-items: center;
     margin-top: 150px;
     justify-content: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+}
+
+.home-area.in-view {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .home {
@@ -18,6 +28,12 @@
 .name {
     font-weight: 600;
     text-align: left;
+    margin-bottom: 5px;
+}
+
+.h2 {
+    font-weight: 600;
+    margin-top: 15px;
     margin-bottom: 5px;
 }
 
@@ -36,6 +52,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+}
+
+.linkbar-area.in-view {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .linkbar {

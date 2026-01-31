@@ -1,21 +1,63 @@
+import { useRef, useEffect } from "react";
+
 import "./App.css";
 
 export default function Home() {
+    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("in-view");
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.15 },
+        );
+
+        itemsRef.current.forEach((el) => {
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <div className="wrapper">
-            <div className="home-area">
+            <div
+                className="home-area"
+                ref={(el) => {
+                    itemsRef.current[0] = el;
+                }}
+            >
                 <div className="home">
                     <div className="name">Hao Yan</div>
                     <div className="desc">
+                        <div className="h2">Currently</div>
                         <ul>
-                            <li>Software Engineering at McMaster University</li>
-                            <li>AI/ML at McMaster EcoCAR</li>
                             <li>
-                                Embedded Software Engineer at McMaster
+                                🎓 Computer Engineering @ McMaster University
+                            </li>
+                            <li>🚗 AI/ML at McMaster EcoCAR</li>
+                            <li>
+                                🦿 Embedded Software Engineer at McMaster
                                 Exoskeleton
+                                <ul>
+                                    <li>
+                                        Developing C/C++ firmware for STM32 MCUs
+                                    </li>
+                                    <li>
+                                        Optimizing IMU driver data rates & CAN
+                                        bus
+                                    </li>
+                                </ul>
                             </li>
                             <li>
-                                Currently working on{" "}
+                                ✒️ Creating{" "}
                                 <a
                                     href="https://github.com/dark-sorceror/Neurinese"
                                     target="_blank"
@@ -29,12 +71,54 @@ export default function Home() {
                                     </li>
                                 </ul>
                             </li>
+                        <li>📖 Reading <i>Neural networks and computing learning<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algorithms and applications</i> by Chow, Tommy W. S.</li>
+                        </ul>
+                        <div className="h2">Previously</div>
+                        <ul>
+                            <li>
+                                🤖 Software and Mechanic Engineer for VEX
+                                Robotics team 3388N
+                                <ul>
+                                    <li>
+                                        Autonomous robot pathing using a 2D PID
+                                        controller
+                                    </li>
+                                    <li>
+                                        Managed safe user control and
+                                        concurrency
+                                    </li>
+                                    <li>Engineering design process</li>
+                                </ul>
+                            </li>
+                            <li>💡 Coach at Western Mechatronics</li>
+                            <li>🌐 IB Diploma Student</li>
+                            <li>
+                                📅 Made{" "}
+                                <a
+                                    href="https://github.com/dark-sorceror/Syntra"
+                                    target="_blank"
+                                >
+                                    Syntra
+                                </a>
+                                <ul>
+                                    <li>
+                                        Integrated AI calendar that learns your
+                                        habits
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                     <div className="extras"></div>
                 </div>
             </div>
-            <div className="linkbar-area">
+            <div
+                className="linkbar-area"
+                ref={(el) => {
+                    itemsRef.current[1] = el;
+                }}
+                style={{ transitionDelay: "0.3s" }}
+            >
                 <div className="linkbar">
                     <a
                         className="github"
