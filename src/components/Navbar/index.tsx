@@ -6,7 +6,7 @@ import "./index.css";
 
 const tabs = ["About Me", "Experience", "Projects", "Contact"];
 
-export default function Navbar() {
+export function Navbar() {
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
 
     const tabsRef = useRef<(HTMLAnchorElement | null)[]>([]);
