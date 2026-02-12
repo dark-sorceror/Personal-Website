@@ -1,0 +1,314 @@
+/* Experience.css */
+
+:root {
+    --bg-minimal: #0a0a0a;
+    --text-white: #ffffff;
+    --text-grey: #737373;
+    --text-light-grey: #d4d4d4;
+    --accent-line: #262626;
+}
+
+.experience-wrapper {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 100px;
+}
+
+.experience-area {
+    max-width: 600px;
+    margin-top: 150px;
+    background-color: var(--bg-minimal);
+    color: var(--text-white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.experience-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+    width: 100%;
+}
+
+.experience-row.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.date-col {
+    font-size: 0.9rem;
+    color: var(--text-grey);
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.content-col {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--accent-line);
+    padding-left: 2rem;
+    position: relative;
+}
+
+.content-col::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: 0.6rem;
+    width: 9px;
+    height: 9px;
+    background-color: var(--bg-minimal);
+    border: 1px solid var(--text-grey);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.experience-row:hover .content-col::before {
+    background-color: var(--text-white);
+    border-color: var(--text-white);
+}
+
+.role-title {
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+}
+
+.company-name {
+    font-size: 1rem;
+    color: var(--text-grey);
+    font-weight: 400;
+    margin-bottom: 4px;
+}
+
+.description {
+    font-size: 1rem;
+    margin-top: 0;
+    line-height: 1.7;
+    color: var(--text-light-grey);
+    max-width: 38rem;
+}
+
+.gallery-wrapper {
+    position: relative;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--accent-line);
+    padding-top: 1.5rem;
+
+    /* Force exactly 4.5 items (120px * 4 + 16px gaps * 4 + 60px half image) */
+    max-width: 604px;
+    transition:
+        mask-image 0.3s ease,
+        -webkit-mask-image 0.3s ease;
+}
+
+/* Dynamic fade on the right edge applied via React state */
+.gallery-wrapper.fade-right {
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+.gallery-scroll-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.gallery-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery-thumb {
+    flex: 0 0 auto;
+    width: 240px;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: zoom-in;
+    transition: all 0.3s ease;
+}
+
+.gallery-thumb:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-btn {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid var(--text-grey);
+    color: var(--text-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.scroll-btn:hover {
+    background: var(--text-white);
+    color: var(--bg-minimal);
+    border-color: var(--text-white);
+}
+
+/* Shift right arrow inward slightly so it doesn't get masked out */
+.scroll-btn.left {
+    left: 0.5rem;
+}
+.scroll-btn.right {
+    right: 0.5rem;
+}
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background-color: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.lightbox-image-wrapper {
+    position: relative;
+    max-width: 90vw;
+    max-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.lightbox-image {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    user-select: none;
+    display: block;
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10003;
+}
+
+.lightbox-nav:hover {
+    opacity: 1;
+}
+
+.lightbox-nav.prev {
+    left: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.lightbox-nav.next {
+    right: 0;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.lightbox-nav-icon {
+    width: 3rem;
+    height: 3rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.lightbox-caption-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.6) 50%,
+        transparent 100%
+    );
+    padding: 3rem 1.5rem 1.5rem 1.5rem;
+    text-align: left;
+    color: white;
+    z-index: 10002;
+    pointer-events: none;
+}
+
+.caption-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.25rem;
+}
+
+.caption-text {
+    font-size: 1rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10004;
+    transition: all 0.2s;
+    color: white;
+}
+
+.lightbox-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}

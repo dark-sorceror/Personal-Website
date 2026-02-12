@@ -5,7 +5,8 @@ import { useScrollToTop } from "./hook/scrollToTop";
 import { Navbar } from "./components/Navbar";
 
 import { Home } from "./Home";
-import Experience from "./Experience";
+import { Experience } from "./Experience";
+import { Projects } from "./Projects";
 
 function Wrapper() {
     useScrollToTop();
@@ -14,6 +15,7 @@ function Wrapper() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/experience" element={<Experience />} />
+            <Route path="/projects" element={<Projects />} />
             <Route path="*" element={"error"} />
         </Routes>
     );
