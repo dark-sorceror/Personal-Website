@@ -6,13 +6,13 @@
     --accent-line: #262626;
 }
 
-.experience-wrapper {
+.projects-wrapper {
     display: flex;
     justify-content: center;
     padding-bottom: 100px;
 }
 
-.experience-area {
+.projects-area {
     max-width: 600px;
     margin-top: 150px;
     background-color: var(--bg-minimal);
@@ -22,7 +22,7 @@
     align-items: center;
 }
 
-.experience-row {
+.projects-row {
     display: flex;
     gap: 2rem;
     margin-bottom: 40px;
@@ -34,7 +34,7 @@
     width: 100%;
 }
 
-.experience-row.in-view {
+.projects-row.in-view {
     opacity: 1;
     transform: translateY(0);
 }
@@ -67,22 +67,15 @@
     transition: all 0.3s ease;
 }
 
-.experience-row:hover .content-col::before {
+.projects-row:hover .content-col::before {
     background-color: var(--text-white);
     border-color: var(--text-white);
 }
 
-.role-title {
+.project-title {
     font-weight: 600;
     margin: 0 0 0.5rem 0;
     line-height: 1.2;
-}
-
-.company-name {
-    font-size: 1rem;
-    color: var(--text-grey);
-    font-weight: 400;
-    margin-bottom: 4px;
 }
 
 .description,

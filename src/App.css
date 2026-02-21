@@ -1,3 +1,11 @@
+:root {
+    --bg-minimal: #0a0a0a;
+    --text-white: #ffffff;
+    --text-grey: #737373;
+    --text-light-grey: #e0e0e0;
+    --accent-line: #262626;
+}
+
 .wrapper {
     height: 100%;
     overflow: auto;
@@ -28,6 +36,7 @@
 
     ul {
         line-height: 27px;
+        color: var(--text-light-grey);
     }
 
     a {

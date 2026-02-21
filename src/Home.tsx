@@ -18,18 +18,25 @@ export function Home() {
                                     🎓 Computer Engineering @ McMaster
                                     University
                                 </li>
-                                <li>🚗 AI/ML at McMaster EcoCAR</li>
                                 <li>
-                                    🦿 Embedded Software Engineer at McMaster
-                                    Exoskeleton
+                                    🚗 AI/ML at McMaster EcoCAR
                                     <ul>
                                         <li>
-                                            Developing C/C++ firmware for STM32
-                                            MCUs
+                                            Building a SAE/UDS diagnostic
+                                            architecture and Simulink autonomy{" "}
+                                            <br />
+                                            stack for a competition EV
                                         </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    🦿 Embedded Software at McMaster Exoskeleton
+                                    <ul>
                                         <li>
-                                            Optimizing IMU driver data rates &
-                                            CAN bus
+                                            500 Hz real-time IMU firmware on
+                                            STM32 via DMA/I2C CAN bus{" "}
+                                            <br />
+                                            with Raspberry Pi
                                         </li>
                                     </ul>
                                 </li>
@@ -43,20 +50,19 @@ export function Home() {
                                     </a>
                                     <ul>
                                         <li>
-                                            Grammarly/Copilot for handwritten
-                                            Chinese
+                                            Grammarly for handwritten Chinese —
+                                            stroke-level style learning with VAE{" "}
+                                            <br />+ MDN in PyTorch
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
                                     📖 Reading{" "}
                                     <i>
-                                        Neural networks and computing learning
-                                        <br />
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;algorithms
-                                        and applications
-                                    </i>{" "}
-                                    by Chow, Tommy W. S.
+                                        Neural Networks and Computing Learning
+                                        Algorithms and Applications
+                                    </i>
+                                    <br /> by Chow, Tommy W. S.
                                 </li>
                             </ul>
                         </div>
@@ -66,22 +72,20 @@ export function Home() {
                             Previously
                             <ul>
                                 <li>
-                                    🤖 Software and Mechanic Engineer for VEX
-                                    Robotics team 3388N
+                                    🤖 Lead Software & Mechanical Engineer — VEX
+                                    Robotics Team 3388N
                                     <ul>
                                         <li>
-                                            Autonomous robot pathing using a 2D
-                                            PID controller
+                                            8th of 200 teams at Canada's largest
+                                            VEX tournament; built full <br />
+                                            autonomous nav stack in C/C++
                                         </li>
-                                        <li>
-                                            Managed safe user control and
-                                            concurrency
-                                        </li>
-                                        <li>Engineering design process</li>
                                     </ul>
                                 </li>
-                                <li>💡 Coach at Western Mechatronics</li>
-                                <li>🌐 IB Diploma Student</li>
+                                <li>
+                                    💡 Robotics Coach at Western Mechatronics —
+                                    coached 20+ teams
+                                </li>
                                 <li>
                                     📅 Created{" "}
                                     <a
@@ -92,11 +96,12 @@ export function Home() {
                                     </a>
                                     <ul>
                                         <li>
-                                            Integrated AI calendar that learns
-                                            your habits
+                                            AI calendar with an LSTM/FNN backend
+                                            that learns your scheduling habits
                                         </li>
                                     </ul>
                                 </li>
+                                <li>🌐 IB Diploma Graduate</li>
                             </ul>
                         </div>
                     </FadeIn>
