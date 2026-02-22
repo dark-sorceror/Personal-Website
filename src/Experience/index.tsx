@@ -63,7 +63,7 @@ const experiences: ExperienceItem[] = [
         title: "Lead Software & Mechanical Engineer",
         company: "VEX Robotics Team 3388N Nova",
         period: "September 2022 — June 2025",
-        desc: "Co-led all software and mechanical design over three seasons, placing 8th among 200 teams at Canada's largest VEX robotics tournament.",
+        desc: "Co-led all software and mechanical design over three seasons, placing 6th among 200 teams at Canada's largest VEX robotics tournament.",
         bullets: [
             "Developed a full autonomous navigation stack in C/C++: 1D/2D PID control, velocity profiling, pure pursuit path tracking, and Monte Carlo localization using wheel odometry.",
             "Built a concurrent real-time control system with mutex-protected task scheduling, handling motor burnout recovery, operator input filtering, and safe interaction with field elements under competition conditions.",

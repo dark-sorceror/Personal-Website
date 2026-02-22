@@ -12,7 +12,7 @@ export function Home() {
                     </FadeIn>
                     <FadeIn delay="0.2s">
                         <div className="h2">
-                            Currently
+                            <p>Currently</p>
                             <ul>
                                 <li>
                                     🎓 Computer Engineering @ McMaster
@@ -69,14 +69,14 @@ export function Home() {
                     </FadeIn>
                     <FadeIn delay="0.3s">
                         <div className="h3">
-                            Previously
+                            <p>Previously</p>
                             <ul>
                                 <li>
                                     🤖 Lead Software & Mechanical Engineer — VEX
                                     Robotics Team 3388N
                                     <ul>
                                         <li>
-                                            8th of 200 teams at Canada's largest
+                                            6th of 200 teams at Canada's largest
                                             VEX tournament; built full <br />
                                             autonomous nav stack in C/C++
                                         </li>

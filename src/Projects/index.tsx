@@ -40,16 +40,8 @@ const projects: ProjectItem[] = [
             "Designed a full pipeline: CNN for character recognition → VAE for style encoding → NLP n-gram model for next-character prediction → MDN decoder to synthesize the predicted character in the user's handwriting style.",
         ],
         media: [
-            {
-                type: "image",
-                src: i9,
-                caption: "Caption",
-            },
-            {
-                type: "image",
-                src: i8,
-                caption: "Caption",
-            },
+            { type: "image", src: i9, caption: "Caption" },
+            { type: "image", src: i8, caption: "Caption" },
         ],
     },
     {
@@ -70,13 +62,7 @@ const projects: ProjectItem[] = [
             "Video processing pipeline uses yt-dlp for content retrieval and OpenCV for frame extraction, feeding into the Gemini vision analysis layer.",
             "Implemented Redis-backed caching for repeated analysis requests and structured response models for credibility scores.",
         ],
-        media: [
-            {
-                type: "image",
-                src: i10,
-                caption: "Caption",
-            },
-        ],
+        media: [{ type: "image", src: i10, caption: "Caption" }],
     },
     {
         title: "Syntra",
@@ -101,15 +87,27 @@ const projects: ProjectItem[] = [
             "Implemented rate-limited REST API request handling to stay within Discord's API constraints at scale.",
             "Built when I was first learning JavaScript — marks the start of the engineering habits (APIs, databases, async systems) that carried into everything after.",
         ],
-        media: [
-            {
-                type: "image",
-                src: i11,
-                caption: "Caption",
-            },
-        ],
+        media: [{ type: "image", src: i11, caption: "Caption" }],
     },
 ];
+
+const ArrowUpRight = () => (
+    <svg
+        width="10"
+        height="10"
+        viewBox="0 0 10 10"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M2 8L8 2M8 2H3M8 2V7"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
 
 const GalleryRow = ({
     media,
@@ -142,10 +140,8 @@ const GalleryRow = ({
     const scroll = (direction: "left" | "right") => {
         if (!rowRef.current) return;
 
-        const scrollAmount = 272;
-
         rowRef.current.scrollBy({
-            left: direction === "left" ? -scrollAmount : scrollAmount,
+            left: direction === "left" ? -272 : 272,
             behavior: "smooth",
         });
     };
@@ -179,7 +175,6 @@ const GalleryRow = ({
                     <ChevronLeft size={18} />
                 </button>
             )}
-
             <div
                 className="gallery-scroll-container"
                 ref={rowRef}
@@ -197,7 +192,6 @@ const GalleryRow = ({
                     />
                 ))}
             </div>
-
             {showRight && (
                 <button
                     className="scroll-btn right"
@@ -232,11 +226,11 @@ const Lightbox = ({
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!isOpen) return;
-
             if (e.key === "Escape") onClose();
             if (e.key === "ArrowRight") next();
             if (e.key === "ArrowLeft") prev();
         };
+
         window.addEventListener("keydown", handleKeyDown);
 
         if (isOpen) document.body.style.overflow = "hidden";
@@ -252,11 +246,12 @@ const Lightbox = ({
 
     const next = (e?: React.MouseEvent) => {
         e?.stopPropagation();
+
         setCurrentIndex((prev) => (prev + 1) % media.length);
     };
-
     const prev = (e?: React.MouseEvent) => {
         e?.stopPropagation();
+
         setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
     };
 
@@ -267,7 +262,6 @@ const Lightbox = ({
             <div className="lightbox-close" onClick={onClose}>
                 <X size={24} />
             </div>
-
             <div
                 className="lightbox-image-wrapper"
                 onClick={(e) => e.stopPropagation()}
@@ -275,17 +269,14 @@ const Lightbox = ({
                 <div className="lightbox-nav prev" onClick={prev}>
                     <ChevronLeft className="lightbox-nav-icon" />
                 </div>
-
                 <div className="lightbox-nav next" onClick={next}>
                     <ChevronRight className="lightbox-nav-icon" />
                 </div>
-
                 <img
                     src={currentItem.src}
                     alt={currentItem.caption || "Full screen view"}
                     className="lightbox-image"
                 />
-
                 <div className="lightbox-caption-overlay">
                     <div className="caption-title">{contextTitle}</div>
                     {currentItem.caption && (
@@ -301,7 +292,6 @@ const Lightbox = ({
 
 export function Projects() {
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [activeMedia, setActiveMedia] = useState<MediaItem[]>([]);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -346,8 +336,38 @@ export function Projects() {
                             className="projects-row"
                         >
                             <div className="content-col">
-                                <div className="project-title">{prj.title}</div>
+                                <div className="project-header">
+                                    <div className="project-title">
+                                        {prj.title}
+                                    </div>
+                                    {prj.link && (
+                                        <a
+                                            className="project-goto"
+                                            href={prj.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            GitHub <ArrowUpRight />
+                                        </a>
+                                    )}
+                                </div>
+
                                 <div className="date-col">{prj.period}</div>
+
+                                {prj.tags && prj.tags.length > 0 && (
+                                    <div className="tag-row">
+                                        {prj.tags.map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className="tag"
+                                                data-tag={tag}
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
                                 <p className="description">{prj.desc}</p>
                                 {prj.bullets && prj.bullets.length > 0 && (
                                     <ul className="description-bullets">

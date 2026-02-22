@@ -1,10 +1,4 @@
-:root {
-    --bg-minimal: #0a0a0a;
-    --text-white: #ffffff;
-    --text-grey: #737373;
-    --text-light-grey: #e0e0e0;
-    --accent-line: #262626;
-}
+@import url(../App.css);
 
 .projects-wrapper {
     display: flex;
@@ -39,19 +33,13 @@
     transform: translateY(0);
 }
 
-.date-col {
-    font-size: 0.9rem;
-    color: var(--text-grey);
-    font-weight: 500;
-    margin-bottom: 20px;
-}
-
 .content-col {
     display: flex;
     flex-direction: column;
     border-left: 1px solid var(--accent-line);
     padding-left: 2rem;
     position: relative;
+    width: 100%;
 }
 
 .content-col::before {
@@ -72,10 +60,142 @@
     border-color: var(--text-white);
 }
 
+.project-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.25rem;
+}
+
 .project-title {
+    font-size: 1rem;
     font-weight: 600;
-    margin: 0 0 0.5rem 0;
+    margin: 0;
     line-height: 1.2;
+    color: var(--text-white);
+}
+
+.project-goto {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-grey);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+.project-goto:hover {
+    color: var(--text-white);
+}
+
+.project-goto svg {
+    transition: transform 0.2s ease;
+}
+
+.project-goto:hover svg {
+    transform: translate(1px, -1px);
+}
+
+.date-col {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-grey);
+    margin-top: 5px;
+    margin-bottom: 0.65rem;
+}
+
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+}
+
+.tag {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 3px;
+}
+
+.tag[data-tag="PyTorch"] {
+    color: #f08060;
+    background: rgba(240, 128, 96, 0.12);
+}
+.tag[data-tag="VAE"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+.tag[data-tag="MDN"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+.tag[data-tag="CNN"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+.tag[data-tag="Python"] {
+    color: #60a8f0;
+    background: rgba(96, 168, 240, 0.12);
+}
+.tag[data-tag="FastAPI"] {
+    color: #52d48a;
+    background: rgba(82, 212, 138, 0.12);
+}
+.tag[data-tag="React"] {
+    color: #60d8f8;
+    background: rgba(96, 216, 248, 0.12);
+}
+.tag[data-tag="Electron"] {
+    color: #60d8f8;
+    background: rgba(96, 216, 248, 0.12);
+}
+.tag[data-tag="Gemini API"] {
+    color: #f0c060;
+    background: rgba(240, 192, 96, 0.12);
+}
+.tag[data-tag="OpenCV"] {
+    color: #52d48a;
+    background: rgba(82, 212, 138, 0.12);
+}
+.tag[data-tag="Next.js"] {
+    color: #e0e0e0;
+    background: rgba(224, 224, 224, 0.1);
+}
+.tag[data-tag="LSTM"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+.tag[data-tag="Docker"] {
+    color: #60a8f0;
+    background: rgba(96, 168, 240, 0.12);
+}
+.tag[data-tag="Node.js"] {
+    color: #74d46a;
+    background: rgba(116, 212, 106, 0.12);
+}
+.tag[data-tag="MongoDB"] {
+    color: #74d46a;
+    background: rgba(116, 212, 106, 0.12);
+}
+.tag[data-tag="Discord.js"] {
+    color: #a0a8ff;
+    background: rgba(160, 168, 255, 0.12);
+}
+.tag[data-tag="REST API"] {
+    color: #f0c060;
+    background: rgba(240, 192, 96, 0.12);
 }
 
 .description,
@@ -92,15 +212,12 @@
     margin-top: 1.5rem;
     border-top: 1px solid var(--accent-line);
     padding-top: 1.5rem;
-
-    /* Force exactly 4.5 items (120px * 4 + 16px gaps * 4 + 60px half image) */
     max-width: 604px;
     transition:
         mask-image 0.3s ease,
         -webkit-mask-image 0.3s ease;
 }
 
-/* Dynamic fade on the right edge applied via React state */
 .gallery-wrapper.fade-right {
     -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
@@ -161,24 +278,19 @@
     border-color: var(--text-white);
 }
 
-/* Shift right arrow inward slightly so it doesn't get masked out */
 .scroll-btn.left {
     left: 0.5rem;
 }
 .scroll-btn.right {
     right: 0.5rem;
 }
+
 .lightbox-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
+    inset: 0;
     background-color: rgba(10, 10, 10, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -235,12 +347,10 @@
 .lightbox-nav:hover {
     opacity: 1;
 }
-
 .lightbox-nav.prev {
     left: 0;
     background: linear-gradient(to right, rgba(0, 0, 0, 0.6), transparent);
 }
-
 .lightbox-nav.next {
     right: 0;
     background: linear-gradient(to left, rgba(0, 0, 0, 0.6), transparent);
@@ -263,8 +373,7 @@
         rgba(0, 0, 0, 0.6) 50%,
         transparent 100%
     );
-    padding: 3rem 1.5rem 1.5rem 1.5rem;
-    text-align: left;
+    padding: 3rem 1.5rem 1.5rem;
     color: white;
     z-index: 10002;
     pointer-events: none;
@@ -303,4 +412,50 @@
 
 .lightbox-close:hover {
     background-color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 640px) {
+    .projects-wrapper {
+        padding: 0 1.4rem 80px;
+    }
+
+    .projects-area {
+        margin-top: 72px;
+    }
+
+    .content-col {
+        padding-left: 1.25rem;
+    }
+
+    .project-title {
+        font-size: 0.95rem;
+    }
+
+    .description,
+    .description-bullets {
+        font-size: 0.9rem;
+    }
+
+    .tag-row {
+        gap: 0.3rem;
+    }
+    .tag {
+        font-size: 0.58rem;
+        padding: 0.18rem 0.45rem;
+    }
+
+    .gallery-thumb {
+        width: 180px;
+        height: 142px;
+    }
+
+    .lightbox-nav {
+        opacity: 0.4;
+    }
+    .lightbox-close {
+        top: 1rem;
+        right: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
 }

@@ -31,12 +31,19 @@
 
 .h2,
 .h3 {
+    font-size: 0.7rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted, #999);
+    margin-bottom: 20px;
 
     ul {
         line-height: 27px;
         color: var(--text-light-grey);
+        text-transform: none;
+        font-size: 15px;
+        letter-spacing: normal;
     }
 
     a {
@@ -72,5 +79,35 @@
 
     svg {
         color: white;
+    }
+}
+
+@media (max-width: 640px) {
+    .home-area {
+        margin-top: 72px;
+        padding: 0 1.4rem;
+        align-items: flex-start;
+    }
+
+    .name {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .h2,
+    .h3 {
+        font-size: 0.65rem;
+
+        ul {
+            font-size: 14px;
+            line-height: 24px;
+        }
+    }
+
+    .linkbar-area {
+        margin-top: 48px;
+        margin-bottom: 32px;
+        justify-content: flex-start;
+        padding-left: 1.4rem;
     }
 }
