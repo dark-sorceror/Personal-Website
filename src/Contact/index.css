@@ -1,0 +1,123 @@
+@import url(../App.css);
+
+.contact-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+}
+
+.contact-area {
+    width: 100%;
+    max-width: 520px;
+    margin-top: 150px;
+}
+
+.contact-heading {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    color: white;
+    line-height: 1.1;
+}
+
+.contact-sub {
+    font-size: 0.95rem;
+    color: var(--text-light-grey);
+    line-height: 1.65;
+    margin: 0 0 2.8rem;
+    max-width: 380px;
+}
+
+.contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.05rem 0;
+    border-bottom: 1px solid var(--border, #e8e8e8);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: opacity 0.18s ease;
+    position: relative;
+}
+
+.contact-links > *:first-child .contact-row {
+    border-top: 1px solid var(--border, #e8e8e8);
+}
+
+.contact-row:hover {
+    opacity: 0.55;
+}
+
+.contact-row:hover .contact-arrow {
+    transform: translate(2px, -2px);
+}
+
+.contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    color: white;
+}
+
+.contact-meta {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.contact-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted, #999);
+    margin-bottom: 0.18rem;
+}
+
+.contact-value {
+    font-size: 0.97rem;
+    color: white;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.contact-arrow {
+    font-size: 1rem;
+    color: var(--text-muted, #999);
+    transition: transform 0.18s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+@media (max-width: 640px) {
+    .contact-wrapper {
+        padding: 0 1.4rem;
+    }
+    .contact-area {
+        margin-top: 72px;
+    }
+    .contact-heading {
+        font-size: 2rem;
+    }
+    .contact-sub {
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+    }
+    .contact-value {
+        font-size: 0.875rem;
+    }
+}
