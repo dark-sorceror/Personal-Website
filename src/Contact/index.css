@@ -105,10 +105,10 @@
 
 @media (max-width: 640px) {
     .contact-wrapper {
-        padding: 0 1.4rem;
+        padding: 0 30px;
     }
     .contact-area {
-        margin-top: 72px;
+        margin-top: 120px;
     }
     .contact-heading {
         font-size: 2rem;

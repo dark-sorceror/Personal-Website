@@ -84,8 +84,8 @@
 
 @media (max-width: 640px) {
     .home-area {
-        margin-top: 72px;
-        padding: 0 1.4rem;
+        margin-top: 120px;
+        padding: 0 30px;
         align-items: flex-start;
     }
 
@@ -107,7 +107,7 @@
     .linkbar-area {
         margin-top: 48px;
         margin-bottom: 32px;
-        justify-content: flex-start;
+        justify-content: center;
         padding-left: 1.4rem;
     }
 }

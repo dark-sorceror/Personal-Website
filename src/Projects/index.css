@@ -415,12 +415,12 @@
 }
 
 @media (max-width: 640px) {
-    .projects-wrapper {
-        padding: 0 1.4rem 80px;
-    }
-
     .projects-area {
-        margin-top: 72px;
+        display: flex;
+        padding: 0 30px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 130px;
     }
 
     .content-col {

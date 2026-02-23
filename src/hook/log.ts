@@ -1,22 +1,7 @@
-// useVisitorLog.ts
-// ─────────────────────────────────────────────────────────────
-// Fires a Discord webhook once per browser session.
-// Import and call this in your App.tsx (or root layout).
-//
-// Setup:
-//   1. Create a webhook in your Discord server:
-//      Server Settings → Integrations → Webhooks → New Webhook
-//      Copy the URL.
-//   2. Add to your .env file:
-//      VITE_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
-//   3. Call useVisitorLog() at the top of your App component.
-// ─────────────────────────────────────────────────────────────
-
 import { useEffect } from "react";
 
 const WEBHOOK_URL = import.meta.env.VITE_DISCORD_WEBHOOK_URL as string;
 
-// Grab a rough location from a free, no-key-required API
 async function getGeo(): Promise<{
     city: string;
     region: string;
@@ -39,14 +24,15 @@ async function getGeo(): Promise<{
 
 export function useVisitorLog() {
     useEffect(() => {
-        // Only fire once per session (survives hot-reloads in dev)
         if (sessionStorage.getItem("__visited")) return;
+
         sessionStorage.setItem("__visited", "1");
 
         if (!WEBHOOK_URL) {
             console.warn(
                 "[useVisitorLog] VITE_DISCORD_WEBHOOK_URL is not set.",
             );
+
             return;
         }
 
@@ -67,8 +53,8 @@ export function useVisitorLog() {
                     "https://avatars.githubusercontent.com/u/dark-sorceror",
                 embeds: [
                     {
-                        title: "👀  New visitor",
-                        color: 0x1a56db, // blue accent matching portfolio
+                        title: "New visitor",
+                        color: 0x1a56db,
                         fields: [
                             {
                                 name: "📍 Location",
@@ -109,7 +95,6 @@ export function useVisitorLog() {
                     body: JSON.stringify(payload),
                 });
             } catch (err) {
-                // Fail silently — never surface errors to the visitor
                 console.error("[useVisitorLog] webhook failed:", err);
             }
         })();
