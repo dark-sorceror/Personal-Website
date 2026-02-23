@@ -25,3 +25,5 @@ dist-ssr
 
 .gitattributes
 .vscode
+
+.env
