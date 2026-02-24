@@ -8,6 +8,7 @@ import { Home } from "./Home";
 import { Experience } from "./Experience";
 import { Projects } from "./Projects";
 import { Contact } from "./Contact";
+import { useVisitorLog } from "./hook/log";
 
 function Wrapper() {
     useScrollToTop();
@@ -24,6 +25,8 @@ function Wrapper() {
 }
 
 function App() {
+    useVisitorLog();
+    
     return (
         <Router>
             <Navbar />

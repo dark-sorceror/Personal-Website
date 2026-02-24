@@ -415,6 +415,10 @@
 }
 
 @media (max-width: 640px) {
+    .projects-wrapper {
+        padding-bottom: 0;
+    }
+
     .projects-area {
         display: flex;
         padding: 0 30px;

@@ -53,7 +53,7 @@ export function useVisitorLog() {
                     "https://avatars.githubusercontent.com/u/dark-sorceror",
                 embeds: [
                     {
-                        title: "New visitor",
+                        title: "New Visitor",
                         color: 0x1a56db,
                         fields: [
                             {
