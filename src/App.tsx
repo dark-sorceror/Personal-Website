@@ -26,7 +26,7 @@ function Wrapper() {
 
 function App() {
     useVisitorLog();
-    
+
     return (
         <Router>
             <Navbar />

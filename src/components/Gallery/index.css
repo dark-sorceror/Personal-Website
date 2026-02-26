@@ -1,0 +1,111 @@
+.gallery-wrapper {
+    position: relative;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--accent-line);
+    padding-top: 1.5rem;
+    max-width: 604px;
+    transition:
+        mask-image 0.3s ease,
+        -webkit-mask-image 0.3s ease;
+}
+
+.gallery-wrapper.fade-right {
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+.gallery-scroll-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.gallery-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery-thumb {
+    flex: 0 0 auto;
+    width: 240px;
+    height: 190px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: zoom-in;
+    transition: all 0.3s ease;
+}
+
+.scroll-btn {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid var(--text-grey);
+    color: var(--text-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease-out;
+}
+
+.scroll-btn:active {
+    transform: translateY(-50%) scale(1.15);
+}
+
+.scroll-btn.left {
+    left: 0.5rem;
+}
+.scroll-btn.right {
+    right: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .scroll-btn:hover {
+        background: var(--text-white);
+        color: var(--bg-minimal);
+        border-color: var(--text-white);
+    }
+
+    .gallery-thumb:hover {
+        filter: brightness(1.1);
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+}
+
+@media (max-width: 640px) {
+    .gallery-thumb {
+        width: 180px;
+        height: 142px;
+    }
+
+    .gallery-scroll-container::after {
+        content: "";
+        flex: 0 0 1px;
+        align-self: center;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-grey);
+        opacity: 0.4;
+        margin-left: 0.5rem;
+    }
+}
+
+@media (hover: none) {
+    .scroll-btn {
+        display: none;
+    }
+}

@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ChevronRight, ChevronLeft, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
+import { GalleryRow } from "../components/Gallery";
+import { Lightbox } from "../components/Lightbox";
 import FadeIn from "../components/Fade Effect";
+
+import type { ExperienceItem, MediaItem } from "../types";
 
 import i1 from "../media/1.jpg";
 import i2 from "../media/2.jpg";
@@ -12,21 +15,6 @@ import i6 from "../media/6.jpg";
 import i7 from "../media/7.jpg";
 
 import "./index.css";
-
-type MediaItem = {
-    type: "image";
-    src: string;
-    caption?: string;
-};
-
-type ExperienceItem = {
-    title: string;
-    company: string;
-    period: string;
-    desc: string;
-    bullets?: string[];
-    media?: MediaItem[];
-};
 
 const experiences: ExperienceItem[] = [
     {
@@ -107,13 +95,13 @@ const experiences: ExperienceItem[] = [
         title: "Robotics Coach",
         company: "Western Mechatronics",
         period: "September 2024 — February 2025",
-        desc: "Coached 20+ teams across Calgary in robot design, C++ programming, and competition strategy — teaching not just the technical fundamentals, but the engineering mindset behind excellent design.",
+        desc: "Coached 20+ teams across Calgary in robot design, C++ programming, and competition strategy — teaching not just the technicals, but the engineering mindset behind excellent design.",
     },
     {
         title: "Executive — Math & Robotics Clubs",
         company: "Sir Winston Churchill High School",
         period: "June 2024 — June 2025",
-        desc: "Co-led two school clubs with a combined ~80 members across 10+ active robotics teams.",
+        desc: "Co-led two school clubs, each with ~80 members with weekly sessions.",
         bullets: [
             "Ran weekly Math Club sessions with contest prep and problem-solving activities, helping members compete in the CCC, Euclid, and AMC.",
             "Managed team registration, fundraising events, and technical mentorship for robotics teams competing in regional tournaments.",
@@ -126,194 +114,6 @@ const experiences: ExperienceItem[] = [
         desc: "Managed a federal election polling station end-to-end — processing over 1,000 ballots with strict adherence to ballot secrecy protocol, multi-source voter verification, and chain-of-custody procedures throughout the count.",
     },
 ];
-
-const GalleryRow = ({
-    media,
-    onOpen,
-}: {
-    media: MediaItem[];
-    onOpen: (index: number) => void;
-}) => {
-    const rowRef = useRef<HTMLDivElement>(null);
-    const [showLeft, setShowLeft] = useState(false);
-    const [showRight, setShowRight] = useState(false);
-
-    const checkScroll = () => {
-        if (!rowRef.current) return;
-
-        const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
-
-        setShowLeft(scrollLeft > 5);
-        setShowRight(scrollLeft < scrollWidth - clientWidth - 10);
-    };
-
-    useEffect(() => {
-        checkScroll();
-
-        window.addEventListener("resize", checkScroll);
-
-        return () => window.removeEventListener("resize", checkScroll);
-    }, [media]);
-
-    const scroll = (direction: "left" | "right") => {
-        if (!rowRef.current) return;
-
-        const scrollAmount = 272;
-
-        rowRef.current.scrollBy({
-            left: direction === "left" ? -scrollAmount : scrollAmount,
-            behavior: "smooth",
-        });
-    };
-
-    const maskStyle = {
-        WebkitMaskImage:
-            showLeft && showRight
-                ? "linear-gradient(to right, transparent, black 10%, black 90%, transparent)"
-                : showLeft
-                  ? "linear-gradient(to right, transparent, black 10%, black 100%)"
-                  : showRight
-                    ? "linear-gradient(to right, black 0%, black 90%, transparent)"
-                    : "none",
-        maskImage:
-            showLeft && showRight
-                ? "linear-gradient(to right, transparent, black 10%, black 90%, transparent)"
-                : showLeft
-                  ? "linear-gradient(to right, transparent, black 10%, black 100%)"
-                  : showRight
-                    ? "linear-gradient(to right, black 0%, black 90%, transparent)"
-                    : "none",
-    };
-
-    return (
-        <div className="gallery-wrapper">
-            {showLeft && (
-                <button
-                    className="scroll-btn left"
-                    onClick={() => scroll("left")}
-                >
-                    <ChevronLeft size={18} />
-                </button>
-            )}
-
-            <div
-                className="gallery-scroll-container"
-                ref={rowRef}
-                onScroll={checkScroll}
-                style={maskStyle}
-            >
-                {media.map((item, idx) => (
-                    <img
-                        key={idx}
-                        src={item.src}
-                        alt={item.caption || "Work thumbnail"}
-                        className="gallery-thumb"
-                        onClick={() => onOpen(idx)}
-                        loading="lazy"
-                    />
-                ))}
-            </div>
-
-            {showRight && (
-                <button
-                    className="scroll-btn right"
-                    onClick={() => scroll("right")}
-                >
-                    <ChevronRight size={18} />
-                </button>
-            )}
-        </div>
-    );
-};
-
-const Lightbox = ({
-    isOpen,
-    media,
-    initialIndex,
-    onClose,
-    contextTitle,
-}: {
-    isOpen: boolean;
-    media: MediaItem[];
-    initialIndex: number;
-    onClose: () => void;
-    contextTitle: string;
-}) => {
-    const [currentIndex, setCurrentIndex] = useState(initialIndex);
-
-    useEffect(() => {
-        setCurrentIndex(initialIndex);
-    }, [initialIndex]);
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (!isOpen) return;
-
-            if (e.key === "Escape") onClose();
-            if (e.key === "ArrowRight") next();
-            if (e.key === "ArrowLeft") prev();
-        };
-        window.addEventListener("keydown", handleKeyDown);
-
-        if (isOpen) document.body.style.overflow = "hidden";
-
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-
-            document.body.style.overflow = "unset";
-        };
-    }, [isOpen, currentIndex]);
-
-    if (!isOpen || media.length === 0) return null;
-
-    const next = (e?: React.MouseEvent) => {
-        e?.stopPropagation();
-        setCurrentIndex((prev) => (prev + 1) % media.length);
-    };
-
-    const prev = (e?: React.MouseEvent) => {
-        e?.stopPropagation();
-        setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
-    };
-
-    const currentItem = media[currentIndex];
-
-    return (
-        <div className="lightbox-overlay" onClick={onClose}>
-            <div className="lightbox-close" onClick={onClose}>
-                <X size={24} />
-            </div>
-
-            <div
-                className="lightbox-image-wrapper"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="lightbox-nav prev" onClick={prev}>
-                    <ChevronLeft className="lightbox-nav-icon" />
-                </div>
-
-                <div className="lightbox-nav next" onClick={next}>
-                    <ChevronRight className="lightbox-nav-icon" />
-                </div>
-
-                <img
-                    src={currentItem.src}
-                    alt={currentItem.caption || "Full screen view"}
-                    className="lightbox-image"
-                />
-
-                <div className="lightbox-caption-overlay">
-                    <div className="caption-title">{contextTitle}</div>
-                    {currentItem.caption && (
-                        <div className="caption-text">
-                            {currentItem.caption}
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
 
 export function Experience() {
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
