@@ -34,7 +34,7 @@ export const GalleryRow = ({
 
     const isTouch = useRef(
         typeof window !== "undefined" &&
-            ("ontouchstart" in window || navigator.maxTouchPoints > 0),
+            !window.matchMedia("(hover: hover) and (pointer: fine)").matches,
     );
 
     const scroll = (direction: "left" | "right") => {

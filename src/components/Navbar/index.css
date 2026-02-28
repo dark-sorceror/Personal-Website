@@ -76,9 +76,16 @@ nav {
 
 @media (max-width: 640px) {
     nav {
-        padding: 0px 20px;
-        box-sizing: border-box;
+        margin-top: 0;
+        top: auto;
+        bottom: 20px;
+        margin-bottom: env(safe-area-inset-bottom);
         width: 100%;
+        padding: 0px 15px;
+        box-sizing: border-box;
+        justify-content: center;
+        display: flex;
+        position: fixed;
     }
 
     .nav {
