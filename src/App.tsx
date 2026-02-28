@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { useScrollToTop } from "./hook/scrollToTop";
+import { useVisitorLog } from "./hook/log";
+import { usePageTracking } from "./hook/page";
 
 import { Navbar } from "./components/Navbar";
 
@@ -8,10 +10,10 @@ import { Home } from "./Home";
 import { Experience } from "./Experience";
 import { Projects } from "./Projects";
 import { Contact } from "./Contact";
-import { useVisitorLog } from "./hook/log";
 
 function Wrapper() {
     useScrollToTop();
+    usePageTracking();
 
     return (
         <Routes>
