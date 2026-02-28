@@ -11,10 +11,18 @@
     animation: fadeIn 0.3s ease-out;
 }
 
+.lightbox-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
 .lightbox-image-wrapper {
     position: relative;
-    max-width: 90vw;
-    max-height: 85vh;
+    width: 90vw;
+    height: 85vh;
+    max-width: 1200px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,13 +32,12 @@
 }
 
 .lightbox-image {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 85vh;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     user-select: none;
     display: block;
+    animation: imageFadeIn 0.2s ease-out;
 }
 
 .lightbox-nav {
@@ -115,14 +122,54 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+.lightbox-dots {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+}
+
+.lightbox-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.lightbox-dot.active {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.3);
+}
+
+.lightbox-dot:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .lightbox-nav:hover {
+        opacity: 1;
+    }
+}
+
 @media (max-width: 640px) {
     .lightbox-nav {
         opacity: 0.6;
     }
+    
     .lightbox-close {
         top: 1rem;
         right: 1rem;
         width: 2.5rem;
         height: 2.5rem;
+    }
+
+    .lightbox-dot {
+        width: 5px;
+        height: 5px;
     }
 }
