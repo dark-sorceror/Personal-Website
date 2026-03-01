@@ -26,6 +26,7 @@
 }
 
 .name {
+    font-size: 17px;
     font-weight: 600;
     text-align: left;
     margin-bottom: 15px;
@@ -57,6 +58,19 @@
     }
 }
 
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #2a2a2a, transparent);
+}
+
 .desc {
     ul {
         line-height: 25px;
@@ -68,11 +82,27 @@
 }
 
 .linkbar-area {
+    position: relative;
     padding-top: 4px;
-    margin-right: 40px;
-    border-right: 1px solid var(--accent-line);
     padding-bottom: 40px;
     padding-right: 40px;
+    margin-right: 40px;
+}
+
+.linkbar-area::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        #2a2a2a 25%,
+        #2a2a2a 75%,
+        transparent
+    );
 }
 
 .linkbar {

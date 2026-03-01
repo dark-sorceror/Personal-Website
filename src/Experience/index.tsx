@@ -13,6 +13,7 @@ import i4 from "../media/4.jpg";
 import i5 from "../media/5.jpg";
 import i6 from "../media/6.jpg";
 import i7 from "../media/7.jpg";
+import i8 from "../media/8.png";
 
 import "./index.css";
 
@@ -43,6 +44,11 @@ const experiences: ExperienceItem[] = [
             {
                 type: "image",
                 src: i7,
+                caption: "Caption",
+            },
+            {
+                type: "image",
+                src: i8,
                 caption: "Caption",
             },
         ],
@@ -168,6 +174,7 @@ export function Experience() {
                                 </div>
                                 <div className="date-col">{exp.period}</div>
                                 <p className="description">{exp.desc}</p>
+                                
                                 {exp.bullets && exp.bullets.length > 0 && (
                                     <ul className="description-bullets">
                                         {exp.bullets.map((b, i) => (

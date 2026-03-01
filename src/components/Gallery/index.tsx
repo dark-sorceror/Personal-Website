@@ -4,6 +4,8 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 
 import type { MediaItem } from "../../types";
 
+import "./index.css";
+
 export const GalleryRow = ({
     media,
     onOpen,

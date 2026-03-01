@@ -40,7 +40,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1.05rem 0;
-    border-bottom: 1px solid var(--border, #e8e8e8);
+    border-bottom: 1px solid var(--accent-line);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
@@ -49,7 +49,7 @@
 }
 
 .contact-links > *:first-child .contact-row {
-    border-top: 1px solid var(--border, #e8e8e8);
+    border-top: 1px solid var(--accent-line);
 }
 
 .contact-row:hover {
@@ -107,16 +107,20 @@
     .contact-wrapper {
         padding: 0 30px;
     }
+    
     .contact-area {
         margin-top: 50px;
     }
+    
     .contact-heading {
         font-size: 2rem;
     }
+
     .contact-sub {
         font-size: 0.875rem;
         margin-bottom: 2rem;
     }
+
     .contact-value {
         font-size: 0.875rem;
     }

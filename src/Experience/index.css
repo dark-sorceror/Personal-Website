@@ -94,15 +94,6 @@
     max-width: 38rem;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 @media (max-width: 640px) {
     .experience-wrapper {
         padding-bottom: 40px;
@@ -130,20 +121,5 @@
     .description,
     .description-bullets {
         font-size: 0.9rem;
-    }
-
-    .gallery-thumb {
-        width: 180px;
-        height: 142px;
-    }
-
-    .lightbox-nav {
-        opacity: 0.6;
-    }
-    .lightbox-close {
-        top: 1rem;
-        right: 1rem;
-        width: 2.5rem;
-        height: 2.5rem;
     }
 }

@@ -18,7 +18,7 @@ export function usePageTracking() {
             );
 
         if (prev && !prev.engaged) {
-            prev.engaged = now - prev.enteredAt >= 20_000;
+            prev.engaged = now - prev.enteredAt >= 10_000;
         }
 
         if (prev?.path === location.pathname) {
@@ -55,14 +55,14 @@ export function usePageTracking() {
                         e.type === "page",
                 );
             if (last && !last.engaged) {
-                last.engaged = Date.now() - last.enteredAt >= 20_000;
+                last.engaged = Date.now() - last.enteredAt >= 10_000;
             }
 
             const lines = events.map((e) => {
                 if (e.type === "page") {
-                    return e.engaged ? `${e.path}  *(20s+)*` : e.path;
+                    return e.engaged ? `${e.path} (20s+)` : e.path;
                 } else {
-                    return `→ ${e.label}`;
+                    return `-> ${e.label}`;
                 }
             });
 

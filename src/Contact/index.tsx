@@ -1,13 +1,28 @@
+import { trackLinkClick } from "../hook/session";
+
 import FadeIn from "../components/Fade Effect";
+
+import type { ContactLink } from "../types";
 
 import "./index.css";
 
-type ContactLink = {
-    label: string;
-    value: string;
-    href: string;
-    icon: React.ReactNode;
-};
+const ArrowUpRight = () => (
+    <svg
+        width="10"
+        height="10"
+        viewBox="0 0 10 10"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M2 8L8 2M8 2H3M8 2V7"
+            stroke="grey"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    </svg>
+);
 
 const links: ContactLink[] = [
     {
@@ -132,6 +147,9 @@ export function Contact() {
                                         : "_blank"
                                 }
                                 rel="noopener noreferrer"
+                                onClick={() => {
+                                    trackLinkClick(link.label, link.href);
+                                }}
                             >
                                 <span className="contact-icon">
                                     {link.icon}
@@ -144,7 +162,7 @@ export function Contact() {
                                         {link.value}
                                     </span>
                                 </span>
-                                <span className="contact-arrow">↗</span>
+                                <ArrowUpRight />
                             </a>
                         </FadeIn>
                     ))}

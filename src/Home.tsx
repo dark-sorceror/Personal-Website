@@ -1,18 +1,25 @@
 import FadeIn from "./components/Fade Effect";
 
 import "./App.css";
+import { trackLinkClick } from "./hook/session";
 
 export function Home() {
     return (
         <div className="wrapper">
-            <FadeIn delay="0.4s">
+            <FadeIn delay="0.7s">
                 <div className="linkbar-area">
                     <div className="linkbar">
-                        <FadeIn delay="0.4s">
+                        <FadeIn delay="0.9s">
                             <a
                                 className="github"
                                 target="_blank"
                                 href="https://github.com/dark-sorceror"
+                                onClick={() =>
+                                    trackLinkClick(
+                                        "GitHub",
+                                        "https://github.com/dark-sorceror",
+                                    )
+                                }
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -31,11 +38,17 @@ export function Home() {
                                 </svg>
                             </a>
                         </FadeIn>
-                        <FadeIn delay="0.5s">
+                        <FadeIn delay="1.1s">
                             <a
                                 className="x"
                                 target="_blank"
                                 href="https://x.com/darksorceror_"
+                                onClick={() =>
+                                    trackLinkClick(
+                                        "X",
+                                        "https://x.com/darksorceror_",
+                                    )
+                                }
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -50,11 +63,17 @@ export function Home() {
                                 </svg>
                             </a>
                         </FadeIn>
-                        <FadeIn delay="0.6s">
+                        <FadeIn delay="1.3s">
                             <a
                                 className="linkedin"
                                 href="https://www.linkedin.com/in/hao-yan-212921274/"
                                 target="_blank"
+                                onClick={() =>
+                                    trackLinkClick(
+                                        "LinkedIn",
+                                        "https://www.linkedin.com/in/hao-yan-212921274/",
+                                    )
+                                }
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -74,10 +93,16 @@ export function Home() {
                                 </svg>
                             </a>
                         </FadeIn>
-                        <FadeIn delay="0.7s">
+                        <FadeIn delay="1.5s">
                             <a
                                 className="mail"
                                 href="mailto:haoyan160@gmail.com"
+                                onClick={() =>
+                                    trackLinkClick(
+                                        "Mail",
+                                        "mailto:haoyan160@gmail.com",
+                                    )
+                                }
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -115,9 +140,9 @@ export function Home() {
                     <FadeIn delay="0.1s">
                         <div className="name">Hao Yan</div>
                     </FadeIn>
-                    <FadeIn delay="0.2s">
+                    <FadeIn delay="0.3s">
                         <div className="h2">
-                            <p>Currently</p>
+                            <p className="section-label">Currently</p>
                             <ul>
                                 <li>
                                     🎓 Computer Engineering @ McMaster
@@ -171,9 +196,9 @@ export function Home() {
                             </ul>
                         </div>
                     </FadeIn>
-                    <FadeIn delay="0.3s">
+                    <FadeIn delay="0.5s">
                         <div className="h3">
-                            <p>Previously</p>
+                            <p className="section-label">Previously</p>
                             <ul>
                                 <li>
                                     🤖 Lead Software & Mechanical Engineer — VEX

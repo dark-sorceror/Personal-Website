@@ -1,31 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 
+import { trackLinkClick } from "../hook/session";
+
 import { GalleryRow } from "../components/Gallery";
 import { Lightbox } from "../components/Lightbox";
 import FadeIn from "../components/Fade Effect";
 
-import i8 from "../media/8.png";
+import type { MediaItem, ProjectItem } from "../types";
+
 import i9 from "../media/9.png";
 import i10 from "../media/10.png";
 import i11 from "../media/11.png";
+import i12 from "../media/12.png";
+import i13 from "../media/13.png";
+import i14 from "../media/14.png";
 
 import "./index.css";
-
-type MediaItem = {
-    type: "image";
-    src: string;
-    caption?: string;
-};
-
-type ProjectItem = {
-    title: string;
-    tags: string[];
-    period: string;
-    link?: string;
-    desc: string;
-    bullets?: string[];
-    media?: MediaItem[];
-};
 
 const projects: ProjectItem[] = [
     {
@@ -42,7 +32,9 @@ const projects: ProjectItem[] = [
         ],
         media: [
             { type: "image", src: i9, caption: "Caption" },
-            { type: "image", src: i8, caption: "Caption" },
+            { type: "image", src: i10, caption: "Caption" },
+            { type: "image", src: i11, caption: "Caption" },
+            { type: "image", src: i12, caption: "Caption" },
         ],
     },
     {
@@ -63,7 +55,7 @@ const projects: ProjectItem[] = [
             "Video processing pipeline uses yt-dlp for content retrieval and OpenCV for frame extraction, feeding into the Gemini vision analysis layer.",
             "Implemented Redis-backed caching for repeated analysis requests and structured response models for credibility scores.",
         ],
-        media: [{ type: "image", src: i10, caption: "Caption" }],
+        media: [{ type: "image", src: i13, caption: "Caption" }],
     },
     {
         title: "Syntra",
@@ -88,7 +80,7 @@ const projects: ProjectItem[] = [
             "Implemented rate-limited REST API request handling to stay within Discord's API constraints at scale.",
             "Built when I was first learning JavaScript — marks the start of the engineering habits (APIs, databases, async systems) that carried into everything after.",
         ],
-        media: [{ type: "image", src: i11, caption: "Caption" }],
+        media: [{ type: "image", src: i14, caption: "Caption" }],
     },
 ];
 
@@ -166,6 +158,12 @@ export function Projects() {
                                             href={prj.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
+                                            onClick={() =>
+                                                trackLinkClick(
+                                                    `GitHub — ${prj.title}`,
+                                                    prj.link!,
+                                                )
+                                            }
                                         >
                                             GitHub <ArrowUpRight />
                                         </a>
