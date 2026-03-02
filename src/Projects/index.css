@@ -9,7 +9,6 @@
 .projects-area {
     max-width: 600px;
     margin-top: 150px;
-    background-color: var(--bg-minimal);
     color: var(--text-white);
     display: flex;
     flex-direction: column;

@@ -118,6 +118,7 @@
     .wrapper {
         position: relative;
         padding-top: 0;
+        padding-bottom: 80px;
     }
 
     .home-area {

@@ -144,7 +144,7 @@ export function Projects() {
                     {projects.map((prj, index) => (
                         <FadeIn
                             key={index}
-                            delay={`${index * 0.1}s`}
+                            delay={`${index * 0.2}s`}
                             className="projects-row"
                         >
                             <div className="content-col">
@@ -152,6 +152,7 @@ export function Projects() {
                                     <div className="project-title">
                                         {prj.title}
                                     </div>
+
                                     {prj.link && (
                                         <a
                                             className="project-goto"
@@ -187,6 +188,7 @@ export function Projects() {
                                 )}
 
                                 <p className="description">{prj.desc}</p>
+
                                 {prj.bullets && prj.bullets.length > 0 && (
                                     <ul className="description-bullets">
                                         {prj.bullets.map((b, i) => (

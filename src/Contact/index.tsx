@@ -124,11 +124,11 @@ export function Contact() {
     return (
         <div className="contact-wrapper">
             <div className="contact-area">
-                <FadeIn delay="0.1s">
+                <FadeIn delay="0.2s">
                     <div className="contact-heading">Get in touch</div>
                 </FadeIn>
 
-                <FadeIn delay="0.2s">
+                <FadeIn delay="0.4s">
                     <p className="contact-sub">
                         Whether it's a role, a project, or just a conversation —
                         I'm always open. Best reached by email.
@@ -137,7 +137,7 @@ export function Contact() {
 
                 <div className="contact-links">
                     {links.map((link, i) => (
-                        <FadeIn key={link.label} delay={`${0.2 + i * 0.07}s`}>
+                        <FadeIn key={link.label} delay={`${0.4 + i * 0.2}s`}>
                             <a
                                 className="contact-row"
                                 href={link.href}

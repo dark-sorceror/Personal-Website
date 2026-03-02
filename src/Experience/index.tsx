@@ -164,7 +164,7 @@ export function Experience() {
                     {experiences.map((exp, index) => (
                         <FadeIn
                             key={index}
-                            delay={`${index * 0.1}s`}
+                            delay={`${index * 0.2}s`}
                             className="experience-row"
                         >
                             <div className="content-col">

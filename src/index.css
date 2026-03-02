@@ -31,7 +31,7 @@ body {
     height: 100%;
     background-color: #0a0a0a;
     color: white;
-    background-image: radial-gradient(circle, #1d1d1d 1px, transparent 1px);
+    background-image: radial-gradient(circle, #252525 1px, transparent 1px);
     background-size: 28px 28px;
 }
 
