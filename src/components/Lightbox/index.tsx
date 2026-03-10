@@ -54,7 +54,8 @@ export const Lightbox = ({
         setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
     };
 
-    const currentItem = media[currentIndex];
+    const safeIndex = Math.min(currentIndex, media.length - 1);
+    const currentItem = media[safeIndex];
 
     return (
         <div className="lightbox-overlay" onClick={onClose}>
@@ -95,7 +96,7 @@ export const Lightbox = ({
                         {media.map((_, i) => (
                             <button
                                 key={i}
-                                className={`lightbox-dot${i === currentIndex ? " active" : ""}`}
+                                className={`lightbox-dot${i === safeIndex ? " active" : ""}`}
                                 onClick={() => setCurrentIndex(i)}
                                 aria-label={`Go to image ${i + 1}`}
                             />

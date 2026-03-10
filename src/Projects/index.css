@@ -32,6 +32,44 @@
     transform: translateY(0);
 }
 
+.projects-row.featured .content-col {
+    border-left: 1px solid rgba(180, 138, 255, 0.4);
+    background: linear-gradient(to right, rgba(180, 138, 255, 0.06), transparent);
+}
+
+.projects-row.featured .content-col::before {
+    background-color: #b48aff;
+    border-color: #b48aff;
+}
+
+.projects-row.featured:hover .content-col::before {
+    background-color: #c9a8ff;
+    border-color: #c9a8ff;
+}
+
+.featured-pill {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    color: #f0c060;
+    background: rgba(240, 192, 96, 0.12);
+    border: 1px solid rgba(240, 192, 96, 0.25);
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}
+
+.projects-row.featured .content-col {
+    padding-top: 20px;
+    padding-bottom: 15px;
+}
+
+.projects-row.featured .content-col::Before {
+    top: 1.6rem;
+}
+
 .content-col {
     display: flex;
     flex-direction: column;
@@ -39,6 +77,7 @@
     padding-left: 2rem;
     position: relative;
     width: 100%;
+    padding-top: 5px;
 }
 
 .content-col::before {
@@ -128,11 +167,8 @@
     border-radius: 3px;
 }
 
-.tag[data-tag="PyTorch"] {
-    color: #f08060;
-    background: rgba(240, 128, 96, 0.12);
-}
-.tag[data-tag="VAE"] {
+/* ML Architecture */
+.tag[data-tag="CVAE"] {
     color: #b48aff;
     background: rgba(180, 138, 255, 0.12);
 }
@@ -144,14 +180,66 @@
     color: #b48aff;
     background: rgba(180, 138, 255, 0.12);
 }
+.tag[data-tag="FNN"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+.tag[data-tag="Transformer"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+.tag[data-tag="LSTM"] {
+    color: #b48aff;
+    background: rgba(180, 138, 255, 0.12);
+}
+
+/* AI */
+.tag[data-tag="Agentic AI"] {
+    color: #f080b0;
+    background: rgba(240, 128, 176, 0.12);
+}
+.tag[data-tag="Behavioral AI"] {
+    color: #f080b0;
+    background: rgba(240, 128, 176, 0.12);
+}
+.tag[data-tag="Computer Vision"] {
+    color: #f080b0;
+    background: rgba(240, 128, 176, 0.12);
+}
+.tag[data-tag="LLM"] {
+    color: #f080b0;
+    background: rgba(240, 128, 176, 0.12);
+}
+.tag[data-tag="Inference Optimization"] {
+    color: #f080b0;
+    background: rgba(240, 128, 176, 0.12);
+}
+
+/* Language */
 .tag[data-tag="Python"] {
     color: #60a8f0;
     background: rgba(96, 168, 240, 0.12);
 }
+.tag[data-tag="TypeScript"] {
+    color: #60a8f0;
+    background: rgba(96, 168, 240, 0.12);
+}
+
+/* Backend Framework */
 .tag[data-tag="FastAPI"] {
     color: #52d48a;
     background: rgba(82, 212, 138, 0.12);
 }
+.tag[data-tag="Express"] {
+    color: #52d48a;
+    background: rgba(82, 212, 138, 0.12);
+}
+.tag[data-tag="Node.js"] {
+    color: #52d48a;
+    background: rgba(82, 212, 138, 0.12);
+}
+
+/* Frontend */
 .tag[data-tag="React"] {
     color: #60d8f8;
     background: rgba(96, 216, 248, 0.12);
@@ -160,41 +248,61 @@
     color: #60d8f8;
     background: rgba(96, 216, 248, 0.12);
 }
+.tag[data-tag="Next.js"] {
+    color: #60d8f8;
+    background: rgba(96, 216, 248, 0.12);
+}
+
+/* Database */
+.tag[data-tag="MongoDB"] {
+    color: #f0a040;
+    background: rgba(240, 161, 64, 0.12);
+}
+.tag[data-tag="PostgreSQL"] {
+    color: #f0a040;
+    background: rgba(240, 161, 64, 0.12);
+}
+.tag[data-tag="Redis"] {
+    color: #f0a040;
+    background: rgba(240, 161, 64, 0.12);
+}
+
+/* API/Service */
 .tag[data-tag="Gemini API"] {
     color: #f0c060;
     background: rgba(240, 192, 96, 0.12);
 }
-.tag[data-tag="OpenCV"] {
-    color: #52d48a;
-    background: rgba(82, 212, 138, 0.12);
-}
-.tag[data-tag="Next.js"] {
-    color: #e0e0e0;
-    background: rgba(224, 224, 224, 0.1);
-}
-.tag[data-tag="LSTM"] {
-    color: #b48aff;
-    background: rgba(180, 138, 255, 0.12);
-}
-.tag[data-tag="Docker"] {
-    color: #60a8f0;
-    background: rgba(96, 168, 240, 0.12);
-}
-.tag[data-tag="Node.js"] {
-    color: #74d46a;
-    background: rgba(116, 212, 106, 0.12);
-}
-.tag[data-tag="MongoDB"] {
-    color: #74d46a;
-    background: rgba(116, 212, 106, 0.12);
+.tag[data-tag="Claude API"] {
+    color: #f0c060;
+    background: rgba(240, 192, 96, 0.12);
 }
 .tag[data-tag="Discord.js"] {
-    color: #a0a8ff;
-    background: rgba(160, 168, 255, 0.12);
+    color: #f0c060;
+    background: rgba(240, 192, 96, 0.12);
 }
 .tag[data-tag="REST API"] {
     color: #f0c060;
     background: rgba(240, 192, 96, 0.12);
+}
+.tag[data-tag="ngrok"] {
+    color: #f0c060;
+    background: rgba(240, 192, 96, 0.12);
+}
+
+/* Library/Tool */
+.tag[data-tag="PyTorch"] {
+    color: #f08060;
+    background: rgba(240, 128, 96, 0.12);
+}
+.tag[data-tag="OpenCV"] {
+    color: #f08060;
+    background: rgba(240, 128, 96, 0.12);
+}
+
+/* DevOps */
+.tag[data-tag="OpenCV"] {
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
 }
 
 .description,
@@ -208,7 +316,7 @@
 
 @media (max-width: 640px) {
     .projects-wrapper {
-        padding-bottom: 40px;
+        padding-bottom: 50px;
     }
 
     .projects-area {

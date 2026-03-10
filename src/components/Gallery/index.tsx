@@ -89,16 +89,30 @@ export const GalleryRow = ({
                 onScroll={checkScroll}
                 style={maskStyle}
             >
-                {media.map((item, idx) => (
-                    <img
-                        key={idx}
-                        src={item.src}
-                        alt={item.caption || "Work thumbnail"}
-                        className="gallery-thumb"
-                        onClick={() => onOpen(idx)}
-                        loading="lazy"
-                    />
-                ))}
+                {media.map((item, idx) =>
+                    item.fit === "contain" ? (
+                        <div
+                            key={idx}
+                            className="gallery-thumb gallery-thumb--contain"
+                            onClick={() => onOpen(idx)}
+                        >
+                            <img
+                                src={item.src}
+                                alt={item.caption || "Work thumbnail"}
+                                loading="lazy"
+                            />
+                        </div>
+                    ) : (
+                        <img
+                            key={idx}
+                            src={item.src}
+                            alt={item.caption || "Work thumbnail"}
+                            className="gallery-thumb"
+                            onClick={() => onOpen(idx)}
+                            loading="lazy"
+                        />
+                    ),
+                )}
             </div>
 
             {showRight && !isTouch.current && (

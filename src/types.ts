@@ -1,7 +1,9 @@
 export type MediaItem = {
-    type: "image";
+    type: "image" | "video";
     src: string;
     caption?: string;
+    label?: string;
+    fit?: "cover" | "contain";
 };
 
 export type ExperienceItem = {
@@ -21,6 +23,7 @@ export type ProjectItem = {
     desc: string;
     bullets?: string[];
     media?: MediaItem[];
+    featured?: boolean;
 };
 
 export type ContactLink = {

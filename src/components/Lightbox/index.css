@@ -157,10 +157,14 @@
 }
 
 @media (max-width: 640px) {
+    .lightbox-image-wrapper {
+        height: 500px;
+    }
+
     .lightbox-nav {
         opacity: 0.6;
     }
-    
+
     .lightbox-close {
         top: 1rem;
         right: 1rem;

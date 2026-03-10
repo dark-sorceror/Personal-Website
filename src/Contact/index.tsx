@@ -5,6 +5,7 @@ import FadeIn from "../components/Fade Effect";
 import type { ContactLink } from "../types";
 
 import "./index.css";
+import { CalendarDays } from "lucide-react";
 
 const ArrowUpRight = () => (
     <svg
@@ -116,6 +117,14 @@ const links: ContactLink[] = [
                     d="m236 0h46l-101 115 118 156h-92.6l-72.5-94.8-83 94.8h-46l107-123-113-148h94.9l65.5 86.6zm-16.1 244h25.5l-165-218h-27.4z"
                 />
             </svg>
+        ),
+    },
+    {
+        label: "Cal",
+        value: "Book a meeting with me",
+        href: "https://cal.com/hao-yan",
+        icon: (
+            <CalendarDays strokeWidth={1.5} />
         ),
     },
 ];

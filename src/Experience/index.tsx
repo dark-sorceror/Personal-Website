@@ -6,14 +6,15 @@ import FadeIn from "../components/Fade Effect";
 
 import type { ExperienceItem, MediaItem } from "../types";
 
-import i1 from "../media/1.jpg";
-import i2 from "../media/2.jpg";
-import i3 from "../media/3.jpg";
-import i4 from "../media/4.jpg";
-import i5 from "../media/5.jpg";
-import i6 from "../media/6.jpg";
-import i7 from "../media/7.jpg";
-import i8 from "../media/8.png";
+import exo_1 from "../media/exo_1.jpg";
+import exo_2 from "../media/exo_2.jpg";
+import exo_3 from "../media/exo_3.png";
+import robot_1 from "../media/robot_1.jpg";
+import robot_2 from "../media/robot_2.jpg";
+import robot_3 from "../media/robot_3.jpg";
+import robot_4 from "../media/robot_4.jpg";
+import robot_5 from "../media/robot_5.jpg";
+import robot_6 from "../media/robot_6.jpg";
 
 import "./index.css";
 
@@ -43,12 +44,17 @@ const experiences: ExperienceItem[] = [
         media: [
             {
                 type: "image",
-                src: i7,
+                src: exo_1,
                 caption: "Caption",
             },
             {
                 type: "image",
-                src: i8,
+                src: exo_2,
+                caption: "Caption",
+            },
+            {
+                type: "image",
+                src: exo_3,
                 caption: "Caption",
             },
         ],
@@ -67,32 +73,32 @@ const experiences: ExperienceItem[] = [
         media: [
             {
                 type: "image",
-                src: i1,
+                src: robot_1,
                 caption: "Caption",
             },
             {
                 type: "image",
-                src: i2,
+                src: robot_2,
                 caption: "Caption",
             },
             {
                 type: "image",
-                src: i3,
+                src: robot_3,
                 caption: "Caption",
             },
             {
                 type: "image",
-                src: i4,
+                src: robot_4,
                 caption: "Caption",
             },
             {
                 type: "image",
-                src: i5,
+                src: robot_5,
                 caption: "Caption",
             },
             {
                 type: "image",
-                src: i6,
+                src: robot_6,
                 caption: "Caption",
             },
         ],

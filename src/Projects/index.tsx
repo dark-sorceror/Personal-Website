@@ -8,19 +8,22 @@ import FadeIn from "../components/Fade Effect";
 
 import type { MediaItem, ProjectItem } from "../types";
 
-import i9 from "../media/9.png";
-import i10 from "../media/10.png";
-import i11 from "../media/11.png";
-import i12 from "../media/12.png";
-import i13 from "../media/13.png";
-import i14 from "../media/14.png";
+import neurinese_1 from "../media/neurinese_1.gif";
+import neurinese_2 from "../media/neurinese_2.png";
+import neurinese_3 from "../media/neurinese_3.png";
+import neurinese_4 from "../media/neurinese_4.png";
+import neurinese_5 from "../media/neurinese_5.png";
+import neurinese_6 from "../media/neurinese_6.png";
+import verifai_1 from "../media/verifai_1.png";
+import verifai_2 from "../media/verifai_2.png";
+import spongebob_1 from "../media/spongebob_1.png";
 
 import "./index.css";
 
 const projects: ProjectItem[] = [
     {
         title: "Neurinese",
-        tags: ["PyTorch", "VAE", "MDN", "CNN", "Python"],
+        tags: ["PyTorch", "CVAE", "MDN", "LSTM", "CNN", "Python"],
         period: "December 2025 — Present",
         link: "https://github.com/dark-sorceror/Neurinese",
         desc: "A real-time handwriting intelligence engine for Chinese — Grammarly and Copilot in one, but for pen strokes. Instead of recognizing pixels, the system models the motion of writing itself.",
@@ -31,23 +34,39 @@ const projects: ProjectItem[] = [
             "Designed a full pipeline: CNN for character recognition → VAE for style encoding → NLP n-gram model for next-character prediction → MDN decoder to synthesize the predicted character in the user's handwriting style.",
         ],
         media: [
-            { type: "image", src: i9, caption: "Caption" },
-            { type: "image", src: i10, caption: "Caption" },
-            { type: "image", src: i11, caption: "Caption" },
-            { type: "image", src: i12, caption: "Caption" },
+            {
+                type: "image",
+                src: neurinese_1,
+                caption: "Caption",
+                label: "Click to see demo",
+                fit: "contain",
+            },
+            { type: "image", src: neurinese_2, caption: "Caption" },
+            { type: "image", src: neurinese_3, caption: "Caption" },
+            { type: "image", src: neurinese_4, caption: "Caption" },
+            { type: "image", src: neurinese_5, caption: "Caption" },
+            { type: "image", src: neurinese_6, caption: "Caption" },
         ],
+        featured: true,
+    },
+    {
+        title: "ClaudeOps",
+        tags: ["Agentic AI", "Claude API", "FastAPI", "Python", "DevOps"],
+        period: "March 2025 — Present",
+        link: "https://github.com/dark-sorceror/ClaudeOps",
+        desc: "An orchestrated team of Claude-powered AI agents that takes a GitLab issue and autonomously produces a complete, ready-to-review MR — with code, tests, and a security scan.",
     },
     {
         title: "VerifAI",
         tags: [
-            "FastAPI",
-            "React",
+            "Computer Vision",
+            "LLM",
+            "Inference Optimization",
             "Electron",
             "Gemini API",
             "Python",
-            "OpenCV",
         ],
-        period: "October 2025 — Present",
+        period: "February 2025 — Present",
         link: "https://github.com/dark-sorceror/VerifAI",
         desc: "A multimodal misinformation detection toolkit that analyzes screenshots, videos, and text.",
         bullets: [
@@ -55,12 +74,23 @@ const projects: ProjectItem[] = [
             "Video processing pipeline uses yt-dlp for content retrieval and OpenCV for frame extraction, feeding into the Gemini vision analysis layer.",
             "Implemented Redis-backed caching for repeated analysis requests and structured response models for credibility scores.",
         ],
-        media: [{ type: "image", src: i13, caption: "Caption" }],
+        media: [
+            { type: "image", src: verifai_1, caption: "Caption" },
+            { type: "image", src: verifai_2, caption: "Caption" },
+        ],
     },
     {
         title: "Syntra",
-        tags: ["Next.js", "Electron", "FastAPI", "Python", "LSTM", "Docker"],
-        period: "2024 — Present",
+        tags: [
+            "Behavioral AI",
+            "LSTM",
+            "Next.js",
+            "Electron",
+            "FastAPI",
+            "PostgreSQL",
+            "Python",
+        ],
+        period: "November 2024 — Present",
         link: "https://github.com/dark-sorceror/Syntra",
         desc: "An AI-native calendar that learns how you actually schedule — not just what you put in, but when, how often, and how your habits shift over time.",
         bullets: [
@@ -72,7 +102,7 @@ const projects: ProjectItem[] = [
     {
         title: "Spongebob",
         tags: ["Node.js", "MongoDB", "Discord.js", "REST API"],
-        period: "September 2022 — February 2023",
+        period: "February 2022 — September 2022",
         link: "https://github.com/dark-sorceror/Spongebob",
         desc: "A scalable Discord bot for automated giveaway management — one of my first real engineering projects.",
         bullets: [
@@ -80,7 +110,7 @@ const projects: ProjectItem[] = [
             "Implemented rate-limited REST API request handling to stay within Discord's API constraints at scale.",
             "Built when I was first learning JavaScript — marks the start of the engineering habits (APIs, databases, async systems) that carried into everything after.",
         ],
-        media: [{ type: "image", src: i14, caption: "Caption" }],
+        media: [{ type: "image", src: spongebob_1, caption: "Caption" }],
     },
 ];
 
@@ -145,12 +175,17 @@ export function Projects() {
                         <FadeIn
                             key={index}
                             delay={`${index * 0.2}s`}
-                            className="projects-row"
+                            className={`projects-row${prj.featured ? " featured" : ""}`}
                         >
                             <div className="content-col">
                                 <div className="project-header">
                                     <div className="project-title">
                                         {prj.title}
+                                        {prj.featured && (
+                                            <span className="featured-pill">
+                                                Featured
+                                            </span>
+                                        )}
                                     </div>
 
                                     {prj.link && (
