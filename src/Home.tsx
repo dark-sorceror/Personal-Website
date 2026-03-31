@@ -179,11 +179,20 @@ export function Home() {
                                     </a>
                                     <ul>
                                         <li>
-                                            Grammarly for handwritten Chinese —
-                                            stroke-level style learning with VAE{" "}
-                                            <br />+ MDN in PyTorch
+                                            Grammarly/Copilot for handwritten
+                                            Chinese — models the motion of{" "}
+                                            <br />
+                                            writing itself, not just what
+                                            characters look like, using a CVAE +{" "}
+                                            <br />
+                                            MDN in PyTorch
                                         </li>
                                     </ul>
+                                </li>
+                                <li>
+                                    🔬 Exploring how transformers "guess" —
+                                    probing entropy, priors, and zero-context <br />
+                                    inference
                                 </li>
                                 <li>
                                     📖 Reading{" "}
@@ -225,8 +234,13 @@ export function Home() {
                                     </a>
                                     <ul>
                                         <li>
-                                            AI calendar with an LSTM/FNN backend
-                                            that learns your scheduling habits
+                                            AI-native calendar that passively
+                                            builds a behavioral model from your{" "}
+                                            <br />
+                                            history — learns when you work and
+                                            how your habits shift over time, not{" "}
+                                            <br />
+                                            just what you put in
                                         </li>
                                     </ul>
                                 </li>

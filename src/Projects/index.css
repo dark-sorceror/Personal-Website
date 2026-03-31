@@ -34,7 +34,11 @@
 
 .projects-row.featured .content-col {
     border-left: 1px solid rgba(180, 138, 255, 0.4);
-    background: linear-gradient(to right, rgba(180, 138, 255, 0.06), transparent);
+    background: radial-gradient(
+        ellipse at left,
+        rgba(180, 138, 255, 0.06),
+        transparent
+    );
 }
 
 .projects-row.featured .content-col::before {
@@ -61,15 +65,6 @@
     margin-left: 0.5rem;
 }
 
-.projects-row.featured .content-col {
-    padding-top: 20px;
-    padding-bottom: 15px;
-}
-
-.projects-row.featured .content-col::Before {
-    top: 1.6rem;
-}
-
 .content-col {
     display: flex;
     flex-direction: column;
@@ -84,7 +79,7 @@
     content: "";
     position: absolute;
     left: -5px;
-    top: 0.6rem;
+    top: 1.6rem;
     width: 9px;
     height: 9px;
     background-color: var(--bg-minimal);
@@ -184,7 +179,7 @@
     color: #b48aff;
     background: rgba(180, 138, 255, 0.12);
 }
-.tag[data-tag="Transformer"] {
+.tag[data-tag="Transformers"] {
     color: #b48aff;
     background: rgba(180, 138, 255, 0.12);
 }
@@ -195,24 +190,32 @@
 
 /* AI */
 .tag[data-tag="Agentic AI"] {
-    color: #f080b0;
-    background: rgba(240, 128, 176, 0.12);
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
 }
 .tag[data-tag="Behavioral AI"] {
-    color: #f080b0;
-    background: rgba(240, 128, 176, 0.12);
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
 }
 .tag[data-tag="Computer Vision"] {
-    color: #f080b0;
-    background: rgba(240, 128, 176, 0.12);
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
 }
 .tag[data-tag="LLM"] {
-    color: #f080b0;
-    background: rgba(240, 128, 176, 0.12);
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
 }
 .tag[data-tag="Inference Optimization"] {
-    color: #f080b0;
-    background: rgba(240, 128, 176, 0.12);
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
+}
+.tag[data-tag="Deep Learning"] {
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
+}
+.tag[data-tag="Generative AI"] {
+    color: #a0a0a0;
+    background: rgba(160, 160, 160, 0.12);
 }
 
 /* Language */
@@ -300,9 +303,9 @@
 }
 
 /* DevOps */
-.tag[data-tag="OpenCV"] {
-    color: #a0a0a0;
-    background: rgba(160, 160, 160, 0.12);
+.tag[data-tag="DevOps"] {
+    color: #f080b0;
+    background: rgba(240, 128, 176, 0.12);
 }
 
 .description,

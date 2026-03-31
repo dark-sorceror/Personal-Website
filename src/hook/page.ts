@@ -104,11 +104,19 @@ export function usePageTracking() {
             }, 500);
         };
 
-        window.addEventListener("beforeunload", onBeforeUnload);
-        document.addEventListener("visibilitychange", () => {
+        const onVisibilityChange = () => {
             if (document.visibilityState === "hidden") patch(false);
-        });
+        };
 
-        return () => window.removeEventListener("beforeunload", onBeforeUnload);
+        window.addEventListener("beforeunload", onBeforeUnload);
+        document.addEventListener("visibilitychange", onVisibilityChange);
+
+        return () => {
+            window.removeEventListener("beforeunload", onBeforeUnload);
+            document.removeEventListener(
+                "visibilitychange",
+                onVisibilityChange,
+            );
+        };
     }, []);
 }

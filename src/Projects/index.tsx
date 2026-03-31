@@ -16,6 +16,7 @@ import neurinese_5 from "../media/neurinese_5.png";
 import neurinese_6 from "../media/neurinese_6.png";
 import verifai_1 from "../media/verifai_1.png";
 import verifai_2 from "../media/verifai_2.png";
+import verifai_3 from "../media/verifai_3.png";
 import spongebob_1 from "../media/spongebob_1.png";
 
 import "./index.css";
@@ -23,38 +24,72 @@ import "./index.css";
 const projects: ProjectItem[] = [
     {
         title: "Neurinese",
-        tags: ["PyTorch", "CVAE", "MDN", "LSTM", "CNN", "Python"],
+        tags: [
+            "Deep Learning",
+            "Generative AI",
+            "PyTorch",
+            "CVAE",
+            "MDN",
+            "LSTM",
+            "CNN",
+            "Python",
+        ],
         period: "December 2025 — Present",
         link: "https://github.com/dark-sorceror/Neurinese",
-        desc: "A real-time handwriting intelligence engine for Chinese — Grammarly and Copilot in one, but for pen strokes. Instead of recognizing pixels, the system models the motion of writing itself.",
+        desc: "Grammarly/Copilot for Handwritten Chinese",
         bullets: [
-            "Built a recurrent VAE architecture (bidirectional LSTM encoder → autoregressive LSTM decoder) that compresses raw pen-trajectory sequences (dx, dy, pen state) into a continuous latent style embedding per user.",
-            "Discovered that standard MSE regression collapsed multimodal stroke paths into their mathematical mean — migrating decoder output to a Mixture Density Network (MDN) for stochastic Gaussian Mixture sampling to preserve expressive variability.",
-            "Applied the Ramer–Douglas–Peucker algorithm during preprocessing to simplify stroke geometry and reduce noise before training.",
-            "Designed a full pipeline: CNN for character recognition → VAE for style encoding → NLP n-gram model for next-character prediction → MDN decoder to synthesize the predicted character in the user's handwriting style.",
+            "Built a recurrent CVAE (BiLSTM encoder → autoregressive decoder) to encode pen trajectories into a continuous user-specific style embedding",
+            "Discovered that standard MSE regression collapsed multimodal stroke paths into their mathematical mean — migrating decoder output to a Mixture Density Network (MDN) for stochastic Gaussian Mixture sampling to preserve expressive variability",
+            "Reduced stroke noise using Ramer–Douglas–Peucker simplification, improving training stability",
+            "Designed an end-to-end pipeline: CNN → CVAE → n-gram LM → MDN decoder for style-conditioned character generation",
         ],
         media: [
             {
                 type: "image",
                 src: neurinese_1,
-                caption: "Caption",
-                label: "Click to see demo",
+                caption:
+                    "Working demo of autocompletion with consistent handwriting style",
                 fit: "contain",
             },
-            { type: "image", src: neurinese_2, caption: "Caption" },
-            { type: "image", src: neurinese_3, caption: "Caption" },
-            { type: "image", src: neurinese_4, caption: "Caption" },
-            { type: "image", src: neurinese_5, caption: "Caption" },
-            { type: "image", src: neurinese_6, caption: "Caption" },
+            {
+                type: "image",
+                src: neurinese_2,
+                caption: "Cross character style transfer",
+            },
+            {
+                type: "image",
+                src: neurinese_3,
+                caption: "High level pipeline architecture",
+            },
+            { type: "image", src: neurinese_4, caption: "VAE architecture" },
+            {
+                type: "image",
+                src: neurinese_5,
+                caption: "Graphs comparing two loss functions during training",
+            },
+            {
+                type: "image",
+                src: neurinese_6,
+                caption: "t-SNE of different handwriting styles",
+            },
         ],
         featured: true,
     },
     {
+        title: "Latent Guesser",
+        tags: ["Transformers", "Deep Learning"],
+        period: "April 2025 — Present (Planned)",
+        desc: "Can a model guess without context?",
+        bullets: [
+            "Exploring how transformers “guess” by analyzing entropy, priors, and uncertainty under zero context.",
+        ],
+    },
+    {
         title: "ClaudeOps",
-        tags: ["Agentic AI", "Claude API", "FastAPI", "Python", "DevOps"],
-        period: "March 2025 — Present",
+        tags: ["Agentic AI", "DevOps", "Claude API", "FastAPI", "Python"],
+        period: "March 2026 — Present",
         link: "https://github.com/dark-sorceror/ClaudeOps",
-        desc: "An orchestrated team of Claude-powered AI agents that takes a GitLab issue and autonomously produces a complete, ready-to-review MR — with code, tests, and a security scan.",
+        desc: "An orchestrated team of Claude-powered AI agents that takes a GitLab issue and autonomously produces a complete, ready-to-review MR — with code, tests, and a security scan",
     },
     {
         title: "VerifAI",
@@ -62,21 +97,26 @@ const projects: ProjectItem[] = [
             "Computer Vision",
             "LLM",
             "Inference Optimization",
-            "Electron",
             "Gemini API",
+            "FastAPI",
             "Python",
         ],
-        period: "February 2025 — Present",
+        period: "February 2026 — March 2026",
         link: "https://github.com/dark-sorceror/VerifAI",
-        desc: "A multimodal misinformation detection toolkit that analyzes screenshots, videos, and text.",
+        desc: "Multimodal misinformation detection across text, video, and images",
         bullets: [
-            "Designed a dual-backend architecture: a FastAPI service handling media routing and analysis logic, and a Flask auxiliary server wrapping Google GenAI (Gemini) for LLM-based credibility analysis.",
-            "Video processing pipeline uses yt-dlp for content retrieval and OpenCV for frame extraction, feeding into the Gemini vision analysis layer.",
-            "Implemented Redis-backed caching for repeated analysis requests and structured response models for credibility scores.",
+            "Designed a dual-backend system: FastAPI for media routing + Flask service for LLM-based credibility analysis",
+            "Built a video analysis pipeline using yt-dlp + OpenCV, feeding frames into multimodal LLM evaluation",
+            "Implemented Redis caching and structured scoring models for efficient repeated analysis",
         ],
         media: [
-            { type: "image", src: verifai_1, caption: "Caption" },
-            { type: "image", src: verifai_2, caption: "Caption" },
+            { type: "image", src: verifai_1, caption: "Analysis of tweet" },
+            { type: "image", src: verifai_2, caption: "Analysis of tweet" },
+            {
+                type: "image",
+                src: verifai_3,
+                caption: "High level pipeline architecture",
+            },
         ],
     },
     {
@@ -90,13 +130,13 @@ const projects: ProjectItem[] = [
             "PostgreSQL",
             "Python",
         ],
-        period: "November 2024 — Present",
+        period: "November 2025 — Present",
         link: "https://github.com/dark-sorceror/Syntra",
-        desc: "An AI-native calendar that learns how you actually schedule — not just what you put in, but when, how often, and how your habits shift over time.",
+        desc: "An AI-native calendar that learns how you actually schedule — not just what you put in, but when, how often, and how your habits shift over time",
         bullets: [
-            "Python backend uses an LSTM/FNN model to learn temporal scheduling patterns from a user's calendar history and predict optimal time slots for new events.",
-            "Full-stack architecture: Next.js web frontend, Electron desktop app, FastAPI backend, and Dockerized deployment for consistent dev and prod environments.",
-            "Designed to passively build a behavioral model over time, surfacing schedule suggestions without requiring manual input from the user.",
+            "Built an LSTM-based model to learn user scheduling patterns and predict optimal event time slots",
+            "Developed a full-stack system (Next.js, Electron, FastAPI, PostgreSQL) with Dockerized deployment",
+            "Designed a passive behavioral modeling system that improves recommendations over time without manual input",
         ],
     },
     {
@@ -106,11 +146,17 @@ const projects: ProjectItem[] = [
         link: "https://github.com/dark-sorceror/Spongebob",
         desc: "A scalable Discord bot for automated giveaway management — one of my first real engineering projects.",
         bullets: [
-            "Served over 50,000 peak users across multiple Discord servers with persistent MongoDB storage for giveaway state and winner tracking.",
-            "Implemented rate-limited REST API request handling to stay within Discord's API constraints at scale.",
-            "Built when I was first learning JavaScript — marks the start of the engineering habits (APIs, databases, async systems) that carried into everything after.",
+            "Scaled to 50,000+ users across Discord servers with persistent MongoDB-backed state management",
+            "Implemented rate-limited API handling to operate reliably within Discord constraints",
+            "Built when I was first learning JavaScript — marks the start of the engineering habits (APIs, databases, async systems) that carried into everything after",
         ],
-        media: [{ type: "image", src: spongebob_1, caption: "Caption" }],
+        media: [
+            {
+                type: "image",
+                src: spongebob_1,
+                caption: "Screenshot of giveaway embed",
+            },
+        ],
     },
 ];
 

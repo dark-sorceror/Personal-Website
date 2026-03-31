@@ -23,39 +23,42 @@ const experiences: ExperienceItem[] = [
         title: "AI/ML Engineer",
         company: "McMaster EcoCAR EV Challenge",
         period: "November 2025 — Present",
-        desc: "Designing the diagnostic and control architecture for a competition-grade automated EV — working across simulation, perception, and vehicle networking layers.",
+        desc: "AI/ML for autonomous EV simulation, diagnostics, and control",
         bullets: [
-            "Built and validated MATLAB/Simulink models for a connected automated vehicle stack, benchmarking 0–60 acceleration, 60–0 stopping distance, and HWFET/UDDS/US06 drive-cycle efficiency against the target LYRIQ platform.",
-            "Engineered a SAE/ISO-compliant onboard diagnostic (OBD) system, implementing DTC services $01, $03, $04, $09, and $0A per J1979 and ISO 14229-1 (UDS) standards using CAN pack/unpack/receive/send blocks from MATLAB's Vehicle Network Toolbox.",
-            "Tuning the EV 2EM powertrain controller and electric motor plant model in Simulink by migrating LYRIQ-specific data dictionaries and adapting motor characteristics for accurate vehicle dynamics simulation.",
-            "Developing perception and control modules including YOLO-based object detection, lane-keeping algorithms, and low-pass torque filtering to smooth commands at constant accelerator pedal positions.",
+            "Built and validated MATLAB/Simulink vehicle models to benchmark acceleration, braking, and drive-cycle efficiency (HWFET, UDDS, US06) against the Cadillac LYRIQ baseline",
+            "Implemented SAE/ISO-compliant OBD diagnostics (J1979, UDS) over CAN using MATLAB Vehicle Network Toolbox (services $01, $03, $04, $09, $0A)",
+            "Tuned EV powertrain and motor models by integrating LYRIQ data dictionaries and calibrating vehicle dynamics in simulation",
+            "Developed perception and control modules: YOLO-based object detection, lane-keeping logic, and torque filtering for stable actuation",
         ],
     },
     {
         title: "Embedded Software Engineer",
         company: "McMaster Exoskeleton",
         period: "October 2025 — Present",
-        desc: "Built the real-time embedded firmware stack for a wearable exoskeleton from the ground up — from register-level sensor drivers to a distributed CAN bus network.",
+        desc: "Built real-time embedded systems for wearable exoskeleton",
         bullets: [
-            "Achieved stable 500 Hz IMU sampling on the LSM6DS3TR-C 6-axis sensor by implementing DMA-based I2C transfers with Block Data Update (BDU) and optimizing the APB1/PLL clock tree on the STM32 Nucleo-F446RE.",
-            "Designed and commissioned a multi-node CAN bus network linking STM32 Nucleo boards, IMU modules, and a Raspberry Pi 5 for distributed real-time control with transceiver wiring.",
-            "Developed Python UART telemetry scripts for live sensor readout and timing diagnostics, used to identify and resolve clock bottlenecks before CAN integration.",
+            "Achieved 500 Hz IMU sampling on LSM6DS3TR-C via DMA-based I2C, optimizing STM32 clock configuration (PLL/APB1) for deterministic timing",
+            "Designed a multi-node CAN bus system connecting STM32 boards, IMUs, and a Raspberry Pi for distributed real-time control",
+            "Built Python UART telemetry tools for live diagnostics, identifying timing bottlenecks prior to CAN integration",
         ],
         media: [
             {
                 type: "image",
                 src: exo_1,
-                caption: "Caption",
+                caption:
+                    "Multi-node test bench with STM32 Nucleo, IMU modules, and Raspberry Pi 5 — upgraded to a 1 Mbps CAN transceiver",
             },
             {
                 type: "image",
                 src: exo_2,
-                caption: "Caption",
+                caption:
+                    "Multi-node test bench: STM32 Nucleo, MPU-9250 and IMU modules, and Raspberry Pi 5 — CAN bus running at 500 kbps during early integration testing",
             },
             {
                 type: "image",
                 src: exo_3,
-                caption: "Caption",
+                caption:
+                    "Live UART telemetry output from the LSM6DS3TR-C IMU used to diagnose clock bottlenecks during firmware development",
             },
         ],
     },
@@ -65,41 +68,41 @@ const experiences: ExperienceItem[] = [
         period: "September 2022 — June 2025",
         desc: "Co-led all software and mechanical design over three seasons, placing 6th among 200 teams at Canada's largest VEX robotics tournament.",
         bullets: [
-            "Developed a full autonomous navigation stack in C/C++: 1D/2D PID control, velocity profiling, pure pursuit path tracking, and Monte Carlo localization using wheel odometry.",
-            "Built a concurrent real-time control system with mutex-protected task scheduling, handling motor burnout recovery, operator input filtering, and safe interaction with field elements under competition conditions.",
-            "Designed and iterated mechanical subsystems in Onshape CAD through prototyping cycles documented in a formal engineering notebook.",
-            "Created a web-based motion algorithm simulator and YouTube channel to visualize and share autonomous routines.",
+            "Developed an autonomous navigation stack (C/C++): PID control, velocity profiling, pure pursuit, and Monte Carlo localization",
+            "Built a concurrent real-time control system with mutex-based task scheduling for safe and robust competition operation",
+            "Designed and iterated mechanical subsystems in CAD (Onshape) through rapid prototyping cycles",
+            "Created a web-based simulator and YouTube channel to visualize and share autonomous algorithms",
         ],
         media: [
             {
                 type: "image",
                 src: robot_1,
-                caption: "Caption",
+                caption: "Build iteration of 2024-25 season at provincials",
             },
             {
                 type: "image",
                 src: robot_2,
-                caption: "Caption",
+                caption: "Build iteration of 2024-25 season",
             },
             {
                 type: "image",
                 src: robot_3,
-                caption: "Caption",
+                caption: "Build iteration of 2024-25 season at provincials",
             },
             {
                 type: "image",
                 src: robot_4,
-                caption: "Caption",
+                caption: "Build iteration of 2023-24 season at Mecha Mayhem",
             },
             {
                 type: "image",
                 src: robot_5,
-                caption: "Caption",
+                caption: "Build iteration of 2024-25 season",
             },
             {
                 type: "image",
                 src: robot_6,
-                caption: "Caption",
+                caption: "Build iteration of 2023-24 season",
             },
         ],
     },
@@ -180,7 +183,7 @@ export function Experience() {
                                 </div>
                                 <div className="date-col">{exp.period}</div>
                                 <p className="description">{exp.desc}</p>
-                                
+
                                 {exp.bullets && exp.bullets.length > 0 && (
                                     <ul className="description-bullets">
                                         {exp.bullets.map((b, i) => (

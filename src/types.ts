@@ -2,7 +2,6 @@ export type MediaItem = {
     type: "image" | "video";
     src: string;
     caption?: string;
-    label?: string;
     fit?: "cover" | "contain";
 };
 
