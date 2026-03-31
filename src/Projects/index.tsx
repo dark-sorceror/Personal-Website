@@ -180,16 +180,16 @@ const ArrowUpRight = () => (
 
 export function Projects() {
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-    const [lightboxOpen, setLightboxOpen] = useState(false);
     const [activeMedia, setActiveMedia] = useState<MediaItem[]>([]);
-    const [activeIndex, setActiveIndex] = useState(0);
     const [activeTitle, setActiveTitle] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     const openLightbox = (media: MediaItem[], index: number, title: string) => {
         setActiveMedia(media);
-        setActiveIndex(index);
+        setCurrentIndex(index);
         setActiveTitle(title);
-        setLightboxOpen(true);
+        setIsOpen(true);
     };
 
     useEffect(() => {
@@ -297,11 +297,12 @@ export function Projects() {
             </div>
 
             <Lightbox
-                isOpen={lightboxOpen}
+                isOpen={isOpen}
                 media={activeMedia}
-                initialIndex={activeIndex}
+                currentIndex={currentIndex}
+                setCurrentIndex={setCurrentIndex}
+                onClose={() => setIsOpen(false)}
                 contextTitle={activeTitle}
-                onClose={() => setLightboxOpen(false)}
             />
         </>
     );

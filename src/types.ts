@@ -1,3 +1,12 @@
+export type LightboxProps = {
+    isOpen: boolean;
+    media: MediaItem[];
+    currentIndex: number;
+    setCurrentIndex: (index: number) => void;
+    onClose: () => void;
+    contextTitle: string;
+};
+
 export type MediaItem = {
     type: "image" | "video";
     src: string;

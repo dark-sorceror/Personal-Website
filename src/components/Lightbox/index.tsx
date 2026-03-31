@@ -1,30 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { ChevronRight, ChevronLeft, X } from "lucide-react";
 
-import type { MediaItem } from "../../types";
+import type { LightboxProps } from "../../types";
 
 import "./index.css";
 
 export const Lightbox = ({
     isOpen,
     media,
-    initialIndex,
+    currentIndex,
+    setCurrentIndex,
     onClose,
     contextTitle,
-}: {
-    isOpen: boolean;
-    media: MediaItem[];
-    initialIndex: number;
-    onClose: () => void;
-    contextTitle: string;
-}) => {
-    const [currentIndex, setCurrentIndex] = useState(initialIndex);
-
-    useEffect(() => {
-        setCurrentIndex(initialIndex);
-    }, [initialIndex]);
-
+}: LightboxProps) => {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (!isOpen) return;
@@ -39,6 +28,7 @@ export const Lightbox = ({
 
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
+
             document.body.style.overflow = "unset";
         };
     }, [isOpen, currentIndex]);
@@ -47,11 +37,12 @@ export const Lightbox = ({
 
     const next = (e?: React.MouseEvent) => {
         e?.stopPropagation();
-        setCurrentIndex((prev) => (prev + 1) % media.length);
+        setCurrentIndex((currentIndex + 1) % media.length);
     };
+
     const prev = (e?: React.MouseEvent) => {
         e?.stopPropagation();
-        setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
+        setCurrentIndex((currentIndex - 1 + media.length) % media.length);
     };
 
     const safeIndex = Math.min(currentIndex, media.length - 1);
