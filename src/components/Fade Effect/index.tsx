@@ -27,7 +27,7 @@ export default function FadeIn({
                     }
                 });
             },
-            { threshold: 0.15 },
+            { threshold: 0.05 },
         );
 
         const currentRef = domRef.current;

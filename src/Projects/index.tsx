@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { trackLinkClick } from "../hook/session";
 
@@ -179,7 +179,6 @@ const ArrowUpRight = () => (
 );
 
 export function Projects() {
-    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
     const [activeMedia, setActiveMedia] = useState<MediaItem[]>([]);
     const [activeTitle, setActiveTitle] = useState("");
     const [isOpen, setIsOpen] = useState(false);
@@ -191,27 +190,6 @@ export function Projects() {
         setActiveTitle(title);
         setIsOpen(true);
     };
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("in-view");
-
-                        observer.unobserve(entry.target);
-                    }
-                });
-            },
-            { threshold: 0.15 },
-        );
-
-        itemsRef.current.forEach((el) => {
-            if (el) observer.observe(el);
-        });
-
-        return () => observer.disconnect();
-    }, []);
 
     return (
         <>
