@@ -8,7 +8,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
             className="section-label"
             style={{
                 fontFamily: "system-ui",
-                fontSize: "14px",
+                fontSize: "0.875rem",
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 color: "var(--text-muted)",
@@ -93,7 +93,7 @@ export default function Home() {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "8px",
-                                fontSize: "14px",
+                                fontSize: "0.875rem",
                                 color: "var(--text-muted)",
                                 letterSpacing: "0.08em",
                                 textTransform: "uppercase",

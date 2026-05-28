@@ -24,8 +24,6 @@ html {
     min-height: 100%;
     min-height: 100dvh;
     background-color: var(--bg);
-    zoom: 0.75;
-    -webkit-text-size-adjust: 100%;
     transition: background-color 0.3s ease;
 }
 
@@ -43,8 +41,8 @@ html {
 body {
     margin: 0;
     padding: 0;
-    min-height: calc(100vh / 0.75);
-    min-height: calc(100dvh / 0.75);
+    min-height: 100vh;
+    min-height: 100dvh;
     background-color: var(--bg);
     color: var(--text);
     position: relative;
@@ -127,7 +125,7 @@ a.link,
 span.link {
     color: var(--link-color);
     text-decoration: underline;
-    text-decoration-thickness: 2px;
+    text-decoration-thickness: 3px;
     text-underline-offset: 6px;
     text-decoration-color: color-mix(
         in srgb,
@@ -135,7 +133,7 @@ span.link {
         transparent
     );
     font-weight: 500;
-    transition: text-decoration-color 0.25s ease;
+    transition: text-decoration-color 0.3s ease;
 }
 
 a.link:hover,
@@ -156,6 +154,7 @@ span.link:hover {
     flex-direction: column;
     align-items: center;
     gap: 31px;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .sidebar::after {
@@ -178,7 +177,7 @@ span.link:hover {
     color: var(--link-color);
     display: flex;
     opacity: 0.85;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease, color 0.3s ease;
 }
 
 .sidebar a:hover {
@@ -212,6 +211,10 @@ span.link:hover {
 }
 
 @media (max-width: 640px) {
+    html {
+        font-size: 65%;
+    }
+
     body {
         overflow: hidden;
     }
@@ -262,7 +265,7 @@ span.link:hover {
     }
 
     .page-inner {
-        margin-top: 35px;
+        margin-top: 15px;
         padding-top: 0;
         padding-left: 30px;
         padding-right: 30px;
