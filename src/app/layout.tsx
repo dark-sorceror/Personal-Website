@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { Inter, Libre_Baskerville } from "next/font/google";
 import { Analytics } from "../components/Analytics";
@@ -11,6 +11,11 @@ const libreBaskerville = Libre_Baskerville({
     weight: ["400", "700"],
     variable: "--font-serif",
 });
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+};
 
 export const metadata: Metadata = {
     title: "Hao Yan",
