@@ -1,21 +1,14 @@
-// Conway's Game of Life — standard B3/S23 rules on a toroidal grid.
-//
-// Two engines:
-//   stepLife  — reference implementation: per-cell neighbor scan, O(9N).
-//   BitLife   — bit-parallel (SWAR) engine: 32 cells per word, neighbor
-//               counts computed with bitwise carry-save adders, so one
-//               machine op advances 32 cells at once. Stochastic flips
-//               ("temperature") are applied in O(expected flips) via
-//               geometric skip sampling rather than N coin tosses.
-//
-// `epsilon` adds stochasticity: each cell's computed outcome flips with
-// probability epsilon per generation — temperature sampling for a cellular
-// automaton. epsilon = 0 is pure deterministic Conway.
+// Conway's Game of Life engines (B3/S23) on a toroidal grid.
 
+/** Index into a flat [col * rows + row] grid with toroidal wrapping. */
 export function lifeIndex(c: number, r: number, cols: number, rows: number) {
     return ((c + cols) % cols) * rows + ((r + rows) % rows);
 }
 
+/**
+ * Reference engine: per-cell neighbor scan. `epsilon` flips each cell's
+ * computed outcome with that probability; 0 is pure deterministic Conway.
+ */
 export function stepLife(
     cells: Uint8Array,
     next: Uint8Array,
@@ -46,6 +39,10 @@ export function stepLife(
     }
 }
 
+/**
+ * Bit-parallel engine: 32 cells per word, neighbor counts computed with
+ * bitwise carry-save adders, stochastic flips applied in O(expected flips).
+ */
 export class BitLife {
     readonly cols: number;
     readonly rows: number;
@@ -149,9 +146,7 @@ export class BitLife {
                 const rb = shiftLo[dn + w];
                 const self = grid[o + w];
 
-                // Carry-save addition of the 8 neighbor bitboards:
-                // full-adder trees give each bit position its count 0-8
-                // as four bit-planes b0 (1s), b1 (2s), b2 (4s), b3 (8s).
+                // Carry-save adders sum the 8 neighbor boards into count bit-planes b0-b3
                 const t1 = la ^ ca;
                 const s1 = t1 ^ ra;
                 const c1 = (la & ca) | (ra & t1);
@@ -187,8 +182,7 @@ export class BitLife {
 
         [this.grid, this.next] = [this.next, this.grid];
 
-        // Temperature: flip each cell with probability epsilon. Geometric
-        // skip sampling visits only the ~N*epsilon cells that actually flip.
+        // Geometric skip sampling visits only the ~N*epsilon cells that flip
         if (epsilon > 0) {
             const total = this.cols * this.rows;
             const logOneMinusEps = Math.log(1 - Math.min(epsilon, 0.999999));

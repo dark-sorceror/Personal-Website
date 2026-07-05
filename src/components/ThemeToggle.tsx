@@ -89,9 +89,8 @@ export function ThemeToggle() {
             return;
         }
 
-        // Circular reveal expanding from the toggle button.
-        // The ::view-transition pseudo inherits the root's zoom, so convert
-        // from visual px to the pseudo's unzoomed coordinate space.
+        // Circular reveal from the button; ::view-transition pseudos inherit
+        // the root zoom, so convert visual px to their unzoomed space.
         const zoom =
             Number(getComputedStyle(document.documentElement).zoom) || 1;
         const rect = buttonRef.current?.getBoundingClientRect();
@@ -105,21 +104,26 @@ export function ThemeToggle() {
                 Math.max(cy, window.innerHeight - cy),
             ) / zoom;
 
-        document.startViewTransition(apply).ready.then(() => {
-            document.documentElement.animate(
-                {
-                    clipPath: [
-                        `circle(0px at ${x}px ${y}px)`,
-                        `circle(${radius}px at ${x}px ${y}px)`,
-                    ],
-                },
-                {
-                    duration: 500,
-                    easing: "ease-in-out",
-                    pseudoElement: "::view-transition-new(root)",
-                },
-            );
-        });
+        document
+            .startViewTransition(apply)
+            .ready.then(() => {
+                document.documentElement.animate(
+                    {
+                        clipPath: [
+                            `circle(0px at ${x}px ${y}px)`,
+                            `circle(${radius}px at ${x}px ${y}px)`,
+                        ],
+                    },
+                    {
+                        duration: 500,
+                        easing: "ease-in-out",
+                        pseudoElement: "::view-transition-new(root)",
+                    },
+                );
+            })
+            .catch(() => {
+                // A re-toggle aborted the transition; the theme already applied
+            });
     };
 
     return (

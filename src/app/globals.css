@@ -13,11 +13,11 @@
 [data-theme="light"] {
     --bg: #f7f5f0;
     --text: #4a4a4a;
-    --text-muted: #888888;
+    --text-muted: rgba(0, 0, 0, 0.5);
     --accent-line: rgba(0, 0, 0, 0.22);
     --link-color: #000000;
     --dot-base: rgba(0, 0, 0, 0.08);
-    --dot-active: rgba(0, 0, 0, 0.12);
+    --dot-active: rgba(0, 0, 0, 0.17);
 }
 
 html {

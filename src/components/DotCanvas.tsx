@@ -114,8 +114,7 @@ export function DotCanvas() {
         };
 
         const resize = () => {
-            // Backing store accounts for both devicePixelRatio and the
-            // root zoom so dots stay crisp at the rendered scale.
+            // Scale the backing store by devicePixelRatio and root zoom to stay crisp
             const zoom =
                 Number(getComputedStyle(document.documentElement).zoom) || 1;
             const scale = (window.devicePixelRatio || 1) * zoom;
@@ -149,8 +148,7 @@ export function DotCanvas() {
                     const y = r * SPACING + SPACING / 2;
                     const level = levels ? levels[c * rows + r] : 0;
 
-                    // Fade the base dot out as the active dot fades in so
-                    // the two don't visibly stack
+                    // Crossfade the base dot out as the active dot fades in
                     const baseFade = Math.max(0, 1 - level * 2);
 
                     if (baseFade > 0.02) {
@@ -216,8 +214,7 @@ export function DotCanvas() {
                 resize();
             }
 
-            // Re-read theme colors periodically so CSS variable changes
-            // (theme tweaks, hot reload) apply without a page reload
+            // Re-read theme colors so CSS variable changes apply without a reload
             if (t - lastColorRead >= 1) {
                 readColors();
                 lastColorRead = t;
