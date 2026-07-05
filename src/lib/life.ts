@@ -58,7 +58,7 @@ export class BitLife {
         this.cols = cols;
         this.rows = rows;
         this.wordsPerRow = Math.ceil(cols / 32);
-        this.lastMask = cols % 32 ? (1 << cols % 32) - 1 : -1;
+        this.lastMask = cols % 32 ? (1 << (cols % 32)) - 1 : -1;
         this.grid = new Uint32Array(rows * this.wordsPerRow);
         this.next = new Uint32Array(rows * this.wordsPerRow);
         this.shiftHi = new Uint32Array(rows * this.wordsPerRow);
@@ -109,13 +109,11 @@ export class BitLife {
             const wrapLo = grid[o] & 1;
 
             for (let w = 0; w < W; w++) {
-                const carryHi =
-                    w > 0 ? grid[o + w - 1] >>> 31 : wrapHi;
+                const carryHi = w > 0 ? grid[o + w - 1] >>> 31 : wrapHi;
 
                 shiftHi[o + w] = ((grid[o + w] << 1) | carryHi) >>> 0;
 
-                const carryLo =
-                    w < W - 1 ? (grid[o + w + 1] & 1) << 31 : 0;
+                const carryLo = w < W - 1 ? (grid[o + w + 1] & 1) << 31 : 0;
 
                 shiftLo[o + w] = (grid[o + w] >>> 1) | carryLo;
             }

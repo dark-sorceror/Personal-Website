@@ -177,7 +177,7 @@ export function useVisitorLog() {
 
                 if (res.ok) {
                     const msg = await res.json();
-                    
+
                     visitorSession.messageId = msg.id;
                     visitorSession.webhookUrl = WEBHOOK_URL;
                     visitorSession.embedPayload = payload;

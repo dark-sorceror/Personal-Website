@@ -54,6 +54,8 @@ export function ThemeToggle() {
         const stored = localStorage.getItem("theme") as Theme | null;
         const t = stored ?? "dark";
 
+        // Hydrate from localStorage after mount; SSR always renders dark
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTheme(t);
 
         document.documentElement.setAttribute("data-theme", t);

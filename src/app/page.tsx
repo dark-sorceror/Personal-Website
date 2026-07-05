@@ -76,7 +76,10 @@ export default function Home() {
                                 />
                                 McMaster University (&apos;29)
                             </li>
-                            <li>Embedded & Controls Software Lead @ McMaster Exoskeleton</li>
+                            <li>
+                                Embedded & Controls Software Lead @ McMaster
+                                Exoskeleton
+                            </li>
                             <li>AI/ML @ McMaster EcoCAR</li>
                             <li>
                                 Exploring how transformers &quot;guess&quot; —

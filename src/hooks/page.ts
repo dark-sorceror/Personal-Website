@@ -7,7 +7,6 @@ import { visitorSession, type SessionEvent } from "./session";
 export function usePageTracking() {
     const pathname = usePathname();
     const firedRef = useRef(false);
-    const enteredAt = useRef(Date.now());
 
     useEffect(() => {
         const now = Date.now();
@@ -22,11 +21,7 @@ export function usePageTracking() {
             prev.engaged = now - prev.enteredAt >= 10_000;
         }
 
-        if (prev?.path === pathname) {
-            enteredAt.current = now;
-
-            return;
-        }
+        if (prev?.path === pathname) return;
 
         visitorSession.events.push({
             type: "page",
@@ -34,8 +29,6 @@ export function usePageTracking() {
             enteredAt: now,
             engaged: false,
         });
-
-        enteredAt.current = now;
     }, [pathname]);
 
     useEffect(() => {
