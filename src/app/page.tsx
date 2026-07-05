@@ -110,7 +110,7 @@ export default function Home() {
                                     marginLeft: "10px",
                                 }}
                             >
-                                Curr: Calgary, AB
+                                Curr: San Francisco, CA
                             </span>
                         </div>
                     </div>
@@ -134,16 +134,6 @@ export default function Home() {
                                 YC S25)
                             </li>
                             <li>
-                                AI @{" "}
-                                <Logo
-                                    src="/media/corall_co_logo.png"
-                                    alt="Corall"
-                                />
-                                <InlineLink href="https://corall.co">
-                                    Corall
-                                </InlineLink>
-                            </li>
-                            <li>
                                 Software Engineering @{" "}
                                 <Logo
                                     src="/media/mcmaster_logo.png"
@@ -151,8 +141,8 @@ export default function Home() {
                                 />
                                 McMaster University
                             </li>
+                            <li>Embedded & Controls Software Lead at McMaster Exoskeleton</li>
                             <li>AI/ML at McMaster EcoCAR</li>
-                            <li>Embedded Software at McMaster Exoskeleton</li>
                             <li>
                                 Exploring how transformers &quot;guess&quot; —
                                 probing entropy, priors, and zero-context
