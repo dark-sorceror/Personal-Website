@@ -139,13 +139,18 @@ export default function Home() {
                             </li>
                         </ul>
                     </section>
-                    <footer className="pb-[80px] font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted)">
-                        Last updated{" "}
-                        {new Date().toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                        })}
+                    <footer className="flex items-center justify-between gap-[16px] pb-[80px] font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted)">
+                        <span>
+                            Last updated{" "}
+                            {new Date().toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            })}
+                        </span>
+                        <span className="underline decoration-(--text-muted)/50 decoration-1 underline-offset-4 transition-colors duration-200 hover:text-(--link-color) hover:decoration-(--link-color)">
+                            what are these dots?
+                        </span>
                     </footer>
                 </main>
             </div>

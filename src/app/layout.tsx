@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 
 import { Inter, Libre_Baskerville } from "next/font/google";
 import { Analytics } from "../components/Analytics";
+import { DotCanvas } from "../components/DotCanvas";
 
 import "./globals.css";
 
@@ -19,7 +20,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: "Hao Yan",
-    description: "Hao Yan — Software Engineer",
+    description:
+        "Hao Yan — Software Engineer — TraceRoot.AI (YC S25) · McMaster University",
 };
 
 export default function RootLayout({
@@ -40,6 +42,7 @@ export default function RootLayout({
                 className={`${inter.className} ${libreBaskerville.variable} antialiased`}
             >
                 <Analytics />
+                <DotCanvas />
                 {children}
             </body>
         </html>
