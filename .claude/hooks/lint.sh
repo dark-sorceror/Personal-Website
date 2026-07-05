@@ -23,6 +23,11 @@ case "$FILE_PATH" in
       *src/api/generated/* | *openapi.json) exit 0 ;;
     esac
 
+    # Guard: skip if biome isn't installed in this project
+    if ! npx --no-install biome --version >/dev/null 2>&1; then
+      exit 0
+    fi
+
     # Auto-fix: format + safe lint fixes
     npx --no-install biome check --write "$FILE_PATH" >/dev/null 2>&1
 
