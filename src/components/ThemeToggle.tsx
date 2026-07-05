@@ -125,7 +125,7 @@ export function ThemeToggle() {
     return (
         <button
             ref={buttonRef}
-            className="theme-toggle"
+            className="flex cursor-pointer items-center justify-center border-none bg-transparent p-0 text-(--text-muted) opacity-70 transition-opacity duration-200 hover:opacity-100"
             onClick={toggle}
             aria-label="Toggle theme"
         >
