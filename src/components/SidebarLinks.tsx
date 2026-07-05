@@ -1,6 +1,6 @@
 "use client";
 
-import { trackLinkClick } from "../hooks/session";
+import { trackLinkClick } from "@/lib/session";
 
 function GithubIcon() {
     return (

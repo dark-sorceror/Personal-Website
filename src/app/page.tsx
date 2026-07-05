@@ -1,6 +1,6 @@
-import { ThemeToggle } from "../components/ThemeToggle";
-import { InlineLink, linkClassName } from "../components/InlineLink";
-import { SidebarLinks } from "../components/SidebarLinks";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { InlineLink, linkClassName } from "@/components/InlineLink";
+import { SidebarLinks } from "@/components/SidebarLinks";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
     return (

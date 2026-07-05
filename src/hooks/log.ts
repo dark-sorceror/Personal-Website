@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { visitorSession } from "./session";
+import { visitorSession } from "@/lib/session";
 
 const WEBHOOK_URL = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL as string;
 

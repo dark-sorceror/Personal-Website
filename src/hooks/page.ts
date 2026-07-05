@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { visitorSession, type SessionEvent } from "./session";
+import { visitorSession, type SessionEvent } from "@/lib/session";
 
 export function usePageTracking() {
     const pathname = usePathname();

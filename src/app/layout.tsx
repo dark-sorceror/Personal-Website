@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 
 import { Inter, Libre_Baskerville } from "next/font/google";
-import { Analytics } from "../components/Analytics";
-import { DotCanvas } from "../components/DotCanvas";
+import { Analytics } from "@/components/Analytics";
+import { DotCanvas } from "@/components/DotCanvas";
 
 import "./globals.css";
 

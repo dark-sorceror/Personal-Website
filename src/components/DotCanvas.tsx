@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { BitLife } from "../lib/life";
+import { BitLife } from "@/lib/life";
 
 const SPACING = 30;
 const BASE_RADIUS = 1.5;
