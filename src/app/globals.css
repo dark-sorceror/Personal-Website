@@ -94,6 +94,20 @@ body::after {
     z-index: -1;
 }
 
+/* Theme switch: circular reveal via the View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+/* Snap colors instantly while the reveal circle expands */
+html:active-view-transition *,
+html:active-view-transition *::before,
+html:active-view-transition *::after {
+    transition: none !important;
+}
+
 .name {
     color: var(--link-color);
     font-size: 36px;

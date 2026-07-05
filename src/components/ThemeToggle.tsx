@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Theme = "dark" | "light";
+
+const THEME_EVENT = "site-theme-change";
 
 function SunIcon() {
     return (
@@ -46,6 +48,7 @@ function MoonIcon() {
 
 export function ThemeToggle() {
     const [theme, setTheme] = useState<Theme>("dark");
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const stored = localStorage.getItem("theme") as Theme | null;
@@ -54,19 +57,74 @@ export function ThemeToggle() {
         setTheme(t);
 
         document.documentElement.setAttribute("data-theme", t);
+
+        const onThemeChange = (e: Event) =>
+            setTheme((e as CustomEvent<Theme>).detail);
+
+        window.addEventListener(THEME_EVENT, onThemeChange);
+
+        return () => window.removeEventListener(THEME_EVENT, onThemeChange);
     }, []);
 
     const toggle = () => {
         const next: Theme = theme === "dark" ? "light" : "dark";
-        
-        setTheme(next);
 
-        document.documentElement.setAttribute("data-theme", next);
-        localStorage.setItem("theme", next);
+        const apply = () => {
+            setTheme(next);
+
+            document.documentElement.setAttribute("data-theme", next);
+            localStorage.setItem("theme", next);
+            window.dispatchEvent(
+                new CustomEvent<Theme>(THEME_EVENT, { detail: next }),
+            );
+        };
+
+        const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        if (!document.startViewTransition || reduceMotion) {
+            apply();
+
+            return;
+        }
+
+        // Circular reveal expanding from the toggle button.
+        // The ::view-transition pseudo inherits the root's zoom, so convert
+        // from visual px to the pseudo's unzoomed coordinate space.
+        const zoom =
+            Number(getComputedStyle(document.documentElement).zoom) || 1;
+        const rect = buttonRef.current?.getBoundingClientRect();
+        const cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+        const cy = rect ? rect.top + rect.height / 2 : 0;
+        const x = cx / zoom;
+        const y = cy / zoom;
+        const radius =
+            Math.hypot(
+                Math.max(cx, window.innerWidth - cx),
+                Math.max(cy, window.innerHeight - cy),
+            ) / zoom;
+
+        document.startViewTransition(apply).ready.then(() => {
+            document.documentElement.animate(
+                {
+                    clipPath: [
+                        `circle(0px at ${x}px ${y}px)`,
+                        `circle(${radius}px at ${x}px ${y}px)`,
+                    ],
+                },
+                {
+                    duration: 500,
+                    easing: "ease-in-out",
+                    pseudoElement: "::view-transition-new(root)",
+                },
+            );
+        });
     };
 
     return (
         <button
+            ref={buttonRef}
             className="theme-toggle"
             onClick={toggle}
             aria-label="Toggle theme"
