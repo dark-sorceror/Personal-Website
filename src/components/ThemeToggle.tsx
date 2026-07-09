@@ -91,7 +91,9 @@ export function ThemeToggle() {
             return;
         }
 
-        // Circular reveal from the button, measured in visual viewport px
+        // Circular reveal from the button. Percentages resolve against the
+        // pseudo-element's own box, so the math holds in every browser
+        // regardless of how it scales the view transition layer.
         const rect = buttonRef.current?.getBoundingClientRect();
         const cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
         const cy = rect ? rect.top + rect.height / 2 : 0;
@@ -99,34 +101,23 @@ export function ThemeToggle() {
             Math.max(cx, window.innerWidth - cx),
             Math.max(cy, window.innerHeight - cy),
         );
+        const x = (cx / window.innerWidth) * 100;
+        const y = (cy / window.innerHeight) * 100;
+        // A circle() percentage radius resolves against diagonal / sqrt(2)
+        const radius =
+            (spread /
+                (Math.hypot(window.innerWidth, window.innerHeight) /
+                    Math.SQRT2)) *
+            100;
 
         document
             .startViewTransition(apply)
             .ready.then(() => {
-                // Browsers disagree on whether ::view-transition pseudos
-                // inherit the root zoom; measure their space instead of guessing
-                const vtWidth = parseFloat(
-                    getComputedStyle(
-                        document.documentElement,
-                        "::view-transition",
-                    ).width,
-                );
-                const zoom =
-                    Number(getComputedStyle(document.documentElement).zoom) ||
-                    1;
-                const scale =
-                    Number.isFinite(vtWidth) && vtWidth > 0
-                        ? vtWidth / window.innerWidth
-                        : 1 / zoom;
-                const x = cx * scale;
-                const y = cy * scale;
-                const radius = spread * scale;
-
                 document.documentElement.animate(
                     {
                         clipPath: [
-                            `circle(0px at ${x}px ${y}px)`,
-                            `circle(${radius}px at ${x}px ${y}px)`,
+                            `circle(0% at ${x}% ${y}%)`,
+                            `circle(${radius}% at ${x}% ${y}%)`,
                         ],
                     },
                     {
