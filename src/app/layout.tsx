@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
     title: "Hao Yan",
     description:
-        "Hao Yan — Software Engineer — TraceRoot.AI (YC S25) · McMaster University",
+        "Hao Yan · SWE @ TraceRoot.AI (YC S25) · SWE @ McMaster University",
 };
 
 export default function RootLayout({

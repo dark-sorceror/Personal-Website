@@ -91,24 +91,37 @@ export function ThemeToggle() {
             return;
         }
 
-        // Circular reveal from the button; ::view-transition pseudos inherit
-        // the root zoom, so convert visual px to their unzoomed space.
-        const zoom =
-            Number(getComputedStyle(document.documentElement).zoom) || 1;
+        // Circular reveal from the button, measured in visual viewport px
         const rect = buttonRef.current?.getBoundingClientRect();
         const cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
         const cy = rect ? rect.top + rect.height / 2 : 0;
-        const x = cx / zoom;
-        const y = cy / zoom;
-        const radius =
-            Math.hypot(
-                Math.max(cx, window.innerWidth - cx),
-                Math.max(cy, window.innerHeight - cy),
-            ) / zoom;
+        const spread = Math.hypot(
+            Math.max(cx, window.innerWidth - cx),
+            Math.max(cy, window.innerHeight - cy),
+        );
 
         document
             .startViewTransition(apply)
             .ready.then(() => {
+                // Browsers disagree on whether ::view-transition pseudos
+                // inherit the root zoom; measure their space instead of guessing
+                const vtWidth = parseFloat(
+                    getComputedStyle(
+                        document.documentElement,
+                        "::view-transition",
+                    ).width,
+                );
+                const zoom =
+                    Number(getComputedStyle(document.documentElement).zoom) ||
+                    1;
+                const scale =
+                    Number.isFinite(vtWidth) && vtWidth > 0
+                        ? vtWidth / window.innerWidth
+                        : 1 / zoom;
+                const x = cx * scale;
+                const y = cy * scale;
+                const radius = spread * scale;
+
                 document.documentElement.animate(
                     {
                         clipPath: [
