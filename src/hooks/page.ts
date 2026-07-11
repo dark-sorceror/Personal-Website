@@ -59,7 +59,7 @@ export function usePageTracking() {
                 return `[ Visited ${e.label} ]`;
             });
 
-            const patched = JSON.parse(JSON.stringify(embedPayload)) as {
+            const patched = structuredClone(embedPayload) as {
                 embeds: Array<{
                     fields: Array<{
                         name: string;
