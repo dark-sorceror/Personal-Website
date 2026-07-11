@@ -49,6 +49,9 @@ export function DotCanvas() {
         let rows = 0;
         let baseColor = "rgba(255, 255, 255, 0.06)";
         let activeColor = "rgba(255, 255, 255, 0.26)";
+        let bgColor = "#0d0d0d";
+        let baseLayer: HTMLCanvasElement | null = null;
+        let deviceScale = 1;
         let lastMs = 0;
         let lastColorRead = 0;
         let raf = 0;
@@ -60,11 +63,53 @@ export function DotCanvas() {
 
         const readColors = () => {
             const styles = getComputedStyle(document.documentElement);
-
-            baseColor =
+            const nextBase =
                 styles.getPropertyValue("--dot-base").trim() || baseColor;
+
             activeColor =
                 styles.getPropertyValue("--dot-active").trim() || activeColor;
+            bgColor = styles.getPropertyValue("--bg").trim() || bgColor;
+
+            if (nextBase !== baseColor) {
+                baseColor = nextBase;
+                renderBaseLayer();
+            }
+        };
+
+        // The base grid never moves, so draw it once per resize/theme and
+        // blit it each frame instead of re-tracing ~3k arcs
+        const renderBaseLayer = () => {
+            const layer = document.createElement("canvas");
+
+            layer.width = canvas.width;
+            layer.height = canvas.height;
+
+            const layerCtx = layer.getContext("2d");
+
+            if (!layerCtx) {
+                baseLayer = null;
+
+                return;
+            }
+
+            layerCtx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
+            layerCtx.fillStyle = baseColor;
+
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    layerCtx.beginPath();
+                    layerCtx.arc(
+                        c * SPACING + SPACING / 2,
+                        r * SPACING + SPACING / 2,
+                        BASE_RADIUS,
+                        0,
+                        Math.PI * 2,
+                    );
+                    layerCtx.fill();
+                }
+            }
+
+            baseLayer = layer;
         };
 
         const setWrapped = (c: number, r: number) =>
@@ -121,6 +166,7 @@ export function DotCanvas() {
 
             width = canvas.clientWidth;
             height = canvas.clientHeight;
+            deviceScale = scale;
             canvas.width = Math.round(width * scale);
             canvas.height = Math.round(height * scale);
             ctx.setTransform(scale, 0, 0, scale, 0, 0);
@@ -131,6 +177,7 @@ export function DotCanvas() {
             life = new BitLife(cols, rows);
             brightness = new Float32Array(cols * rows);
             seed();
+            renderBaseLayer();
         };
 
         const drawDot = (x: number, y: number, radius: number) => {
@@ -142,30 +189,36 @@ export function DotCanvas() {
         const drawGrid = (levels: Float32Array | null) => {
             ctx.clearRect(0, 0, width, height);
 
+            if (baseLayer) {
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.drawImage(baseLayer, 0, 0);
+                ctx.restore();
+            }
+
+            if (!levels) return;
+
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
+                    const level = levels[c * rows + r];
+
+                    if (level <= 0.03) continue;
+
                     const x = c * SPACING + SPACING / 2;
                     const y = r * SPACING + SPACING / 2;
-                    const level = levels ? levels[c * rows + r] : 0;
 
-                    // Crossfade the base dot out as the active dot fades in
-                    const baseFade = Math.max(0, 1 - level * 2);
+                    // Cover the static base dot as the active dot fades in
+                    ctx.globalAlpha = Math.min(1, level * 2);
+                    ctx.fillStyle = bgColor;
+                    drawDot(x, y, BASE_RADIUS + 0.5);
 
-                    if (baseFade > 0.02) {
-                        ctx.globalAlpha = baseFade;
-                        ctx.fillStyle = baseColor;
-                        drawDot(x, y, BASE_RADIUS);
-                    }
-
-                    if (level > 0.03) {
-                        ctx.globalAlpha = Math.min(level, 1);
-                        ctx.fillStyle = activeColor;
-                        drawDot(
-                            x,
-                            y,
-                            BASE_RADIUS + BOOST_RADIUS * Math.min(level, 1.4),
-                        );
-                    }
+                    ctx.globalAlpha = Math.min(level, 1);
+                    ctx.fillStyle = activeColor;
+                    drawDot(
+                        x,
+                        y,
+                        BASE_RADIUS + BOOST_RADIUS * Math.min(level, 1.4),
+                    );
                 }
             }
 
@@ -186,14 +239,16 @@ export function DotCanvas() {
                 lastReseed = t;
             }
 
+            const fadeIn = Math.min(1, FADE_IN_RATE * dt);
+            const fadeOut = Math.min(1, FADE_OUT_RATE * dt);
+
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
                     const i = c * rows + r;
                     const target = life.get(c, r);
-                    const rate = target ? FADE_IN_RATE : FADE_OUT_RATE;
 
                     brightness[i] +=
-                        (target - brightness[i]) * Math.min(1, rate * dt);
+                        (target - brightness[i]) * (target ? fadeIn : fadeOut);
                 }
             }
 
