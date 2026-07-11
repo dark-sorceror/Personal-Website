@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 
-import { Inter, Libre_Baskerville } from "next/font/google";
+import { Libre_Baskerville } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
 import { DotCanvas } from "@/components/DotCanvas";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], weight: ["200", "300"] });
 const libreBaskerville = Libre_Baskerville({
     subsets: ["latin"],
     weight: ["400", "700"],
@@ -38,9 +37,7 @@ export default function RootLayout({
                     }}
                 />
             </head>
-            <body
-                className={`${inter.className} ${libreBaskerville.variable} antialiased`}
-            >
+            <body className={`${libreBaskerville.variable} antialiased`}>
                 <Analytics />
                 <DotCanvas />
                 {children}
