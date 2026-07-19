@@ -85,7 +85,12 @@ export function ThemeToggle() {
             "(prefers-reduced-motion: reduce)",
         ).matches;
 
-        if (!document.startViewTransition || reduceMotion) {
+        // On phones the circular reveal can't drag the browser chrome
+        // (address/tool bars) along, so they snap while the page wipes —
+        // fall back to the plain CSS background/color fade instead.
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+
+        if (!document.startViewTransition || reduceMotion || isMobile) {
             apply();
 
             return;

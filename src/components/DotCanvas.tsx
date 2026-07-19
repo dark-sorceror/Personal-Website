@@ -50,6 +50,9 @@ export function DotCanvas() {
         let baseColor = "rgba(255, 255, 255, 0.06)";
         let activeColor = "rgba(255, 255, 255, 0.26)";
         let bgColor = "#0d0d0d";
+        // Desktop shrinks the whole page via `zoom`; phones don't, so the
+        // live dots balloon. Trim their expansion back on small screens.
+        let activeBoost = BOOST_RADIUS;
         let baseLayer: HTMLCanvasElement | null = null;
         let deviceScale = 1;
         let lastMs = 0;
@@ -164,6 +167,10 @@ export function DotCanvas() {
                 Number(getComputedStyle(document.documentElement).zoom) || 1;
             const scale = (window.devicePixelRatio || 1) * zoom;
 
+            activeBoost = window.matchMedia("(max-width: 640px)").matches
+                ? 1.5
+                : BOOST_RADIUS;
+
             width = canvas.clientWidth;
             height = canvas.clientHeight;
             deviceScale = scale;
@@ -217,7 +224,7 @@ export function DotCanvas() {
                     drawDot(
                         x,
                         y,
-                        BASE_RADIUS + BOOST_RADIUS * Math.min(level, 1.4),
+                        BASE_RADIUS + activeBoost * Math.min(level, 1.4),
                     );
                 }
             }

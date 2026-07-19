@@ -104,7 +104,9 @@ main li {
     }
 
     body {
-        overflow: hidden;
+        /* Content is taller than the viewport on phones — let it scroll
+           instead of clipping the footer, but keep horizontal drift out */
+        overflow-x: hidden;
     }
 
     .sidebar::after {

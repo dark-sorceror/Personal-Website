@@ -3,7 +3,7 @@
 import { trackLinkClick } from "@/lib/session";
 
 export const linkClassName =
-    "text-(--link-color) font-medium underline decoration-[3px] underline-offset-[6px] decoration-(--link-color)/40 transition-[text-decoration-color] duration-300 hover:decoration-(--link-color)";
+    "text-(--link-color) font-medium underline decoration-[3px] underline-offset-[6px] decoration-(--link-color)/40 transition-[text-decoration-color] duration-300 hover:decoration-(--link-color) max-[640px]:decoration-[2px] max-[640px]:underline-offset-[3px]";
 
 export function InlineLink({
     href,

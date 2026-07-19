@@ -142,7 +142,7 @@ export default function Home() {
                             </li>
                         </ul>
                     </section>
-                    <footer className="flex items-center justify-between gap-[16px] pb-[80px] font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted)">
+                    <footer className="flex items-center justify-between gap-[16px] pb-[80px] font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted) max-[640px]:pb-[calc(96px+env(safe-area-inset-bottom,0px))]">
                         <span>
                             Last updated{" "}
                             {new Date().toLocaleDateString("en-US", {
