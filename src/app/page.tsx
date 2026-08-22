@@ -66,8 +66,8 @@ export default function Home() {
                                     src="/media/ycombinator_logo.png"
                                     alt="Y Combinator"
                                 />
-                                YC S25) — observability and self-healing for AI
-                                agents
+                                YC S25) — building infrastructure that lets AI
+                                agents debug and fix themselves
                             </li>
                             <li>
                                 Software Engineering @{" "}
@@ -82,8 +82,8 @@ export default function Home() {
                                 <InlineLink href="https://github.com/dark-sorceror/Lumen">
                                     Lumen
                                 </InlineLink>{" "}
-                                — a white-box research instrument for
-                                open-weight LLMs
+                                — probing what post-training actually does
+                                inside open-weight LLMs
                             </li>
                             <li>
                                 Embedded & Controls Software Lead @ McMaster
