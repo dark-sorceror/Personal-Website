@@ -53,7 +53,7 @@ export default function Home() {
                         <SectionLabel>Currently</SectionLabel>
                         <ul className={listClassName}>
                             <li>
-                                SWE @{" "}
+                                Founding Engineer @{" "}
                                 <Logo
                                     src="/media/traceroot_ai_logo.png"
                                     alt="TraceRoot.AI"
@@ -66,7 +66,8 @@ export default function Home() {
                                     src="/media/ycombinator_logo.png"
                                     alt="Y Combinator"
                                 />
-                                YC S25)
+                                YC S25) — observability and self-healing for AI
+                                agents
                             </li>
                             <li>
                                 Software Engineering @{" "}
@@ -77,15 +78,18 @@ export default function Home() {
                                 McMaster University (&apos;29)
                             </li>
                             <li>
+                                Building{" "}
+                                <InlineLink href="https://github.com/dark-sorceror/Lumen">
+                                    Lumen
+                                </InlineLink>{" "}
+                                — a white-box research instrument for
+                                open-weight LLMs
+                            </li>
+                            <li>
                                 Embedded & Controls Software Lead @ McMaster
                                 Exoskeleton
                             </li>
                             <li>AI/ML @ McMaster EcoCAR</li>
-                            <li>
-                                Exploring how transformers &quot;guess&quot; —
-                                probing entropy, priors, and zero-context
-                                inference
-                            </li>
                             <li>
                                 Reading{" "}
                                 <em>
