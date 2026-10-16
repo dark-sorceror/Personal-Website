@@ -56,6 +56,9 @@ export function usePageTracking() {
                 if (e.type === "page")
                     return e.engaged ? `; ${e.path} (20s+)` : `; ${e.path}`;
 
+                if (e.type === "photo")
+                    return `[ Viewed ${e.topic}: ${e.label} ]`;
+
                 return `[ Visited ${e.label} ]`;
             });
 

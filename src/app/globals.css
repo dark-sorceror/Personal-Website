@@ -113,3 +113,222 @@ main li {
         display: none;
     }
 }
+
+/* ---- Lightbox ------------------------------------------ */
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    /* Just enough tint to hold contrast — the page stays visible underneath,
+       blurred, rather than being swapped for a fresh background. */
+    background: color-mix(in srgb, var(--bg) 40%, transparent);
+    backdrop-filter: blur(14px) saturate(1.1);
+    animation: lightbox-in 0.25s ease both;
+}
+
+@keyframes lightbox-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.lightbox-figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    /* Definite, so the frame below has a real width to take 100% of */
+    width: min(1000px, 100%);
+    max-height: 100%;
+}
+
+/* Every photo gets the same box whatever its proportions, so the arrows,
+   caption and dots hold still while you step through a set — you keep
+   clicking the same spot instead of chasing the last image's edges. */
+.lightbox-frame {
+    position: relative;
+    /* flex: none — otherwise a long caption shrinks the box and the photo
+       size starts depending on its caption again. */
+    flex: none;
+    width: 100%;
+    height: min(68vh, 620px);
+    border: 1px solid var(--accent-line);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+}
+
+.lightbox-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 9px;
+}
+
+.lightbox-caption {
+    font-family: system-ui, sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Position in the set, without a counter to read: one dot per image, the
+   current one stretched into a bar. */
+.lightbox-dots {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.lightbox-dot {
+    display: flex;
+    padding: 8px 3px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.lightbox-dot span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent-line);
+    transition:
+        width 0.25s cubic-bezier(0.2, 0.8, 0.3, 1),
+        background 0.2s ease;
+}
+
+.lightbox-dot:hover span {
+    background: var(--text-muted);
+}
+
+.lightbox-dot[aria-current="true"] span,
+.lightbox-dot[aria-current="true"]:hover span {
+    width: 20px;
+    background: var(--link-color);
+}
+
+.lightbox-close {
+    position: fixed;
+    top: calc(20px + env(safe-area-inset-top, 0px));
+    right: 24px;
+    display: flex;
+    padding: 8px;
+    border: 1px solid var(--accent-line);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Each arrow is the whole side of the photo: a scrim that fades up as the
+   pointer moves into that third, with the chevron riding in it. The button
+   reaches past the frame as well, so a click just outside the photo counts. */
+.lightbox-nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    width: calc(26% + 46px);
+    max-width: 300px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.lightbox-nav--prev {
+    left: -46px;
+    padding-left: 46px;
+}
+
+.lightbox-nav--next {
+    right: -46px;
+    padding-right: 46px;
+}
+
+.lightbox-nav:hover,
+.lightbox-nav:focus-visible {
+    opacity: 1;
+}
+
+/* Nothing to hover on a touch screen, so leave them showing */
+@media (hover: none) {
+    .lightbox-nav {
+        opacity: 1;
+    }
+}
+
+/* The visible half: covers the photo's edge only, never the gap beside it */
+.lightbox-nav-scrim {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+}
+
+.lightbox-nav--prev .lightbox-nav-scrim {
+    justify-content: flex-start;
+    border-radius: 9px 0 0 9px;
+    background: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--bg) 85%, transparent),
+        color-mix(in srgb, var(--bg) 55%, transparent) 45%,
+        transparent
+    );
+}
+
+.lightbox-nav--next .lightbox-nav-scrim {
+    justify-content: flex-end;
+    border-radius: 0 9px 9px 0;
+    background: linear-gradient(
+        to left,
+        color-mix(in srgb, var(--bg) 85%, transparent),
+        color-mix(in srgb, var(--bg) 55%, transparent) 45%,
+        transparent
+    );
+}
+
+.lightbox-close:hover {
+    color: var(--link-color);
+    border-color: var(--link-color);
+}
+
+@media (max-width: 640px) {
+    .lightbox {
+        padding: 56px 12px;
+    }
+
+    .lightbox-frame {
+        height: min(58vh, 460px);
+    }
+
+    .lightbox-nav {
+        width: calc(30% + 20px);
+    }
+
+    .lightbox-nav--prev {
+        left: -20px;
+        padding-left: 20px;
+    }
+
+    .lightbox-nav--next {
+        right: -20px;
+        padding-right: 20px;
+    }
+}

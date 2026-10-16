@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-labelledby="title desc">
+<title id="title">A heartbeat must keep changing to show the supervisor is alive</title>
+<desc id="desc">Safe verdicts arrive repeatedly, then stop. The supervisor continues toggling only until the last verdict expires after 200 milliseconds. This is a conceptual timing illustration, not measured data; the physical connection to the drive board is unfinished.</desc>
+<rect width="1000" height="300" rx="14" fill="#f8fafc"/>
+<rect x="480" y="74" width="320" height="169" rx="6" fill="#fff7ed"/>
+<rect x="800" y="74" width="150" height="169" rx="6" fill="#f1f5f9"/>
+<g font-family="Arial, sans-serif" fill="#172b4d">
+<text x="30" y="38" font-size="21" font-weight="bold">Silence expires. A frozen signal cannot count as a heartbeat.</text>
+<text x="30" y="128" font-size="17">SAFE verdicts</text>
+<text x="30" y="206" font-size="17">GPIO heartbeat</text>
+<path d="M220 125H950" stroke="#cbd5e1" stroke-width="2"/>
+<g fill="#0d9488"><circle cx="240" cy="125" r="6"/><circle cx="320" cy="125" r="6"/><circle cx="400" cy="125" r="6"/><circle cx="480" cy="125" r="6"/></g>
+<text x="535" y="114" font-size="16" fill="#9a3412">No new verdicts</text>
+<path d="M220 222H240V180H280V222H320V180H360V222H400V180H440V222H480V180H520V222H560V180H600V222H640V180H680V222H720V180H760V222H800" fill="none" stroke="#0d9488" stroke-width="3"/>
+<path d="M800 222H950" fill="none" stroke="#64748b" stroke-width="3"/>
+<path d="M480 74V242M800 74V242" stroke="#94a3b8" stroke-dasharray="4 5"/>
+<path d="M480 65H800M480 60V70M800 60V70" stroke="#9a3412"/>
+<text x="640" y="58" text-anchor="middle" font-size="15" fill="#9a3412">200 ms freshness window</text>
+<text x="870" y="158" text-anchor="middle" font-size="16" font-weight="bold">Expired</text>
+<text x="870" y="181" text-anchor="middle" font-size="15">No new edges</text>
+<text x="30" y="278" font-size="14" fill="#64748b">Conceptual timing, not a measurement. The physical heartbeat link to the drivetrain is unfinished.</text>
+</g></svg>

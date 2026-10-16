@@ -2,6 +2,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { InlineLink, linkClassName } from "@/components/InlineLink";
 import { SidebarLinks } from "@/components/SidebarLinks";
 import { Bookshelf } from "@/components/Bookshelf";
+import { Projects } from "@/components/Projects";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
     return (
@@ -79,19 +80,21 @@ export default function Home() {
                                 McMaster University (&apos;29)
                             </li>
                             <li>
-                                Building{" "}
-                                <InlineLink href="https://github.com/dark-sorceror/Lumen">
-                                    Lumen
-                                </InlineLink>{" "}
-                                — a debugger for LLM context, measuring from
-                                inside the model why one edit can cost 99×
-                                another of the same size
+                                Embedded & Controls Software Lead @{" "}
+                                <Logo
+                                    src="/media/mcmaster_exoskeleton_logo.png"
+                                    alt="McMaster Exoskeleton"
+                                />
+                                McMaster Exoskeleton
                             </li>
                             <li>
-                                Embedded & Controls Software Lead @ McMaster
-                                Exoskeleton
+                                AI/ML @{" "}
+                                <Logo
+                                    src="/media/mcmaster_ecocar_logo.jpg"
+                                    alt="McMaster EcoCAR"
+                                />
+                                McMaster EcoCAR
                             </li>
-                            <li>AI/ML @ McMaster EcoCAR</li>
                         </ul>
                     </section>
                     <section className="mb-[28px]">
@@ -125,13 +128,6 @@ export default function Home() {
                                 </InlineLink>
                             </li>
                             <li>
-                                Created{" "}
-                                <InlineLink href="https://github.com/dark-sorceror/Neurinese">
-                                    Neurinese
-                                </InlineLink>{" "}
-                                — Grammarly/Copilot for handwritten Chinese
-                            </li>
-                            <li>
                                 <Logo
                                     src="/media/ib_logo.png"
                                     alt="International Baccalaureate"
@@ -139,6 +135,10 @@ export default function Home() {
                                 IB Diploma Graduate
                             </li>
                         </ul>
+                    </section>
+                    <section className="mb-[28px]">
+                        <SectionLabel>Projects</SectionLabel>
+                        <Projects />
                     </section>
                     <section className="mb-[60px]">
                         <SectionLabel>Bookshelf</SectionLabel>

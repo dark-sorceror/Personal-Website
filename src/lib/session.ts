@@ -1,6 +1,7 @@
 export type SessionEvent =
     | { type: "page"; path: string; enteredAt: number; engaged: boolean }
-    | { type: "click"; label: string; href: string; timestamp: number };
+    | { type: "click"; label: string; href: string; timestamp: number }
+    | { type: "photo"; topic: string; label: string; timestamp: number };
 
 interface VisitorSessionState {
     messageId: string | null;
@@ -21,6 +22,15 @@ export function trackLinkClick(label: string, href: string) {
         type: "click",
         label,
         href,
+        timestamp: Date.now(),
+    });
+}
+
+export function trackLightboxView(topic: string, label: string) {
+    visitorSession.events.push({
+        type: "photo",
+        topic,
+        label,
         timestamp: Date.now(),
     });
 }

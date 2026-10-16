@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="title desc">
+<title id="title">Lumen: a language model, opened up</title><desc id="desc">An editable context feeds a hand-owned MLX decode loop for Qwen3-8B. The workbench exposes KV cache edits, activation taps, attention taps, and token log probabilities.</desc>
+<defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#e2e2e7" opacity=".12"/></pattern></defs>
+<rect width="1200" height="700" fill="#141414"/><rect width="1200" height="700" fill="url(#grid)"/>
+<g font-family="Arial,Helvetica,sans-serif"><text x="62" y="75" font-size="21" letter-spacing="3" fill="#a0a0a5">LUMEN / INSIDE THE DECODE LOOP</text>
+<g fill="none" stroke="#696970" stroke-width="2"><path d="M320 278H425M780 278H895M600 353V430M205 328V465H345M990 328V465H855"/><path d="m414 271 11 7-11 7m470-14 11 7-11 7"/></g>
+<rect x="65" y="228" width="255" height="100" rx="8" fill="#1c1c1d" stroke="#45454b"/><text x="93" y="272" fill="#f1f1f2" font-size="25">Editable context</text><text x="93" y="303" fill="#b3b3ba" font-size="18">Edit · preview · continue</text>
+<rect x="425" y="203" width="355" height="150" rx="8" fill="#2d2d33" stroke="#e2e2e7"/><text x="451" y="241" fill="#e2e2e7" font-size="17" letter-spacing="2">QWEN3-8B / MLX</text><text x="451" y="287" fill="#f1f1f2" font-size="31">One token at a time.</text><text x="451" y="325" fill="#c0c0c8" font-size="20">A hand-owned decode loop</text>
+<rect x="895" y="228" width="240" height="100" rx="8" fill="#1c1c1d" stroke="#45454b"/><text x="924" y="271" fill="#f1f1f2" font-size="25">Next token</text><text x="924" y="303" fill="#b3b3ba" font-size="18">With token logprobs</text>
+<rect x="345" y="430" width="510" height="96" rx="8" fill="#1c1c1d" stroke="#45454b"/><text x="379" y="471" fill="#e2e2e7" font-size="23">KV cache · activations · attention</text><text x="379" y="502" fill="#b3b3ba" font-size="19">Inspect and intervene between tokens</text>
+<text x="62" y="637" fill="#a0a0a5" font-size="20">Understand the model. Change the context. Keep going.</text><text x="1135" y="637" text-anchor="end" fill="#e2e2e7" font-size="20">01 / 02</text></g></svg>
