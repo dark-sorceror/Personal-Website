@@ -98,7 +98,7 @@ export function SidebarLinks() {
             {LINKS.map(({ href, label, Icon }) => (
                 <a
                     key={label}
-                    className="flex text-(--link-color) opacity-85 [transition:opacity_0.2s_ease,color_0.3s_ease] hover:opacity-100"
+                    className="flex text-(--link-color) opacity-85 [transition:opacity_0.2s_ease,color_0.3s_ease] hover:opacity-100 [&_svg]:overflow-visible"
                     href={href}
                     target={href.startsWith("http") ? "_blank" : undefined}
                     rel={
