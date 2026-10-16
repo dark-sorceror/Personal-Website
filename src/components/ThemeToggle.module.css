@@ -1,0 +1,73 @@
+/* Sun <-> moon morph, driven by <html data-theme> so the right glyph is
+   painted before hydration and both toggle instances stay in sync. */
+.icon {
+    display: block;
+    overflow: visible;
+}
+
+.icon * {
+    transform-origin: 12px 12px;
+    transition:
+        transform 0.5s cubic-bezier(0.34, 1.4, 0.64, 1),
+        opacity 0.3s ease;
+}
+
+/* Dark theme: sun visible, moon tucked away */
+.core {
+    transform: scale(1);
+}
+
+.rays line {
+    transform: rotate(0deg) scale(1);
+}
+
+/* Rays retract one after another, like a dial winding down */
+.rays line:nth-child(2) {
+    transition-delay: 25ms;
+}
+.rays line:nth-child(3) {
+    transition-delay: 50ms;
+}
+.rays line:nth-child(4) {
+    transition-delay: 75ms;
+}
+.rays line:nth-child(5) {
+    transition-delay: 100ms;
+}
+.rays line:nth-child(6) {
+    transition-delay: 125ms;
+}
+.rays line:nth-child(7) {
+    transition-delay: 150ms;
+}
+.rays line:nth-child(8) {
+    transition-delay: 175ms;
+}
+
+.moon {
+    opacity: 0;
+    transform: rotate(-120deg) scale(0.3);
+}
+
+/* Light theme: sun collapses into the moon */
+:global(:root[data-theme="light"]) .core {
+    opacity: 0;
+    transform: scale(1.7);
+}
+
+:global(:root[data-theme="light"]) .rays line {
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
+}
+
+:global(:root[data-theme="light"]) .moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+    transition-delay: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .icon * {
+        transition: none !important;
+    }
+}

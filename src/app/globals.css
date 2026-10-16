@@ -54,20 +54,6 @@ body {
 
 /* Dot grid background is drawn by the DotCanvas component */
 
-/* Theme switch: circular reveal via the View Transitions API */
-::view-transition-old(root),
-::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-}
-
-/* Snap colors instantly while the reveal circle expands */
-html:active-view-transition *,
-html:active-view-transition *::before,
-html:active-view-transition *::after {
-    transition: none !important;
-}
-
 /* Space between bullet marker and text */
 main li {
     padding-left: 6px;

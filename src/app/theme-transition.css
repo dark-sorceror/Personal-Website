@@ -1,0 +1,37 @@
+/* Theme switch: "negative" circular reveal (see ThemeToggle.tsx).
+   The theme flips instantly; this overlay inverts everything outside a
+   circle that grows from the toggle, so the not-yet-revealed area still
+   reads as the old theme until the circle swallows the screen. */
+.theme-reveal {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    pointer-events: none;
+    background: #fff;
+    mix-blend-mode: difference;
+}
+
+/* Photos and brand-coloured logos look the same in both themes, so
+   ThemeToggle marks them: lifted above the inverting layer where
+   possible, otherwise pre-inverted (inverted twice = original) until the
+   circle reaches them. Monochrome currentColor icons invert like text. */
+[data-theme-lift] {
+    z-index: 2147483647;
+}
+
+[data-theme-lift="static"] {
+    position: relative;
+}
+
+[data-theme-counter] {
+    filter: invert(1);
+}
+
+/* Snap colours instantly while the reveal runs; the toggle icon keeps
+   its own transitions so it can morph in step with the circle */
+html[data-theme-switching],
+html[data-theme-switching] *:not([data-theme-icon] *),
+html[data-theme-switching] *:not([data-theme-icon] *)::before,
+html[data-theme-switching] *:not([data-theme-icon] *)::after {
+    transition: none !important;
+}

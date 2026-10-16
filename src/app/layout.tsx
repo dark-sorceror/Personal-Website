@@ -5,6 +5,7 @@ import { Analytics } from "@/components/Analytics";
 import { DotCanvas } from "@/components/DotCanvas";
 
 import "./globals.css";
+import "./theme-transition.css";
 
 const libreBaskerville = Libre_Baskerville({
     subsets: ["latin"],
