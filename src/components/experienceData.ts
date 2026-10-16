@@ -39,7 +39,7 @@ export const CURRENTLY: Entry[] = [
             alt: "Y Combinator",
             text: "YC S25",
         },
-        location: "San Francisco, CA · Remote",
+        location: "San Francisco, CA",
         description:
             "building infrastructure that lets AI agents debug and fix themselves",
     },
@@ -62,7 +62,7 @@ export const CURRENTLY: Entry[] = [
             "500 Hz IMU acquisition and a distributed CAN network for a powered exoskeleton",
     },
     {
-        roles: [{ title: "AI/ML", start: "" }],
+        roles: [{ title: "AI/ML", start: "Nov 2025" }],
         company: "McMaster EcoCAR",
         logo: "/media/mcmaster_ecocar_logo.jpg",
         location: "Hamilton, ON",

@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 
-import { InlineLink } from "@/components/InlineLink";
 import { GALLERIES } from "@/components/galleryData";
 import { Lightbox } from "@/components/Lightbox";
 import { PROJECTS } from "@/components/projectsData";
-import { trackLightboxView } from "@/lib/session";
+import { trackLightboxView, trackLinkClick } from "@/lib/session";
 import styles from "./Projects.module.css";
 
 // A row of project tiles, laid out like the bookshelf: a cover photo, then
@@ -53,14 +52,23 @@ export function Projects() {
                                         )}
                                     </button>
                                 )}
-                                <p className={styles.title}>
-                                    <InlineLink href={project.href}>
-                                        {project.title}
-                                    </InlineLink>
-                                </p>
-                                <p className={styles.description}>
+                                <a
+                                    href={project.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.title}
+                                    onClick={() =>
+                                        trackLinkClick(
+                                            project.title,
+                                            project.href,
+                                        )
+                                    }
+                                >
+                                    {project.title}
+                                </a>
+                                <span className={styles.description}>
                                     {project.description}
-                                </p>
+                                </span>
                             </li>
                         );
                     })}

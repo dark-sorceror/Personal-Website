@@ -1,37 +1,20 @@
-/* Theme switch: "negative" circular reveal (see ThemeToggle.tsx).
-   The theme flips instantly; this overlay inverts everything outside a
-   circle that grows from the toggle, so the not-yet-revealed area still
-   reads as the old theme until the circle swallows the screen. */
-.theme-reveal {
-    position: fixed;
-    inset: 0;
-    z-index: 2147483646;
-    pointer-events: none;
-    background: #fff;
-    mix-blend-mode: difference;
+/* Theme switch (see ThemeToggle.tsx): while data-theme-fading is set,
+   every colour on the page fades to the new theme together. The toggle
+   icon keeps its own transitions so its sun/moon morph still plays. */
+html[data-theme-fading],
+html[data-theme-fading] *:not([data-theme-icon] *),
+html[data-theme-fading] *::before,
+html[data-theme-fading] *::after {
+    transition-property:
+        color, background-color, border-color, text-decoration-color, fill,
+        stroke, box-shadow, outline-color !important;
+    transition-duration: 350ms !important;
+    transition-timing-function: ease !important;
+    transition-delay: 0s !important;
 }
 
-/* Photos and brand-coloured logos look the same in both themes, so
-   ThemeToggle marks them: lifted above the inverting layer where
-   possible, otherwise pre-inverted (inverted twice = original) until the
-   circle reaches them. Monochrome currentColor icons invert like text. */
-[data-theme-lift] {
-    z-index: 2147483647;
-}
-
-[data-theme-lift="static"] {
-    position: relative;
-}
-
-[data-theme-counter] {
-    filter: invert(1);
-}
-
-/* Snap colours instantly while the reveal runs; the toggle icon keeps
-   its own transitions so it can morph in step with the circle */
-html[data-theme-switching],
-html[data-theme-switching] *:not([data-theme-icon] *),
-html[data-theme-switching] *:not([data-theme-icon] *)::before,
-html[data-theme-switching] *:not([data-theme-icon] *)::after {
-    transition: none !important;
+/* Keep the hand cursor through the switch (see holdCursor) */
+html[data-theme-cursor],
+html[data-theme-cursor] * {
+    cursor: pointer !important;
 }

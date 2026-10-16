@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+    /* Native scrollbars and form controls follow the theme */
+    color-scheme: dark;
     --bg: #0d0d0d;
     --text: #dddddd;
     --text-muted: rgba(255, 255, 255, 0.5);
@@ -11,6 +13,7 @@
 }
 
 [data-theme="light"] {
+    color-scheme: light;
     --bg: #f7f5f0;
     --text: #4a4a4a;
     --text-muted: rgba(0, 0, 0, 0.5);

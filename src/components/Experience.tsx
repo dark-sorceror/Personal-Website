@@ -10,7 +10,7 @@ function Logo({ src, alt }: { src: string; alt: string }) {
         <img
             src={src}
             alt={alt}
-            className="relative -top-[2px] mr-[8px] inline h-[27px] w-[27px] object-contain align-middle"
+            className="relative -top-[2px] mr-[5px] inline h-[27px] w-[27px] object-contain align-middle"
         />
     );
 }

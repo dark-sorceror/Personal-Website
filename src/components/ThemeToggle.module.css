@@ -3,6 +3,10 @@
 .icon {
     display: block;
     overflow: visible;
+    /* The morphing shapes would keep changing what's under the pointer
+       mid-animation, which makes browsers drop the hand cursor. Let the
+       button, which never moves, be the only hover target. */
+    pointer-events: none;
 }
 
 .icon * {

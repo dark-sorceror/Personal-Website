@@ -20,9 +20,10 @@ const EPSILON = 0.003;
 // Reduced motion: evolve this many generations off-screen, show one frame
 const STATIC_GENERATIONS = 60;
 
-// Cursor as a heat source: extra spontaneous births around the pointer
-const HEAT_RADIUS = 3.5; // cells
-const HEAT_PEAK = 0.25; // birth chance per generation at the pointer
+// Cursor as a plough: live cells under the pointer are shoved out of its
+// way, so moving through the board scrambles whatever pattern was there
+const PUSH_RADIUS = 2.5; // cells
+const PUSH_SCATTER = 1.5; // extra random cells a shoved cell may fly
 // Soft lift on the base dots under the pointer (render only)
 const LIFT_RADIUS = 4 * SPACING; // CSS px
 const LIFT_ALPHA = 0.9; // of --dot-active, at the pointer
@@ -31,19 +32,26 @@ const POINTER_EASE = 12; // eased position lerp per second
 const WAKE_HOLD_S = 0.2; // full strength this long after the last move...
 const WAKE_FADE_S = 0.6; // ...then fade out over this long
 
-// Click / tap: shockwave ring plus a glider burst
-const RING_S = 0.6;
-const RING_REACH = 9 * SPACING; // final radius, CSS px
-const RING_WIDTH = 1.4 * SPACING;
-const RING_GROW = 1.6; // extra px of radius on the ring front
+// Click: a shockwave that blasts the cells around it outward, then a
+// glider burst from the cleared centre
+// The wave is a ripple: a tall crest at the front with smaller crests and
+// troughs trailing behind it, so dots swell well past their live size on
+// the crests and shrink to pinpricks in the troughs
+const RING_S = 1.3;
+const RING_REACH = 13 * SPACING; // how far the front travels, CSS px
+const RING_WAVELENGTH = 2.4 * SPACING;
+const RING_TRAIL = 1.4 * RING_WAVELENGTH; // how fast the trailing ripples die
+const RING_GROW = 7; // extra px of radius on the tallest crest
+const RING_SHRINK = 0.8; // fraction of a base dot lost in the deepest trough
 const MAX_RINGS = 4;
 const BURST_GAP = 2; // cells between the click and each glider
-const BURST_CLEAR = 6; // cells swept empty so the gliders launch clean
+const BURST_CLEAR = 6; // cells blasted outward so the gliders launch clean
 const FAST_SPEED = 1400; // CSS px/s; above this a click also fires a ship
 const FAST_WINDOW_S = 0.1; // ...measured over this much recent motion
 const TAP_SLOP = 8; // CSS px a tap may wander before it counts as a drag
 
-// Click-and-drag paints live cells (mouse only)
+// Click-and-drag paints live cells. Every effect is mouse only: on phones
+// the dots just run on their own.
 const PAINT_EVERY_MS = 24;
 
 // Targets that keep their own click behaviour
@@ -131,7 +139,9 @@ export function DotCanvas() {
         // Recent pointer samples, for the throw velocity at click time
         const trail: { x: number; y: number; t: number }[] = [];
         let lastMoveAt = -Infinity;
-        let heatFrom = -Infinity; // a click spends the heat until the next move
+        let pushFrom = -Infinity; // a click pauses the plough until the next move
+        let lastPushC = NaN;
+        let lastPushR = NaN;
         let lift = 0;
         let hovering = false;
 
@@ -308,9 +318,10 @@ export function DotCanvas() {
             canvas.height = Math.round(height * scale);
             ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
-            const rect = canvas.getBoundingClientRect();
-
-            pointerScale = rect.width > 0 ? width / rect.width : 1;
+            // The canvas fills the viewport and clientX is in viewport px,
+            // so undo the root zoom. Not measured from getBoundingClientRect,
+            // which older Safari reports without the zoom applied.
+            pointerScale = 1 / zoom;
 
             cols = Math.ceil(width / SPACING);
             rows = Math.ceil(height / SPACING);
@@ -376,25 +387,44 @@ export function DotCanvas() {
                     continue;
                 }
 
-                // Ease out: fast launch, settling as it spreads and fades
-                const radius = RING_REACH * (1 - (1 - p) ** 2);
+                // Ease out: fast launch, slowing as it spreads and fades
+                const front = RING_REACH * (1 - (1 - p) ** 2);
                 const fade = 1 - p;
+                const lead = RING_WAVELENGTH / 4;
 
-                forDotsNear(
-                    rings[i].x,
-                    rings[i].y,
-                    radius + RING_WIDTH,
-                    (x, y, d) => {
-                        const k = 1 - Math.abs(d - radius) / RING_WIDTH;
+                forDotsNear(rings[i].x, rings[i].y, front + lead, (x, y, d) => {
+                    // Distance behind the front; the wave hasn't reached
+                    // dots ahead of it, apart from a short rise
+                    const u = front - d;
+                    const rise = u >= 0 ? 1 : Math.max(0, 1 + u / lead) ** 2;
+                    // Spreading thins the wave, like a real ripple
+                    const spread = 1 / (1 + d / (10 * SPACING));
+                    const a =
+                        Math.cos(
+                            (2 * Math.PI * Math.max(u, 0)) / RING_WAVELENGTH,
+                        ) *
+                        Math.exp(-Math.max(u, 0) / RING_TRAIL) *
+                        rise *
+                        spread *
+                        fade;
 
-                        if (k <= 0) return;
+                    if (Math.abs(a) < 0.02) return;
 
-                        const f = k * fade;
+                    if (a > 0) {
+                        ctx.fillStyle = activeColor;
+                        ctx.globalAlpha = Math.min(1, a * 2.5);
+                        drawDot(x, y, BASE_RADIUS + RING_GROW * a);
 
-                        ctx.globalAlpha = Math.min(1, f);
-                        drawDot(x, y, BASE_RADIUS + RING_GROW * f);
-                    },
-                );
+                        return;
+                    }
+
+                    // Trough: hide the base dot, then draw it smaller
+                    ctx.globalAlpha = 1;
+                    ctx.fillStyle = bgColor;
+                    drawDot(x, y, BASE_RADIUS + 0.5);
+                    ctx.fillStyle = baseColor;
+                    drawDot(x, y, BASE_RADIUS * (1 + RING_SHRINK * a));
+                });
             }
 
             ctx.globalAlpha = 1;
@@ -453,33 +483,71 @@ export function DotCanvas() {
             return k * k * (3 - 2 * k);
         };
 
-        // Locally raised temperature: births only, so the pointer adds
-        // energy to the board rather than erasing what's there
-        const applyHeat = (t: number) => {
-            if (!hovering || t < heatFrom) return;
-
-            const heat = wake(t, heatFrom);
-
-            if (heat <= 0) return;
-
-            const cc = Math.floor(px / SPACING);
-            const cr = Math.floor(py / SPACING);
-            const reach = Math.ceil(HEAT_RADIUS);
+        // Move every live cell within `radius` of (x, y) out to just past
+        // it, along the line from the centre, carrying its glow with it.
+        // Cells landing on each other merge, so the shove destroys as well
+        // as displaces. Cells on a glider's calm lane are left alone.
+        const shove = (x: number, y: number, radius: number) => {
+            // Dots sit at cell centres
+            const fc = x / SPACING - 0.5;
+            const fr = y / SPACING - 0.5;
+            const reach = Math.ceil(radius);
+            const c0 = Math.round(fc);
+            const r0 = Math.round(fr);
+            const moved: [number, number, number][] = [];
 
             for (let dc = -reach; dc <= reach; dc++) {
                 for (let dr = -reach; dr <= reach; dr++) {
-                    const d = Math.hypot(dc, dr);
+                    const c = (((c0 + dc) % cols) + cols) % cols;
+                    const r = (((r0 + dr) % rows) + rows) % rows;
+                    const ox = c0 + dc - fc;
+                    const oy = r0 + dr - fr;
+                    const d = Math.hypot(ox, oy);
 
-                    if (d > HEAT_RADIUS) continue;
+                    if (d > radius || !life.get(c, r)) continue;
+                    if (!isCalm(c0 + dc, r0 + dr)) continue;
 
-                    const chance =
-                        HEAT_PEAK * heat * (1 - d / HEAT_RADIUS) ** 2;
+                    const i = c * rows + r;
+                    const angle =
+                        d > 0.01
+                            ? Math.atan2(oy, ox)
+                            : Math.random() * Math.PI * 2;
+                    const to = radius + 0.5 + Math.random() * PUSH_SCATTER;
 
-                    if (Math.random() < chance && isCalm(cc + dc, cr + dr)) {
-                        setWrapped(cc + dc, cr + dr);
-                    }
+                    life.set(c, r, 0);
+                    moved.push([
+                        Math.round(fc + Math.cos(angle) * to),
+                        Math.round(fr + Math.sin(angle) * to),
+                        brightness[i],
+                    ]);
+                    brightness[i] = 0;
                 }
             }
+
+            for (const [c, r, glow] of moved) {
+                if (!isCalm(c, r)) continue;
+
+                const wc = ((c % cols) + cols) % cols;
+                const wr = ((r % rows) + rows) % rows;
+                const i = wc * rows + wr;
+
+                life.set(wc, wr, 1);
+                brightness[i] = Math.max(brightness[i], glow);
+            }
+        };
+
+        // Plough along the pointer's path, once per cell it enters
+        const plough = (t: number) => {
+            if (!hovering || t < pushFrom) return;
+
+            const c = Math.floor(px / SPACING);
+            const r = Math.floor(py / SPACING);
+
+            if (c === lastPushC && r === lastPushR) return;
+
+            lastPushC = c;
+            lastPushR = r;
+            shove(px, py, PUSH_RADIUS);
         };
 
         // Shortest toroidal offset along one axis
@@ -509,7 +577,6 @@ export function DotCanvas() {
                     lanes.length ? isCalm : undefined,
                 );
                 generation++;
-                applyHeat(t);
                 lastTick = t;
             }
 
@@ -520,6 +587,8 @@ export function DotCanvas() {
                 inject();
                 lastReseed = t;
             }
+
+            plough(t);
 
             const fadeIn = Math.min(1, FADE_IN_RATE * dt);
             const fadeOut = Math.min(1, FADE_OUT_RATE * dt);
@@ -588,6 +657,10 @@ export function DotCanvas() {
         const isInteractive = (target: EventTarget | null) =>
             !(target instanceof Element) || !!target.closest(INTERACTIVE);
 
+        // Ships are stamped after the blast, but their lanes are claimed
+        // first so the blast leaves their paths clear
+        let stamps: (() => void)[] = [];
+
         // A glider mirrored by (sc, sr) flies toward (sc, sr) at c/4
         const launchGlider = (
             c0: number,
@@ -595,7 +668,7 @@ export function DotCanvas() {
             sc: number,
             sr: number,
         ) => {
-            stampAt(GLIDER, c0, r0, sc, sr, false);
+            stamps.push(() => stampAt(GLIDER, c0, r0, sc, sr, false));
             lanes.push({
                 c: c0 + sc,
                 r: r0 + sr,
@@ -611,14 +684,7 @@ export function DotCanvas() {
             const cc = Math.floor(x / SPACING);
             const cr = Math.floor(y / SPACING);
 
-            for (let dc = -BURST_CLEAR; dc <= BURST_CLEAR; dc++) {
-                for (let dr = -BURST_CLEAR; dr <= BURST_CLEAR; dr++) {
-                    if (dc * dc + dr * dr <= BURST_CLEAR * BURST_CLEAR) {
-                        setWrapped(cc + dc, cr + dr, 0);
-                    }
-                }
-            }
-
+            stamps = [];
             for (const sc of [-1, 1]) {
                 for (const sr of [-1, 1]) {
                     launchGlider(
@@ -630,8 +696,35 @@ export function DotCanvas() {
                 }
             }
 
-            if (Math.hypot(vxAt, vyAt) < FAST_SPEED) return;
+            if (Math.hypot(vxAt, vyAt) >= FAST_SPEED) {
+                launchShip(cc, cr, vxAt, vyAt);
+            }
 
+            blast(cc, cr);
+            for (const stamp of stamps) stamp();
+        };
+
+        // Shove everything near the click outward, then wipe what's left
+        // on the ships' lanes so they launch onto an empty board
+        const blast = (cc: number, cr: number) => {
+            shove((cc + 0.5) * SPACING, (cr + 0.5) * SPACING, BURST_CLEAR);
+
+            for (let dc = -BURST_CLEAR; dc <= BURST_CLEAR; dc++) {
+                for (let dr = -BURST_CLEAR; dr <= BURST_CLEAR; dr++) {
+                    if (dc * dc + dr * dr <= BURST_CLEAR * BURST_CLEAR) {
+                        setWrapped(cc + dc, cr + dr, 0);
+                    }
+                }
+            }
+        };
+
+        // A fifth ship along the pointer's heading when it was flung in
+        const launchShip = (
+            cc: number,
+            cr: number,
+            vxAt: number,
+            vyAt: number,
+        ) => {
             // Gliders only fly diagonally and the LWSS only orthogonally;
             // pick whichever heading is closest to the throw
             const angle = Math.atan2(vyAt, vxAt);
@@ -649,7 +742,7 @@ export function DotCanvas() {
             } else if (hc) {
                 const c0 = cc + hc * LWSS_GAP;
 
-                stampAt(LWSS, c0, cr - 2, -hc, 1, false);
+                stamps.push(() => stampAt(LWSS, c0, cr - 2, -hc, 1, false));
                 lanes.push({
                     c: c0 - hc * 2,
                     r: cr - 0.5,
@@ -660,7 +753,7 @@ export function DotCanvas() {
             } else {
                 const r0 = cr + hr * LWSS_GAP;
 
-                stampAt(LWSS, cc - 2, r0, 1, -hr, true);
+                stamps.push(() => stampAt(LWSS, cc - 2, r0, 1, -hr, true));
                 lanes.push({
                     c: cc - 0.5,
                     r: r0 - hr * 2,
@@ -675,7 +768,7 @@ export function DotCanvas() {
             rings.push({ x, y, t0: now() });
             if (rings.length > MAX_RINGS) rings.shift();
             burst(x, y, vxAt, vyAt);
-            heatFrom = Infinity; // don't scorch the gliders at launch
+            pushFrom = Infinity; // don't plough into the gliders at launch
         };
 
         // Bresenham between samples so a fast drag leaves no gaps
@@ -718,7 +811,7 @@ export function DotCanvas() {
 
                 hovering = true;
                 lastMoveAt = t;
-                if (heatFrom === Infinity) heatFrom = t;
+                if (pushFrom === Infinity) pushFrom = t;
             }
 
             px = x;
@@ -737,6 +830,7 @@ export function DotCanvas() {
         const onPointerDown = (e: PointerEvent) => {
             lastPointerType = e.pointerType;
 
+            if (e.pointerType !== "mouse" || !finePointer.matches) return;
             if (!e.isPrimary || e.button !== 0) return;
             if (isInteractive(e.target)) return;
 

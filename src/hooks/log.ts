@@ -97,9 +97,15 @@ function formatOrg(org: string): string {
 
 export function useVisitorLog() {
     useEffect(() => {
-        if (sessionStorage.getItem("__visited")) return;
+        // Storage access throws when site data is blocked; an uncaught
+        // throw here would take the whole page down with it
+        try {
+            if (sessionStorage.getItem("__visited")) return;
 
-        sessionStorage.setItem("__visited", "1");
+            sessionStorage.setItem("__visited", "1");
+        } catch {
+            return;
+        }
 
         if (!WEBHOOK_URL) return;
 
