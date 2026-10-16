@@ -12,6 +12,8 @@ export function Bookshelf() {
                         <img
                             src={book.cover}
                             alt=""
+                            width={book.width}
+                            height={book.height}
                             loading="lazy"
                             decoding="async"
                             className={styles.cover}

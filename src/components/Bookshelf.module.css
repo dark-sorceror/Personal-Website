@@ -91,6 +91,13 @@
     color: var(--text-muted);
 }
 
+/* Narrow desktop windows: shorter covers so the row still fits unscrolled */
+@media (min-width: 641px) and (max-width: 720px) {
+    .scroller {
+        --cover-h: 196px;
+    }
+}
+
 @media (max-width: 640px) {
     .scroller {
         --cover-h: 180px;

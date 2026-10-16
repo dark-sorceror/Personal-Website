@@ -123,3 +123,11 @@ export function formatRange(start: string, end?: string) {
     if (year(start) === year(end)) return `${start.split(" ")[0]} – ${end}`;
     return `${start} – ${end}`;
 }
+
+// Compact form for the quiet state: "2026 – Now", "2022 – 2025", "2026"
+export function formatYears(start: string, end?: string) {
+    if (!start) return "";
+    if (!end) return `${year(start)} – Now`;
+    if (year(start) === year(end)) return year(start);
+    return `${year(start)} – ${year(end)}`;
+}

@@ -950,7 +950,8 @@ export function DotCanvas() {
 
         observer.observe(document.documentElement, {
             attributes: true,
-            attributeFilter: ["data-theme"],
+            // The palette fades after a switch; re-read once it settles
+            attributeFilter: ["data-theme", "data-theme-fading"],
         });
         window.addEventListener("resize", resize);
 

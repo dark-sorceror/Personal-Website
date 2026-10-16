@@ -35,7 +35,11 @@ export function Projects() {
                                         type="button"
                                         className={styles.cover}
                                         onClick={() => show(project.topic, 0)}
-                                        aria-label={`View ${project.title} photos`}
+                                        aria-label={`View ${project.title} photos${
+                                            project.award
+                                                ? ` (${project.award.label}, ${project.award.event})`
+                                                : ""
+                                        }`}
                                     >
                                         <img
                                             src={cover.src}
@@ -45,6 +49,12 @@ export function Projects() {
                                             loading="lazy"
                                             decoding="async"
                                         />
+                                        {project.award && (
+                                            <span className={styles.award}>
+                                                {project.award.label} ·{" "}
+                                                {project.award.event}
+                                            </span>
+                                        )}
                                         {images.length > 1 && (
                                             <span className={styles.count}>
                                                 1 / {images.length}

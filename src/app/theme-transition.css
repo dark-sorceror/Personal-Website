@@ -1,16 +1,55 @@
-/* Theme switch (see ThemeToggle.tsx): while data-theme-fading is set,
-   every colour on the page fades to the new theme together. The toggle
-   icon keeps its own transitions so its sun/moon morph still plays. */
-html[data-theme-fading],
-html[data-theme-fading] *:not([data-theme-icon] *),
+/* Theme switch (see ThemeToggle.tsx). The palette variables are
+   registered as colours so they can be animated themselves: while
+   data-theme-fading is set they fade once, on <html>, and every element
+   that uses them follows along in lockstep through inheritance. Giving
+   each element its own colour transition instead lets inherited text
+   lag behind its parent in Safari. */
+@property --bg {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #0d0d0d;
+}
+
+@property --text {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #dddddd;
+}
+
+@property --text-muted {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(255, 255, 255, 0.5);
+}
+
+@property --accent-line {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgba(255, 255, 255, 0.2);
+}
+
+@property --link-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #ffffff;
+}
+
+html[data-theme-fading] {
+    transition:
+        --bg 350ms ease,
+        --text 350ms ease,
+        --text-muted 350ms ease,
+        --accent-line 350ms ease,
+        --link-color 350ms ease !important;
+}
+
+/* Everything else just follows the variables; its own transitions would
+   only fight them. The toggle icon keeps its morph. */
+html[data-theme-fading] body,
+html[data-theme-fading] body *:not([data-theme-icon] *),
 html[data-theme-fading] *::before,
 html[data-theme-fading] *::after {
-    transition-property:
-        color, background-color, border-color, text-decoration-color, fill,
-        stroke, box-shadow, outline-color !important;
-    transition-duration: 350ms !important;
-    transition-timing-function: ease !important;
-    transition-delay: 0s !important;
+    transition: none !important;
 }
 
 /* Keep the hand cursor through the switch (see holdCursor) */

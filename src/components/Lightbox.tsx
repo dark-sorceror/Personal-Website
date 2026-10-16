@@ -45,6 +45,9 @@ function ChevronIcon({ dir }: { dir: "prev" | "next" }) {
 const PREV_KEYS = new Set(["arrowleft", "a", "arrowup", "w"]);
 const NEXT_KEYS = new Set(["arrowright", "d", "arrowdown", "s"]);
 
+// A mostly sideways swipe at least this long steps the set on touch screens
+const SWIPE_MIN = 50;
+
 // Presentational overlay. Owns no data — the caller supplies the image set,
 // the active index, and the handlers.
 export function Lightbox({
@@ -59,6 +62,7 @@ export function Lightbox({
     onIndexChange: (next: number) => void;
 }) {
     const dialogRef = useRef<HTMLDivElement>(null);
+    const swipeRef = useRef<{ x: number; y: number } | null>(null);
     const image = images[index];
     const many = images.length > 1;
 
@@ -125,6 +129,29 @@ export function Lightbox({
 
     if (!image) return null;
 
+    const onTouchStart = (e: React.TouchEvent) => {
+        const t = e.touches[0];
+
+        swipeRef.current =
+            e.touches.length === 1 ? { x: t.clientX, y: t.clientY } : null;
+    };
+
+    const onTouchEnd = (e: React.TouchEvent) => {
+        const start = swipeRef.current;
+        const t = e.changedTouches[0];
+
+        swipeRef.current = null;
+        if (!start || !t || !many) return;
+
+        const dx = t.clientX - start.x;
+        const dy = t.clientY - start.y;
+
+        // Swipe left for the next photo, right for the previous
+        if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            step(dx < 0 ? 1 : -1);
+        }
+    };
+
     return (
         <div
             ref={dialogRef}
@@ -133,6 +160,8 @@ export function Lightbox({
             aria-modal="true"
             aria-label={image.alt}
             onClick={onClose}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
         >
             <button
                 type="button"

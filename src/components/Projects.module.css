@@ -66,6 +66,22 @@
     color: #fff;
 }
 
+/* A prize the project won, in the count chip's style */
+.award {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgb(0 0 0 / 0.6);
+    font-family: system-ui, sans-serif;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
 /* Name and line under it match the bookshelf's title and author */
 .title {
     align-self: flex-start;

@@ -4,27 +4,28 @@ export type Project = {
     description: string;
     // Key into GALLERIES; its first image is the tile's cover
     topic: string;
+    // A prize the project won, shown as a chip on its cover
+    award?: { label: string; event: string };
 };
 
 export const PROJECTS: Project[] = [
     {
         title: "Lumen",
         href: "https://github.com/dark-sorceror/Lumen",
-        description:
-            "A debugger for LLM context, measuring from inside the model why one edit can cost 99× another of the same size",
+        description: "LLM context debugger: why one edit costs 99× another",
         topic: "lumen-arch",
     },
     {
         title: "Goosetriever",
         href: "https://github.com/dark-sorceror/hack-the-north-2026",
-        description:
-            "A voice-controlled robot that fetches what you dropped, for people who can't reach the floor; built its lidar mapping, A* navigation and safety chain at Hack the North 2026",
+        description: "Voice fetch robot: lidar mapping, A* nav, safety chain",
         topic: "goosetriever",
+        award: { label: "Winner", event: "Hack the North 2026" },
     },
     {
         title: "Neurinese",
         href: "https://github.com/dark-sorceror/Neurinese",
-        description: "Grammarly/Copilot for handwritten Chinese",
+        description: "Grammarly and Copilot for handwritten Chinese",
         topic: "neurinese",
     },
 ];

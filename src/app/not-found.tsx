@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "Not found · Hao Yan" };
 
 // Replaces Next's built-in 404, whose own full-height black panel ignored the
 // theme and, under the desktop zoom, only covered part of the window.

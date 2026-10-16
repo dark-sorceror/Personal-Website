@@ -108,7 +108,8 @@ main li {
 .lightbox {
     position: fixed;
     inset: 0;
-    z-index: 80;
+    /* Above the phone's fixed nav pill (100) */
+    z-index: 200;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -319,5 +320,56 @@ main li {
     .lightbox-nav--next {
         right: -20px;
         padding-right: 20px;
+    }
+}
+
+/* ---- Experience ledger: dates and places on demand. Each row's right
+   column stacks the full range (with place) and a compact year form in one
+   grid cell, so swapping them never shifts layout. At rest only the years
+   of each headline role show; hovering or focusing anywhere in the list
+   swaps in every full range and place at once. The full text never leaves
+   the accessibility tree; only its opacity changes. */
+.ledger-meta {
+    display: grid;
+}
+.ledger-meta > * {
+    grid-area: 1 / 1;
+    transition: opacity 0.25s ease;
+}
+.ledger-full {
+    opacity: 0;
+}
+
+/* Desktop with a real pointer: earlier roles stay bare until the reveal */
+@media (hover: hover) and (min-width: 641px) {
+    .ledger-meta--sub .ledger-short {
+        opacity: 0;
+    }
+    .ledger:hover .ledger-full,
+    .ledger:focus-within .ledger-full {
+        opacity: 1;
+    }
+    .ledger:hover .ledger-short,
+    .ledger:focus-within .ledger-short {
+        opacity: 0;
+    }
+}
+
+/* Touch and phone: nothing to hover, so the compact years always show and
+   the full text is kept for screen readers only */
+@media (hover: none), (max-width: 640px) {
+    .ledger-full {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ledger-meta > * {
+        transition: none;
     }
 }

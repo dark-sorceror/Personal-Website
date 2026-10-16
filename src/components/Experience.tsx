@@ -1,5 +1,9 @@
 import { InlineLink } from "@/components/InlineLink";
-import { formatRange, type Entry } from "@/components/experienceData";
+import {
+    formatRange,
+    formatYears,
+    type Entry,
+} from "@/components/experienceData";
 
 // Small-caps sans for dates and places, matching the section labels
 const metaClassName =
@@ -37,6 +41,28 @@ function Headline({ entry }: { entry: Entry }) {
     );
 }
 
+// Right-hand metadata: the full range (and place) and a compact year form,
+// stacked in one cell. The ledger rules in globals.css pick which one shows;
+// the year form is visual only, so screen readers always hear the full text.
+function Meta({
+    full,
+    short,
+    className = "",
+}: {
+    full: React.ReactNode;
+    short: string;
+    className?: string;
+}) {
+    return (
+        <span className={`ledger-meta ${metaClassName} ${className}`}>
+            <span className="ledger-full">{full}</span>
+            <span className="ledger-short" aria-hidden="true">
+                {short}
+            </span>
+        </span>
+    );
+}
+
 // ---- Ledger: résumé rows. Headline and blurb on the left; dates with the
 // place under them in a right-hand column. Earlier roles at the same place
 // hang underneath on a ruled list, each with its own dates.
@@ -51,37 +77,38 @@ function LedgerItem({ entry }: { entry: Entry }) {
                     <Headline entry={entry} />
                     {entry.description && <> — {entry.description}</>}
                 </p>
-                <p
-                    className={`${metaClassName} text-right leading-[1.6] whitespace-nowrap max-[640px]:text-left`}
-                >
-                    {dates}
-                    {dates && entry.location && (
-                        <span className="max-[640px]:hidden">
-                            <br />
-                        </span>
-                    )}
-                    {dates && entry.location && (
-                        <span className="hidden max-[640px]:inline"> · </span>
-                    )}
-                    <span className="font-normal">{entry.location}</span>
-                </p>
+                {(dates || entry.location) && (
+                    <Meta
+                        className="ledger-meta--main justify-items-end text-right leading-[1.6] whitespace-nowrap max-[640px]:justify-items-start max-[640px]:text-left"
+                        short={formatYears(current.start, current.end)}
+                        full={
+                            <>
+                                {dates}
+                                {dates && entry.location && <br />}
+                                <span className="font-normal">
+                                    {entry.location}
+                                </span>
+                            </>
+                        }
+                    />
+                )}
             </div>
             {earlier.length > 0 && (
                 <ul className="mt-[6px] flex flex-col gap-[2px] border-l border-(--accent-line) pl-[16px]">
                     {earlier.map((role) => (
                         <li
                             key={role.title}
-                            className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-[56px] text-base text-(--text-muted) max-[640px]:grid-cols-1"
+                            className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-[24px] text-base text-(--text-muted) min-[641px]:gap-x-[56px]"
                         >
                             <span>
                                 <span className="italic">prev.</span>{" "}
                                 {role.title}
                             </span>
-                            <span
-                                className={`${metaClassName} whitespace-nowrap`}
-                            >
-                                {formatRange(role.start, role.end)}
-                            </span>
+                            <Meta
+                                className="ledger-meta--sub justify-items-end whitespace-nowrap"
+                                short={formatYears(role.start, role.end)}
+                                full={formatRange(role.start, role.end)}
+                            />
                         </li>
                     ))}
                 </ul>
@@ -91,7 +118,7 @@ function LedgerItem({ entry }: { entry: Entry }) {
 }
 
 const listClassName =
-    "list-disc pl-[18px] ml-[16px] flex flex-col gap-[12px] text-lg leading-relaxed";
+    "ledger list-disc pl-[18px] ml-[16px] flex flex-col gap-[12px] text-lg leading-relaxed";
 
 export function ExperienceList({ entries }: { entries: Entry[] }) {
     return (
