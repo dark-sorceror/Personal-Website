@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { GalleryImage } from "@/components/galleryData";
 
@@ -40,6 +40,75 @@ function ChevronIcon({ dir }: { dir: "prev" | "next" }) {
     );
 }
 
+function PlayIcon() {
+    return (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5.5v13l11-6.5z" />
+        </svg>
+    );
+}
+
+// What a slide shows: a photo, a short looping clip, or a YouTube video that
+// stays a still with a play button until pressed, so YouTube only loads for
+// people who want it
+function Slide({
+    image,
+    onEmbed,
+}: {
+    image: GalleryImage;
+    onEmbed: (playing: boolean) => void;
+}) {
+    const [playing, setPlaying] = useState(false);
+
+    if (image.youtube && playing) {
+        return (
+            <iframe
+                className="lightbox-image"
+                src={`https://www.youtube-nocookie.com/embed/${image.youtube}?autoplay=1&rel=0`}
+                title={image.alt}
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                allowFullScreen
+            />
+        );
+    }
+
+    if (image.youtube) {
+        return (
+            <button
+                type="button"
+                className="lightbox-play"
+                onClick={() => {
+                    setPlaying(true);
+                    onEmbed(true);
+                }}
+                aria-label={`Play ${image.alt}`}
+            >
+                <img className="lightbox-image" src={image.src} alt="" />
+                <span className="lightbox-play-icon">
+                    <PlayIcon />
+                </span>
+            </button>
+        );
+    }
+
+    if (image.video) {
+        return (
+            <video
+                className="lightbox-image"
+                src={image.video}
+                poster={image.src}
+                aria-label={image.alt}
+                autoPlay
+                muted
+                loop
+                playsInline
+            />
+        );
+    }
+
+    return <img className="lightbox-image" src={image.src} alt={image.alt} />;
+}
+
 // Arrow keys and WASD both step the set: left/right for the obvious pair,
 // up/down mapped to back/forward so the whole cluster does something.
 const PREV_KEYS = new Set(["arrowleft", "a", "arrowup", "w"]);
@@ -62,13 +131,18 @@ export function Lightbox({
     onIndexChange: (next: number) => void;
 }) {
     const dialogRef = useRef<HTMLDivElement>(null);
+    // YouTube's player can't sit under anything, so the arrows step aside
+    // while one is up
+    const [embedded, setEmbedded] = useState(false);
     const swipeRef = useRef<{ x: number; y: number } | null>(null);
     const image = images[index];
     const many = images.length > 1;
 
     const step = useCallback(
-        (delta: number) =>
-            onIndexChange((index + delta + images.length) % images.length),
+        (delta: number) => {
+            setEmbedded(false);
+            onIndexChange((index + delta + images.length) % images.length);
+        },
         [index, images.length, onIndexChange],
     );
 
@@ -183,13 +257,13 @@ export function Lightbox({
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="lightbox-frame">
-                    <img
-                        className="lightbox-image"
-                        src={image.src}
-                        alt={image.alt}
+                    <Slide
+                        key={image.src}
+                        image={image}
+                        onEmbed={setEmbedded}
                     />
 
-                    {many && (
+                    {many && !embedded && (
                         <>
                             <button
                                 type="button"
@@ -224,7 +298,10 @@ export function Lightbox({
                                 className="lightbox-dot"
                                 aria-label={`Image ${i + 1} of ${images.length}`}
                                 aria-current={i === index}
-                                onClick={() => onIndexChange(i)}
+                                onClick={() => {
+                                    setEmbedded(false);
+                                    onIndexChange(i);
+                                }}
                             >
                                 <span />
                             </button>

@@ -49,7 +49,7 @@ export function Projects() {
                                         onClick={() => show(project.topic, 0)}
                                         aria-label={`View ${project.title} photos${
                                             project.award
-                                                ? ` (${project.award.label}, ${project.award.event})`
+                                                ? ` (${[project.award.label, project.award.prize, project.award.event].filter(Boolean).join(", ")})`
                                                 : ""
                                         }`}
                                     >
@@ -62,7 +62,10 @@ export function Projects() {
                                             decoding="async"
                                         />
                                         {project.award && (
-                                            <span className={styles.award}>
+                                            <span
+                                                className={styles.award}
+                                                title={project.award.prize}
+                                            >
                                                 {project.award.label} ·{" "}
                                                 {project.award.event}
                                             </span>

@@ -9,7 +9,13 @@ export type Project = {
     // Key into GALLERIES; its first image is the tile's cover
     topic: GalleryTopic;
     // A prize the project won, shown as a chip on its cover
-    award?: { label: string; event: string };
+    award?: {
+        label: string;
+        event: string;
+        // The prize in full, for the tooltip and screen readers; the chip
+        // itself stays short
+        prize?: string;
+    };
     // Show the KV-cache demo in place of the cover; the gallery opens from
     // a chip on it instead
     demo?: boolean;
@@ -28,9 +34,14 @@ export const PROJECTS: Project[] = [
     {
         title: "Goosetriever",
         href: "https://github.com/dark-sorceror/hack-the-north-2026",
-        description: "Voice fetch robot: lidar mapping, A* nav, safety chain",
+        description:
+            "Voice-controlled assistive robot that fetches dropped items",
         topic: "goosetriever",
-        award: { label: "Winner", event: "Hack the North 2026" },
+        award: {
+            label: "Winner",
+            event: "Hack the North 2026",
+            prize: "Best use of Huawei's Real-Time Multimodal AI",
+        },
     },
     {
         title: "Neurinese",

@@ -1,15 +1,19 @@
 export type GalleryImage = {
+    // The picture, or for a video the still shown before it plays
     src: string;
-    // Intrinsic size, so the strip can lay out before the image loads
+    // Intrinsic size, so the cover can lay out before the image loads
     width: number;
     height: number;
     alt: string;
     caption: string;
+    // A short silent clip that plays in place of the still
+    video?: string;
+    // A YouTube video, loaded only once someone presses play
+    youtube?: string;
 };
 
-// Image sets keyed by project. The first few entries are the ones shown in
-// the project's photo strip, so lead with the strongest shots; the rest are
-// reachable by stepping through the lightbox.
+// Image sets keyed by project. The first entry is the project's cover; the
+// rest are reachable by stepping through the lightbox.
 export const GALLERIES = {
     "lumen-arch": [
         {
@@ -36,15 +40,40 @@ export const GALLERIES = {
             height: 161,
             alt: "Goosetriever robot",
             caption:
-                "Goosetriever: skid-steer base, lidar underneath, SO-101 arm at the nose",
+                "Goosetriever, winner of Best use of Huawei's Real-Time Multimodal AI at Hack the North 2026: skid-steer base, lidar underneath, SO-101 arm at the nose",
         },
         {
-            src: "/media/goosetriever/goosetriever_nav_map.png",
-            width: 1698,
-            height: 1256,
-            alt: "Navigation map and teleop page",
+            src: "/media/goosetriever/goosetriever_showcase.jpg",
+            width: 1280,
+            height: 720,
+            alt: "Goosetriever showcase video",
+            caption: "The showcase video from Hack the North 2026",
+            youtube: "G8Z7QbDx5YE",
+        },
+        {
+            src: "/media/goosetriever/goosetriever_mapping.jpg",
+            width: 1280,
+            height: 680,
+            alt: "Lidar mapping the room",
             caption:
-                "The lidar map, inflated costmap and a planned route on the teleop page",
+                "Lidar mapping the room live on the teleop page, at 4× speed",
+            video: "/media/goosetriever/goosetriever_mapping.mp4",
+        },
+        {
+            src: "/media/goosetriever/goosetriever_teleop_map.png",
+            width: 1791,
+            height: 953,
+            alt: "Finished map on the teleop page",
+            caption:
+                "The finished map: inflated costmap, home marker and the routes driven",
+        },
+        {
+            src: "/media/goosetriever/goosetriever_architecture.png",
+            width: 1412,
+            height: 1104,
+            alt: "Goosetriever system architecture",
+            caption:
+                "A cloud LLM picks the skill; a QNX Pi sees, listens and holds the safety interlock; the nav Pi drives and the S100 runs the arm",
         },
         {
             src: "/media/goosetriever/goosetriever_astar.svg",
