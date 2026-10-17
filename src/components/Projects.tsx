@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { GALLERIES } from "@/components/galleryData";
+import { GALLERIES, type GalleryTopic } from "@/components/galleryData";
 import { InlineLink } from "@/components/InlineLink";
 import { Lightbox } from "@/components/Lightbox";
 import { LumenDemo } from "@/components/LumenDemo";
@@ -14,11 +14,12 @@ import styles from "./Projects.module.css";
 // and one line under it. The first project is featured across the row. The
 // cover opens that project's gallery.
 export function Projects() {
-    const [open, setOpen] = useState<{ topic: string; index: number } | null>(
-        null,
-    );
+    const [open, setOpen] = useState<{
+        topic: GalleryTopic;
+        index: number;
+    } | null>(null);
 
-    const show = (topic: string, index: number) => {
+    const show = (topic: GalleryTopic, index: number) => {
         setOpen({ topic, index });
         trackLightboxView(topic, GALLERIES[topic][index].alt);
     };
@@ -27,7 +28,7 @@ export function Projects() {
         <>
             <ul className={styles.grid}>
                 {PROJECTS.map((project, i) => {
-                    const images = GALLERIES[project.topic] ?? [];
+                    const images = GALLERIES[project.topic];
                     const cover = images[0];
 
                     return (

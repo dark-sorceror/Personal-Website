@@ -10,7 +10,7 @@ export type GalleryImage = {
 // Image sets keyed by project. The first few entries are the ones shown in
 // the project's photo strip, so lead with the strongest shots; the rest are
 // reachable by stepping through the lightbox.
-export const GALLERIES: Record<string, GalleryImage[]> = {
+export const GALLERIES = {
     "lumen-arch": [
         {
             src: "/media/lumen-arch/lumen-probe.svg",
@@ -125,4 +125,7 @@ export const GALLERIES: Record<string, GalleryImage[]> = {
             caption: "t-SNE of the 64-dim style latent, coloured by character",
         },
     ],
-};
+} satisfies Record<string, GalleryImage[]>;
+
+// A project's gallery, checked when the site builds
+export type GalleryTopic = keyof typeof GALLERIES;

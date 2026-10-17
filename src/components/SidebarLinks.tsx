@@ -98,7 +98,7 @@ export function SidebarLinks() {
             {LINKS.map(({ href, label, Icon }) => (
                 <a
                     key={label}
-                    className="flex text-(--link-color) opacity-85 transition-opacity duration-200 hover:opacity-100 [&_svg]:overflow-visible phone:size-[40px] max-[379px]:size-[36px] phone:items-center phone:justify-center phone:rounded-full phone:text-(--text) phone:[&_svg]:h-[18px] phone:[&_svg]:w-auto"
+                    className="flex text-(--link-color) opacity-85 transition-opacity duration-200 hover:opacity-100 [&_svg]:overflow-visible phone:size-[40px] narrow:size-[36px] phone:items-center phone:justify-center phone:rounded-full phone:text-(--text) phone:[&_svg]:h-[18px] phone:[&_svg]:w-auto"
                     href={href}
                     target={href.startsWith("http") ? "_blank" : undefined}
                     rel={

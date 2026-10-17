@@ -3,8 +3,14 @@ import styles from "./Bookshelf.module.css";
 
 export function Bookshelf() {
     return (
-        // Focusable so keyboard users can scroll the shelf with the arrow keys
-        <div className={styles.scroller} tabIndex={0} aria-label="On the shelf">
+        // A named region for screen readers. The row fits on every screen,
+        // so it isn't a tab stop; if it ever overflows, browsers make the
+        // scroller focusable on their own.
+        <div
+            className={styles.scroller}
+            role="region"
+            aria-label="On the shelf"
+        >
             <ul className={styles.shelf}>
                 {BOOKS.map((book) => (
                     <li key={book.cover} className={styles.book}>

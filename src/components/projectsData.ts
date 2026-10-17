@@ -1,3 +1,5 @@
+import type { GalleryTopic } from "@/components/galleryData";
+
 export type Project = {
     title: string;
     href: string;
@@ -5,7 +7,7 @@ export type Project = {
     // A sentence or two of prose, shown in the featured project's caption
     summary?: string;
     // Key into GALLERIES; its first image is the tile's cover
-    topic: string;
+    topic: GalleryTopic;
     // A prize the project won, shown as a chip on its cover
     award?: { label: string; event: string };
     // Show the KV-cache demo in place of the cover; the gallery opens from

@@ -93,10 +93,10 @@ export function DotCanvas() {
 
             if (nextBase !== baseColor) {
                 baseColor = nextBase;
-                if (!phone.matches) renderBaseLayer();
+                if (cols && !phone.matches) renderBaseLayer();
             }
 
-            if (still()) paintStill();
+            if (cols && still()) paintStill();
         };
 
         const traceBaseDots = (target: CanvasRenderingContext2D) => {
@@ -348,29 +348,17 @@ export function DotCanvas() {
             raf = requestAnimationFrame(draw);
         };
 
-        const onVisibility = () => {
-            cancelAnimationFrame(raf);
-
-            if (document.visibilityState === "visible" && !still()) {
-                lastMs = 0;
-                raf = requestAnimationFrame(draw);
-            }
-        };
-
+        // Colours first; the ResizeObserver's first callback then sizes and
+        // seeds the board, once
         readColors();
-        resize();
 
-        if (!reduceMotion) {
-            document.addEventListener("visibilitychange", onVisibility);
-        }
-
+        // Theme switches are the only way the dot colours change. The dots
+        // take the new colours at once rather than fading with the page.
         const observer = new MutationObserver(readColors);
 
-        // Theme switches are the only way the dot colours change; the
-        // palette fades after one, so re-read again once it settles
         observer.observe(document.documentElement, {
             attributes: true,
-            attributeFilter: ["data-theme", "data-theme-fading"],
+            attributeFilter: ["data-theme"],
         });
 
         // Covers window resizes, browser zoom and crossing the phone width
@@ -378,11 +366,26 @@ export function DotCanvas() {
 
         resizeObserver.observe(canvas);
 
+        // Moving to a screen with a different pixel density doesn't change
+        // the canvas's CSS size, so the ResizeObserver misses it
+        let density: MediaQueryList | null = null;
+        const onDensity = () => {
+            resize();
+            watchDensity();
+        };
+        const watchDensity = () => {
+            density?.removeEventListener("change", onDensity);
+            density = matchMedia(`(resolution: ${devicePixelRatio}dppx)`);
+            density.addEventListener("change", onDensity);
+        };
+
+        watchDensity();
+
         return () => {
             cancelAnimationFrame(raf);
             observer.disconnect();
             resizeObserver.disconnect();
-            document.removeEventListener("visibilitychange", onVisibility);
+            density?.removeEventListener("change", onDensity);
         };
     }, []);
 

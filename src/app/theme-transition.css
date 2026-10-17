@@ -34,13 +34,20 @@
     initial-value: #ffffff;
 }
 
+@property --accent-red {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #ff5a47;
+}
+
 html[data-theme-fading] {
     transition:
         --bg 350ms ease,
         --text 350ms ease,
         --text-muted 350ms ease,
         --accent-line 350ms ease,
-        --link-color 350ms ease !important;
+        --link-color 350ms ease,
+        --accent-red 350ms ease !important;
 }
 
 /* Everything else just follows the variables; its own transitions would

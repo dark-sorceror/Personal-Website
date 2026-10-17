@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-/* Phones, matching the max-width: 640px the CSS modules and scripts use
-   (Tailwind's own max-[640px] stops at 639px) */
-@custom-variant phone (@media (max-width: 640px));
+/* One phone breakpoint, matching the max-width: 640px the CSS modules and
+   scripts use. Desktop is its exact complement, so no fractional width
+   (say, under browser zoom) falls between the two. Narrow phones come
+   last so their overrides win over the phone ones. */
+@custom-variant phone (@media (width <= 640px));
+@custom-variant desktop (@media (width > 640px));
+@custom-variant narrow (@media (width < 379px));
 
 :root {
     /* Native scrollbars and form controls follow the theme */
@@ -36,7 +40,7 @@ html {
     background-color: var(--bg);
 }
 
-@media (min-width: 641px) {
+@media (width > 640px) {
     html {
         zoom: 0.72;
     }

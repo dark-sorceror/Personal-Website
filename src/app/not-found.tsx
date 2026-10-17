@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Not found · Hao Yan" };
 // theme and, under the desktop zoom, only covered part of the window.
 export default function NotFound() {
     return (
-        <main className="flex min-h-dvh flex-col min-[641px]:min-h-[calc(100dvh/0.72)] items-center justify-center gap-[18px] px-[24px] text-center font-[family-name:var(--font-serif),Georgia,serif]">
+        <main className="flex min-h-dvh flex-col desktop:min-h-[calc(100dvh/0.72)] items-center justify-center gap-[18px] px-[24px] text-center font-[family-name:var(--font-serif),Georgia,serif]">
             <p className="font-[system-ui] text-sm font-semibold uppercase tracking-[0.12em] text-(--text-muted)">
                 404
             </p>

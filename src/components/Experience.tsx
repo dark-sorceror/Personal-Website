@@ -50,7 +50,8 @@ function Headline({ entry }: { entry: Entry }) {
 // room for the column, so it becomes one line under the role instead.
 function Meta({ role }: { role: Role }) {
     const dates = formatDates(role);
-    if (!dates && !role.location) return null;
+    // Still fill the column's cell, so any rows after it keep their places
+    if (!dates && !role.location) return <span />;
 
     return (
         <p

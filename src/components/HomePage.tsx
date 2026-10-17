@@ -25,7 +25,7 @@ export function HomePage() {
                     <aside className="sidebar sticky top-[198px] mr-[38px] flex w-[72px] shrink-0 flex-col items-center gap-[31px] self-start pt-[5px] pr-[38px] phone:fixed phone:top-auto phone:bottom-[calc(14px+env(safe-area-inset-bottom,0px))] phone:left-1/2 phone:z-[100] phone:m-0 phone:w-auto phone:-translate-x-1/2 phone:flex-row phone:gap-[4px] phone:rounded-full phone:border phone:border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] phone:bg-(--nav-surface) phone:p-[5px] phone:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)]">
                         <SidebarLinks />
                         <span className="hidden mx-[4px] h-[18px] w-px shrink-0 bg-(--accent-line) phone:block" />
-                        <span className="hidden size-[40px] max-[379px]:size-[36px] rounded-full bg-[color-mix(in_srgb,var(--text)_8%,transparent)] phone:flex [&>button]:size-full [&_svg]:size-[18px]">
+                        <span className="hidden size-[40px] narrow:size-[36px] rounded-full bg-[color-mix(in_srgb,var(--text)_8%,transparent)] phone:flex [&>button]:size-full [&_svg]:size-[18px]">
                             <ThemeToggle />
                         </span>
                     </aside>
