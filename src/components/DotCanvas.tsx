@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
+import { TiltReadout } from "@/components/TiltReadout";
 import { BitLife } from "@/lib/life";
+import { tilt, tiltSupported } from "@/lib/tilt";
 
 const SPACING = 30;
 const BASE_RADIUS = 1.5;
@@ -50,9 +52,16 @@ const FAST_SPEED = 1400; // CSS px/s; above this a click also fires a ship
 const FAST_WINDOW_S = 0.1; // ...measured over this much recent motion
 const TAP_SLOP = 8; // CSS px a tap may wander before it counts as a drag
 
-// Click-and-drag paints live cells. Every effect is mouse only: on phones
-// the dots just run on their own.
+// Click-and-drag paints live cells. Every pointer effect is mouse only:
+// on phones the dots answer to tilt instead (below).
 const PAINT_EVERY_MS = 24;
+
+// Phones get the motion sensors instead: tilting leans the live dots
+// downhill and steers new gliders that way, and a shake fires the ripple
+const MAX_LEAN = 9; // CSS px a live dot hangs off its grid point
+const DOWNHILL = 0.3; // tilt (sine of the angle) that starts the stream
+const DOWNHILL_EVERY = 3; // seconds between downhill gliders while tipped
+const SHAKE_OFFSET = 0.25; // of the short side, toward the shake
 
 // Targets that keep their own click behaviour
 const INTERACTIVE =
@@ -168,6 +177,10 @@ export function DotCanvas() {
         const finePointer = window.matchMedia(
             "(hover: hover) and (pointer: fine)",
         );
+        const motion = tiltSupported() ? tilt : null;
+        let leanX = 0;
+        let leanY = 0;
+        let lastDownhill = 0;
 
         const readColors = () => {
             const styles = getComputedStyle(document.documentElement);
@@ -247,11 +260,12 @@ export function DotCanvas() {
             }
         };
 
-        const stampPattern = (pattern: number[][]) => {
+        // A heading of (sc, sr) aims a glider that way
+        const stampPattern = (pattern: number[][], heading?: number[]) => {
             const c0 = 2 + Math.floor(Math.random() * Math.max(cols - 6, 1));
             const r0 = 2 + Math.floor(Math.random() * Math.max(rows - 6, 1));
-            const flipC = Math.random() < 0.5 ? -1 : 1;
-            const flipR = Math.random() < 0.5 ? -1 : 1;
+            const flipC = heading?.[0] ?? (Math.random() < 0.5 ? -1 : 1);
+            const flipR = heading?.[1] ?? (Math.random() < 0.5 ? -1 : 1);
 
             stampAt(pattern, c0, r0, flipC, flipR, Math.random() < 0.5);
         };
@@ -269,10 +283,19 @@ export function DotCanvas() {
             }
         };
 
+        // The diagonal closest to downhill, while the phone is tipped
+        const downhill = () => {
+            if (!motion || Math.hypot(motion.gx, motion.gy) < DOWNHILL) {
+                return undefined;
+            }
+
+            return [Math.sign(motion.gx) || 1, Math.sign(motion.gy) || 1];
+        };
+
         const inject = () => {
             const roll = Math.random();
 
-            if (roll < 0.45) stampPattern(GLIDER);
+            if (roll < 0.45) stampPattern(GLIDER, downhill());
             else if (roll < 0.7) stampPattern(R_PENTOMINO);
             else stampSoup();
         };
@@ -459,11 +482,14 @@ export function DotCanvas() {
                     ctx.fillStyle = bgColor;
                     drawDot(x, y, BASE_RADIUS + 0.5);
 
+                    // Brighter dots hang further off their point on a tilt
+                    const hang = Math.min(level, 1);
+
                     ctx.globalAlpha = Math.min(level, 1);
                     ctx.fillStyle = activeColor;
                     drawDot(
-                        x,
-                        y,
+                        x + leanX * hang,
+                        y + leanY * hang,
                         BASE_RADIUS + activeBoost * Math.min(level, 1.4),
                     );
                 }
@@ -589,6 +615,20 @@ export function DotCanvas() {
             }
 
             plough(t);
+
+            if (motion) {
+                const heading = downhill();
+
+                if (heading && t - lastDownhill >= DOWNHILL_EVERY) {
+                    stampPattern(GLIDER, heading);
+                    lastDownhill = t;
+                }
+
+                const [lx, ly] = motion.lean(dt);
+
+                leanX = lx * MAX_LEAN;
+                leanY = ly * MAX_LEAN;
+            }
 
             const fadeIn = Math.min(1, FADE_IN_RATE * dt);
             const fadeOut = Math.min(1, FADE_OUT_RATE * dt);
@@ -907,6 +947,19 @@ export function DotCanvas() {
             hovering = false;
         };
 
+        // Ripple from the side the phone was flung toward, and send a ship
+        // on that way
+        const onShake = (dx: number, dy: number) => {
+            const reach = SHAKE_OFFSET * Math.min(width, height);
+
+            fire(
+                width / 2 + dx * reach,
+                height / 2 + dy * reach,
+                dx * FAST_SPEED,
+                dy * FAST_SPEED,
+            );
+        };
+
         const onVisibility = () => {
             cancelAnimationFrame(raf);
 
@@ -929,6 +982,9 @@ export function DotCanvas() {
             window.addEventListener(type, handler as EventListener, options);
             listeners.push([type, handler as EventListener, options]);
         };
+
+        const releaseTilt = motion?.acquire();
+        const offShake = motion?.onShake(onShake);
 
         if (!reduceMotion) {
             raf = requestAnimationFrame(draw);
@@ -961,6 +1017,8 @@ export function DotCanvas() {
 
         return () => {
             cancelAnimationFrame(raf);
+            offShake?.();
+            releaseTilt?.();
             observer.disconnect();
             resizeObserver.disconnect();
             window.removeEventListener("resize", resize);
@@ -978,10 +1036,13 @@ export function DotCanvas() {
     }, []);
 
     return (
-        <canvas
-            ref={canvasRef}
-            aria-hidden
-            className="pointer-events-none fixed inset-0 -z-10 size-full"
-        />
+        <>
+            <canvas
+                ref={canvasRef}
+                aria-hidden
+                className="pointer-events-none fixed inset-0 -z-10 size-full"
+            />
+            <TiltReadout />
+        </>
     );
 }

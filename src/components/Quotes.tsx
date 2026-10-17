@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { QUOTES } from "@/components/quotesData";
 import styles from "./Quotes.module.css";
 
-const SHOW_MS = 9000;
+// Long enough to read and forget about before the next one turns up
+const SHOW_MS = 120_000;
 const FADE_MS = 700;
 
 // Where in the right-hand margin the quote lands, as fractions of the

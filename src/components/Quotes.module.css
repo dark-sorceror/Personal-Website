@@ -42,8 +42,8 @@
         /* Somewhere between the column's edge and the window's, and in
            the upper two thirds so the record below stays clear */
         left: calc(
-            50% + 465px + 48px +
-                (50% - 465px - 48px - 48px - var(--w)) * var(--x)
+            50% + 465px + 48px + (50% - 465px - 48px - 48px - var(--w)) *
+                var(--x)
         );
         top: calc(16% + 44% * var(--y));
         width: var(--w);
