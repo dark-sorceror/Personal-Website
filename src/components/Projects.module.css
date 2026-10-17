@@ -1,11 +1,12 @@
 /* Project tiles in the bookshelf's idiom: no boxes, just a cover photo with
-   the name and one line under it. Three across on desktop; phones scroll
-   the row sideways instead of stacking. Only uses shared theme tokens. */
+   the name and one line under it. The first project spans the row with its
+   caption beside the cover; the rest sit two across under it. Phones stack
+   every tile in one column. Only uses shared theme tokens. */
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 32px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -15,6 +16,24 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
+}
+
+/* The cover takes three fifths of the row and the caption runs down the
+   rest, starting level with the cover's top */
+.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: auto auto 1fr;
+    column-gap: 32px;
+}
+
+.featured > :first-child {
+    grid-row: 1 / -1;
+}
+
+.featured > .title {
+    margin-top: 2px;
 }
 
 .cover {
@@ -85,6 +104,7 @@
 /* Name and line under it match the bookshelf's title and author */
 .title {
     align-self: flex-start;
+    justify-self: start;
     margin-top: 16px;
     font-size: 1.05rem;
     font-weight: 600;
@@ -104,23 +124,24 @@
     color: var(--text-muted);
 }
 
+.summary {
+    margin: 14px 0 0;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--text);
+}
+
 @media (max-width: 640px) {
-    .scroller {
-        overflow-x: auto;
-        overscroll-behavior-x: contain;
-        scroll-snap-type: x proximity;
-        scrollbar-width: none;
-        mask-image: linear-gradient(to right, #000 85%, transparent);
-    }
-
     .grid {
-        grid-template-columns: repeat(3, 240px);
-        gap: 20px;
-        width: max-content;
-        padding-right: 64px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
     }
 
-    .tile {
-        scroll-snap-align: start;
+    .featured {
+        display: flex;
+    }
+
+    .featured > .title {
+        margin-top: 16px;
     }
 }

@@ -22,23 +22,12 @@ const EPSILON = 0.003;
 // Reduced motion: evolve this many generations off-screen, show one frame
 const STATIC_GENERATIONS = 60;
 
-// Cursor as a plough: live cells under the pointer are shoved out of its
-// way, so moving through the board scrambles whatever pattern was there
-const PUSH_RADIUS = 2.5; // cells
-const PUSH_SCATTER = 1.5; // extra random cells a shoved cell may fly
-// Soft lift on the base dots under the pointer (render only)
-const LIFT_RADIUS = 4 * SPACING; // CSS px
-const LIFT_ALPHA = 0.9; // of --dot-active, at the pointer
-const LIFT_GROW = 0.8; // extra px of radius at the pointer
-const POINTER_EASE = 12; // eased position lerp per second
-const WAKE_HOLD_S = 0.2; // full strength this long after the last move...
-const WAKE_FADE_S = 0.6; // ...then fade out over this long
-
-// Click: a shockwave that blasts the cells around it outward, then a
-// glider burst from the cleared centre
-// The wave is a ripple: a tall crest at the front with smaller crests and
-// troughs trailing behind it, so dots swell well past their live size on
-// the crests and shrink to pinpricks in the troughs
+// A shake on phones fires a shockwave that blasts the cells around it
+// outward, then a glider burst from the cleared centre. The wave is a
+// ripple: a tall crest at
+// the front with smaller crests and troughs trailing behind it, so dots
+// swell well past their live size on the crests and shrink to pinpricks in
+// the troughs
 const RING_S = 1.3;
 const RING_REACH = 13 * SPACING; // how far the front travels, CSS px
 const RING_WAVELENGTH = 2.4 * SPACING;
@@ -46,28 +35,17 @@ const RING_TRAIL = 1.4 * RING_WAVELENGTH; // how fast the trailing ripples die
 const RING_GROW = 7; // extra px of radius on the tallest crest
 const RING_SHRINK = 0.8; // fraction of a base dot lost in the deepest trough
 const MAX_RINGS = 4;
-const BURST_GAP = 2; // cells between the click and each glider
+const BURST_GAP = 2; // cells between the centre and each glider
 const BURST_CLEAR = 6; // cells blasted outward so the gliders launch clean
-const FAST_SPEED = 1400; // CSS px/s; above this a click also fires a ship
-const FAST_WINDOW_S = 0.1; // ...measured over this much recent motion
-const TAP_SLOP = 8; // CSS px a tap may wander before it counts as a drag
+const BLAST_SCATTER = 1.5; // extra random cells a blasted cell may fly
+const FAST_SPEED = 1400; // CSS px/s; a burst this fast also fires a ship
 
-// Click-and-drag paints live cells. Every pointer effect is mouse only:
-// on phones the dots answer to tilt instead (below).
-const PAINT_EVERY_MS = 24;
-
-// Phones get the motion sensors instead: tilting leans the live dots
+// Phones get the motion sensors: tilting leans the live dots
 // downhill and steers new gliders that way, and a shake fires the ripple
 const MAX_LEAN = 9; // CSS px a live dot hangs off its grid point
 const DOWNHILL = 0.3; // tilt (sine of the angle) that starts the stream
 const DOWNHILL_EVERY = 3; // seconds between downhill gliders while tipped
 const SHAKE_OFFSET = 0.25; // of the short side, toward the shake
-
-// Targets that keep their own click behaviour
-const INTERACTIVE =
-    'a,button,input,textarea,select,label,[role="dialog"],.lightbox';
-// Painting starts only on the empty page around these, so text stays selectable
-const CONTENT = "main,aside,footer";
 
 // Classic patterns, as [col, row] offsets
 const GLIDER = [
@@ -127,9 +105,6 @@ export function DotCanvas() {
         let activeBoost = BOOST_RADIUS;
         let baseLayer: HTMLCanvasElement | null = null;
         let deviceScale = 1;
-        // Client px -> canvas CSS px. Under root `zoom` the two differ, so
-        // measure rather than assume.
-        let pointerScale = 1;
         let lastMs = 0;
         let lastColorRead = 0;
         let raf = 0;
@@ -140,43 +115,12 @@ export function DotCanvas() {
         let lastReseed = 0;
         let generation = 0;
 
-        // Pointer state, in canvas CSS px
-        let px = 0;
-        let py = 0;
-        let easedX = 0;
-        let easedY = 0;
-        // Recent pointer samples, for the throw velocity at click time
-        const trail: { x: number; y: number; t: number }[] = [];
-        let lastMoveAt = -Infinity;
-        let pushFrom = -Infinity; // a click pauses the plough until the next move
-        let lastPushC = NaN;
-        let lastPushR = NaN;
-        let lift = 0;
-        let hovering = false;
-
-        // Press state for taps and painting
-        let pressId = -1;
-        let pressX = 0;
-        let pressY = 0;
-        let pressVx = 0;
-        let pressVy = 0;
-        let pressFast = false;
-        let dragged = false;
-        let painting = false;
-        let paintC = 0;
-        let paintR = 0;
-        let lastPaintMs = 0;
-        let lastPointerType = "";
-
         const rings: Ring[] = [];
         let lanes: Lane[] = [];
 
         const reduceMotion = window.matchMedia(
             "(prefers-reduced-motion: reduce)",
         ).matches;
-        const finePointer = window.matchMedia(
-            "(hover: hover) and (pointer: fine)",
-        );
         const motion = tiltSupported() ? tilt : null;
         let leanX = 0;
         let leanY = 0;
@@ -341,11 +285,6 @@ export function DotCanvas() {
             canvas.height = Math.round(height * scale);
             ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
-            // The canvas fills the viewport and clientX is in viewport px,
-            // so undo the root zoom. Not measured from getBoundingClientRect,
-            // which older Safari reports without the zoom applied.
-            pointerScale = 1 / zoom;
-
             cols = Math.ceil(width / SPACING);
             rows = Math.ceil(height / SPACING);
 
@@ -391,17 +330,6 @@ export function DotCanvas() {
         };
 
         const drawEffects = (t: number) => {
-            ctx.fillStyle = activeColor;
-
-            if (lift > 0.01) {
-                forDotsNear(easedX, easedY, LIFT_RADIUS, (x, y, d) => {
-                    const f = (1 - d / LIFT_RADIUS) ** 1.5 * lift;
-
-                    ctx.globalAlpha = LIFT_ALPHA * f;
-                    drawDot(x, y, BASE_RADIUS + LIFT_GROW * f);
-                });
-            }
-
             for (let i = rings.length - 1; i >= 0; i--) {
                 const p = (t - rings[i].t0) / RING_S;
 
@@ -463,7 +391,7 @@ export function DotCanvas() {
                 ctx.restore();
             }
 
-            // Under the live dots, so a live cell's cover hides its lift
+            // Under the live dots, which cover the ripple where they sit
             if (!reduceMotion) drawEffects(t);
 
             if (!levels) return;
@@ -498,17 +426,6 @@ export function DotCanvas() {
             ctx.globalAlpha = 1;
         };
 
-        // 1 while the pointer is moving, easing to 0 shortly after it stops
-        const wake = (t: number, since: number) => {
-            const idle = t - Math.max(lastMoveAt, since) - WAKE_HOLD_S;
-
-            if (idle <= 0) return 1;
-
-            const k = Math.max(0, 1 - idle / WAKE_FADE_S);
-
-            return k * k * (3 - 2 * k);
-        };
-
         // Move every live cell within `radius` of (x, y) out to just past
         // it, along the line from the centre, carrying its glow with it.
         // Cells landing on each other merge, so the shove destroys as well
@@ -538,7 +455,7 @@ export function DotCanvas() {
                         d > 0.01
                             ? Math.atan2(oy, ox)
                             : Math.random() * Math.PI * 2;
-                    const to = radius + 0.5 + Math.random() * PUSH_SCATTER;
+                    const to = radius + 0.5 + Math.random() * BLAST_SCATTER;
 
                     life.set(c, r, 0);
                     moved.push([
@@ -560,20 +477,6 @@ export function DotCanvas() {
                 life.set(wc, wr, 1);
                 brightness[i] = Math.max(brightness[i], glow);
             }
-        };
-
-        // Plough along the pointer's path, once per cell it enters
-        const plough = (t: number) => {
-            if (!hovering || t < pushFrom) return;
-
-            const c = Math.floor(px / SPACING);
-            const r = Math.floor(py / SPACING);
-
-            if (c === lastPushC && r === lastPushR) return;
-
-            lastPushC = c;
-            lastPushR = r;
-            shove(px, py, PUSH_RADIUS);
         };
 
         // Shortest toroidal offset along one axis
@@ -614,8 +517,6 @@ export function DotCanvas() {
                 lastReseed = t;
             }
 
-            plough(t);
-
             if (motion) {
                 const heading = downhill();
 
@@ -642,20 +543,6 @@ export function DotCanvas() {
                         (target - brightness[i]) * (target ? fadeIn : fadeOut);
                 }
             }
-
-            // Ease the lift toward the pointer and in/out with the wake
-            const ease = Math.min(1, POINTER_EASE * dt);
-            const liftTarget = hovering ? wake(t, -Infinity) : 0;
-
-            if (lift <= 0.01) {
-                easedX = px;
-                easedY = py;
-            } else {
-                easedX += (px - easedX) * ease;
-                easedY += (py - easedY) * ease;
-            }
-
-            lift += (liftTarget - lift) * Math.min(1, 6 * dt);
 
             drawGrid(brightness, t);
         };
@@ -689,14 +576,6 @@ export function DotCanvas() {
 
         const now = () => performance.now() / 1000;
 
-        const toCanvas = (e: PointerEvent): [number, number] => [
-            e.clientX * pointerScale,
-            e.clientY * pointerScale,
-        ];
-
-        const isInteractive = (target: EventTarget | null) =>
-            !(target instanceof Element) || !!target.closest(INTERACTIVE);
-
         // Ships are stamped after the blast, but their lanes are claimed
         // first so the blast leaves their paths clear
         let stamps: (() => void)[] = [];
@@ -719,7 +598,7 @@ export function DotCanvas() {
         };
 
         // Four gliders out along the diagonals, plus a ship along the
-        // pointer's heading if it was flung in
+        // burst's heading if it was flung
         const burst = (x: number, y: number, vxAt: number, vyAt: number) => {
             const cc = Math.floor(x / SPACING);
             const cr = Math.floor(y / SPACING);
@@ -744,7 +623,7 @@ export function DotCanvas() {
             for (const stamp of stamps) stamp();
         };
 
-        // Shove everything near the click outward, then wipe what's left
+        // Shove everything near the centre outward, then wipe what's left
         // on the ships' lanes so they launch onto an empty board
         const blast = (cc: number, cr: number) => {
             shove((cc + 0.5) * SPACING, (cr + 0.5) * SPACING, BURST_CLEAR);
@@ -758,7 +637,7 @@ export function DotCanvas() {
             }
         };
 
-        // A fifth ship along the pointer's heading when it was flung in
+        // A fifth ship along the burst's heading when it was flung
         const launchShip = (
             cc: number,
             cr: number,
@@ -808,143 +687,6 @@ export function DotCanvas() {
             rings.push({ x, y, t0: now() });
             if (rings.length > MAX_RINGS) rings.shift();
             burst(x, y, vxAt, vyAt);
-            pushFrom = Infinity; // don't plough into the gliders at launch
-        };
-
-        // Bresenham between samples so a fast drag leaves no gaps
-        const paintTo = (c1: number, r1: number) => {
-            let c = paintC;
-            let r = paintR;
-            const dc = Math.abs(c1 - c);
-            const dr = -Math.abs(r1 - r);
-            const stepC = c < c1 ? 1 : -1;
-            const stepR = r < r1 ? 1 : -1;
-            let err = dc + dr;
-
-            for (;;) {
-                setWrapped(c, r);
-                if (c === c1 && r === r1) break;
-
-                const e2 = 2 * err;
-
-                if (e2 >= dr) {
-                    err += dr;
-                    c += stepC;
-                }
-                if (e2 <= dc) {
-                    err += dc;
-                    r += stepR;
-                }
-            }
-
-            paintC = c1;
-            paintR = r1;
-        };
-
-        const onPointerMove = (e: PointerEvent) => {
-            const [x, y] = toCanvas(e);
-            const t = now();
-
-            if (e.pointerType === "mouse" && finePointer.matches) {
-                trail.push({ x, y, t });
-                if (trail.length > 16) trail.shift();
-
-                hovering = true;
-                lastMoveAt = t;
-                if (pushFrom === Infinity) pushFrom = t;
-            }
-
-            px = x;
-            py = y;
-
-            if (e.pointerId !== pressId) return;
-
-            if (Math.hypot(x - pressX, y - pressY) > TAP_SLOP) dragged = true;
-
-            if (painting && e.timeStamp - lastPaintMs >= PAINT_EVERY_MS) {
-                lastPaintMs = e.timeStamp;
-                paintTo(Math.floor(x / SPACING), Math.floor(y / SPACING));
-            }
-        };
-
-        const onPointerDown = (e: PointerEvent) => {
-            lastPointerType = e.pointerType;
-
-            if (e.pointerType !== "mouse" || !finePointer.matches) return;
-            if (!e.isPrimary || e.button !== 0) return;
-            if (isInteractive(e.target)) return;
-
-            const [x, y] = toCanvas(e);
-            const t = now();
-            // Oldest sample inside the window; moves are often coalesced
-            // per frame, so measure across the window, not between events
-            const from = trail.find((s) => t - s.t <= FAST_WINDOW_S);
-            const span = from ? t - from.t : 0;
-
-            pressId = e.pointerId;
-            pressX = x;
-            pressY = y;
-            pressVx = from && span > 0.01 ? (x - from.x) / span : 0;
-            pressVy = from && span > 0.01 ? (y - from.y) / span : 0;
-            pressFast = Math.hypot(pressVx, pressVy) >= FAST_SPEED;
-            dragged = false;
-            painting =
-                e.pointerType === "mouse" &&
-                !(e.target as Element).closest(CONTENT);
-
-            if (painting) {
-                paintC = Math.floor(x / SPACING);
-                paintR = Math.floor(y / SPACING);
-                lastPaintMs = e.timeStamp;
-                setWrapped(paintC, paintR);
-            }
-        };
-
-        const endPress = () => {
-            pressId = -1;
-            painting = false;
-        };
-
-        const onPointerUp = (e: PointerEvent) => {
-            if (e.pointerId !== pressId) return;
-
-            if (painting) {
-                const [x, y] = toCanvas(e);
-
-                paintTo(Math.floor(x / SPACING), Math.floor(y / SPACING));
-            }
-
-            const wasTap = !dragged;
-            const selecting = !!window.getSelection()?.toString();
-
-            endPress();
-
-            // A drag painted (or selected); only a clean tap fires
-            if (!wasTap || selecting) return;
-
-            fire(
-                pressX,
-                pressY,
-                pressFast ? pressVx : 0,
-                pressFast ? pressVy : 0,
-            );
-        };
-
-        // Stop the browser from starting a text selection when a paint
-        // stroke begins on the empty margin and crosses into the copy
-        const onMouseDown = (e: MouseEvent) => {
-            // Touch emits compatibility mouse events; never block those
-            if (lastPointerType !== "mouse") return;
-            if (e.button !== 0 || isInteractive(e.target)) return;
-            if ((e.target as Element).closest(CONTENT)) return;
-
-            e.preventDefault();
-            window.getSelection()?.removeAllRanges();
-        };
-
-        const onPointerLeave = () => {
-            // Pointer left the window: let the lift fade and the heat stop
-            hovering = false;
         };
 
         // Ripple from the side the phone was flung toward, and send a ship
@@ -972,33 +714,11 @@ export function DotCanvas() {
         readColors();
         resize();
 
-        const listeners: [string, EventListener, AddEventListenerOptions][] =
-            [];
-        const listen = <K extends keyof WindowEventMap>(
-            type: K,
-            handler: (e: WindowEventMap[K]) => void,
-            options: AddEventListenerOptions = { passive: true },
-        ) => {
-            window.addEventListener(type, handler as EventListener, options);
-            listeners.push([type, handler as EventListener, options]);
-        };
-
         const releaseTilt = motion?.acquire();
         const offShake = motion?.onShake(onShake);
 
         if (!reduceMotion) {
             raf = requestAnimationFrame(draw);
-
-            listen("pointermove", onPointerMove);
-            listen("pointerdown", onPointerDown);
-            listen("pointerup", onPointerUp);
-            listen("pointercancel", endPress); // e.g. a touch became a scroll
-            listen("blur", endPress);
-            listen("mousedown", onMouseDown, { passive: false });
-            document.documentElement.addEventListener(
-                "pointerleave",
-                onPointerLeave,
-            );
             document.addEventListener("visibilitychange", onVisibility);
         }
 
@@ -1023,14 +743,6 @@ export function DotCanvas() {
             resizeObserver.disconnect();
             window.removeEventListener("resize", resize);
 
-            for (const [type, handler, options] of listeners) {
-                window.removeEventListener(type, handler, options);
-            }
-
-            document.documentElement.removeEventListener(
-                "pointerleave",
-                onPointerLeave,
-            );
             document.removeEventListener("visibilitychange", onVisibility);
         };
     }, []);

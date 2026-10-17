@@ -2,6 +2,8 @@ export type Project = {
     title: string;
     href: string;
     description: string;
+    // A sentence or two of prose, shown in the featured project's caption
+    summary?: string;
     // Key into GALLERIES; its first image is the tile's cover
     topic: string;
     // A prize the project won, shown as a chip on its cover
@@ -16,6 +18,8 @@ export const PROJECTS: Project[] = [
         title: "Lumen",
         href: "https://github.com/dark-sorceror/Lumen",
         description: "LLM context debugger: why one edit costs 99× another",
+        summary:
+            "Edit an LLM's context mid-generation and keep going. Lumen owns the MLX decode loop, so it keeps the cached prefix and re-prefills only the suffix that changed.",
         topic: "lumen-arch",
         demo: true,
     },

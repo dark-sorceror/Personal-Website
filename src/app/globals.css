@@ -10,6 +10,8 @@
     --link-color: #ffffff;
     --dot-base: rgba(255, 255, 255, 0.06);
     --dot-active: rgba(255, 255, 255, 0.2);
+    /* Red for the moment something is lost, like the Lumen demo's cache */
+    --accent-red: #ff5a47;
 }
 
 [data-theme="light"] {
@@ -21,6 +23,7 @@
     --link-color: #000000;
     --dot-base: rgba(0, 0, 0, 0.08);
     --dot-active: rgba(0, 0, 0, 0.17);
+    --accent-red: #dc3a26;
 }
 
 html {
