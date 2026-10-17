@@ -80,20 +80,15 @@ function switchTheme(e: React.MouseEvent<HTMLButtonElement>) {
     ).matches;
 
     clearTimeout(fadeTimer);
-
-    if (reduceMotion) {
-        root.removeAttribute("data-theme-fading");
-        applyTheme(next);
-
-        return;
-    }
-
-    root.setAttribute("data-theme-fading", "");
+    root.toggleAttribute("data-theme-fading", !reduceMotion);
     applyTheme(next);
-    fadeTimer = setTimeout(
-        () => root.removeAttribute("data-theme-fading"),
-        FADE_MS + 50,
-    );
+
+    if (!reduceMotion) {
+        fadeTimer = setTimeout(
+            () => root.removeAttribute("data-theme-fading"),
+            FADE_MS + 50,
+        );
+    }
 }
 
 export function ThemeToggle() {

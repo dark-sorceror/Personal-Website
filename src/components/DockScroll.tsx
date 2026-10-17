@@ -32,8 +32,6 @@ export function DockScroll() {
             const delta = y - last;
             last = y;
 
-            if (!phone.matches) return condense(false);
-
             run = Math.sign(delta) === Math.sign(run) ? run + delta : delta;
             const nearEnd =
                 y < EDGE_PX || y + innerHeight > root.scrollHeight - EDGE_PX;
@@ -46,12 +44,26 @@ export function DockScroll() {
             frame ||= requestAnimationFrame(update);
         };
 
-        addEventListener("scroll", onScroll, { passive: true });
-        phone.addEventListener("change", onScroll);
+        // Only phones have the dock, so only they listen for scrolls
+        const listen = () => {
+            if (phone.matches) {
+                last = scrollY;
+                run = 0;
+                addEventListener("scroll", onScroll, { passive: true });
+            } else {
+                removeEventListener("scroll", onScroll);
+                cancelAnimationFrame(frame);
+                frame = 0;
+                condense(false);
+            }
+        };
+
+        listen();
+        phone.addEventListener("change", listen);
 
         return () => {
             removeEventListener("scroll", onScroll);
-            phone.removeEventListener("change", onScroll);
+            phone.removeEventListener("change", listen);
             cancelAnimationFrame(frame);
             condense(false);
         };

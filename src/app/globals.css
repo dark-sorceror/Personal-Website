@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Phones, matching the max-width: 640px the CSS modules and scripts use
+   (Tailwind's own max-[640px] stops at 639px) */
+@custom-variant phone (@media (max-width: 640px));
+
 :root {
     /* Native scrollbars and form controls follow the theme */
     color-scheme: dark;
@@ -72,19 +76,21 @@ body {
     --nav-surface: color-mix(in srgb, var(--text) 6%, var(--bg));
 }
 
-/* Vertical divider to the right of the desktop sidebar */
+/* Vertical divider to the right of the desktop sidebar. A border with a
+   fading mask, like the section label lines, so the zoom can't round it
+   away. */
 .sidebar::after {
     content: "";
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
-    width: 1px;
-    background: linear-gradient(
+    border-right: 1px solid var(--accent-line);
+    mask-image: linear-gradient(
         to bottom,
         transparent,
-        var(--accent-line) 25%,
-        var(--accent-line) 75%,
+        #000 25%,
+        #000 75%,
         transparent
     );
 }

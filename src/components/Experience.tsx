@@ -18,7 +18,7 @@ function Logo({ src, alt }: { src: string; alt: string }) {
         <img
             src={src}
             alt={alt}
-            className="relative -top-[2px] mr-[5px] inline h-[27px] w-[27px] object-contain align-middle max-[640px]:top-0 max-[640px]:mr-[4px] max-[640px]:h-[1.2em] max-[640px]:w-[1.2em] max-[640px]:align-[-0.22em]"
+            className="relative -top-[2px] mr-[5px] inline h-[27px] w-[27px] object-contain align-middle phone:top-0 phone:mr-[4px] phone:h-[1.2em] phone:w-[1.2em] phone:align-[-0.22em]"
         />
     );
 }
@@ -54,11 +54,11 @@ function Meta({ role }: { role: Role }) {
 
     return (
         <p
-            className={`${metaClassName} whitespace-nowrap leading-[1.6] max-[640px]:mt-[4px] max-[640px]:whitespace-normal max-[640px]:leading-[1.4]`}
+            className={`${metaClassName} whitespace-nowrap leading-[1.6] phone:mt-[4px] phone:whitespace-normal phone:leading-[1.4]`}
         >
             {dates}
             {role.location && (
-                <span className="block font-normal max-[640px]:inline max-[640px]:font-semibold max-[640px]:before:content-['_·_']">
+                <span className="block font-normal phone:inline phone:font-semibold phone:before:content-['_·_']">
                     {role.location}
                 </span>
             )}
@@ -76,8 +76,8 @@ function LedgerItem({ entry }: { entry: Entry }) {
     const [current, ...earlier] = entry.roles;
 
     return (
-        <li className="pl-[6px] max-[640px]:pl-0">
-            <div className="grid grid-cols-[minmax(0,1fr)_152px] items-baseline gap-x-[32px] max-[640px]:block">
+        <li className="pl-[6px] phone:pl-0">
+            <div className="grid grid-cols-[minmax(0,1fr)_152px] items-baseline gap-x-[32px] phone:block">
                 <div>
                     <p>
                         <Headline entry={entry} />
@@ -87,7 +87,7 @@ function LedgerItem({ entry }: { entry: Entry }) {
                 <Meta role={current} />
                 {earlier.map((role) => (
                     <Fragment key={role.title}>
-                        <div className="mt-[6px] border-l border-(--accent-line) pl-[16px] text-base text-(--text-muted) max-[640px]:mt-[8px] max-[640px]:border-0 max-[640px]:pl-0">
+                        <div className="mt-[6px] border-l border-(--accent-line) pl-[16px] text-base text-(--text-muted) phone:mt-[8px] phone:border-0 phone:pl-0">
                             <p>
                                 <span className="italic">prev.</span>{" "}
                                 {role.title}
@@ -103,7 +103,7 @@ function LedgerItem({ entry }: { entry: Entry }) {
 
 // Phones drop the bullets so entries sit flush with the section label
 const listClassName =
-    "list-disc pl-[18px] ml-[16px] flex flex-col gap-[16px] text-lg leading-relaxed max-[640px]:ml-0 max-[640px]:list-none max-[640px]:gap-[20px] max-[640px]:pl-0";
+    "list-disc pl-[18px] ml-[16px] flex flex-col gap-[16px] text-lg leading-relaxed phone:ml-0 phone:list-none phone:gap-[20px] phone:pl-0";
 
 export function ExperienceList({ entries }: { entries: Entry[] }) {
     return (

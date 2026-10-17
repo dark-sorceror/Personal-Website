@@ -2,7 +2,6 @@ export type Role = {
     title: string;
     start: string; // "Sep 2026"
     end?: string; // omitted while ongoing
-    note?: string; // "Part-time", "Internship"
     // Shown under the dates. Left off where the name already says it,
     // like McMaster University in Hamilton.
     location?: string;
@@ -25,7 +24,6 @@ export const CURRENTLY: Entry[] = [
             {
                 title: "Founding Engineer",
                 start: "Sep 2026",
-                note: "Part-time",
                 location: "San Francisco, CA",
             },
             {
