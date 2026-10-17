@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { GALLERIES } from "@/components/galleryData";
 import { Lightbox } from "@/components/Lightbox";
+import { LumenDemo } from "@/components/LumenDemo";
 import { PROJECTS } from "@/components/projectsData";
 import { trackLightboxView, trackLinkClick } from "@/lib/session";
 import styles from "./Projects.module.css";
@@ -30,37 +31,47 @@ export function Projects() {
 
                         return (
                             <li key={project.title} className={styles.tile}>
-                                {cover && (
-                                    <button
-                                        type="button"
-                                        className={styles.cover}
-                                        onClick={() => show(project.topic, 0)}
-                                        aria-label={`View ${project.title} photos${
-                                            project.award
-                                                ? ` (${project.award.label}, ${project.award.event})`
-                                                : ""
-                                        }`}
-                                    >
-                                        <img
-                                            src={cover.src}
-                                            alt=""
-                                            width={cover.width}
-                                            height={cover.height}
-                                            loading="lazy"
-                                            decoding="async"
-                                        />
-                                        {project.award && (
-                                            <span className={styles.award}>
-                                                {project.award.label} ·{" "}
-                                                {project.award.event}
-                                            </span>
-                                        )}
-                                        {images.length > 1 && (
-                                            <span className={styles.count}>
-                                                1 / {images.length}
-                                            </span>
-                                        )}
-                                    </button>
+                                {project.demo ? (
+                                    <LumenDemo
+                                        onOpenGallery={() =>
+                                            show(project.topic, 0)
+                                        }
+                                    />
+                                ) : (
+                                    cover && (
+                                        <button
+                                            type="button"
+                                            className={styles.cover}
+                                            onClick={() =>
+                                                show(project.topic, 0)
+                                            }
+                                            aria-label={`View ${project.title} photos${
+                                                project.award
+                                                    ? ` (${project.award.label}, ${project.award.event})`
+                                                    : ""
+                                            }`}
+                                        >
+                                            <img
+                                                src={cover.src}
+                                                alt=""
+                                                width={cover.width}
+                                                height={cover.height}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
+                                            {project.award && (
+                                                <span className={styles.award}>
+                                                    {project.award.label} ·{" "}
+                                                    {project.award.event}
+                                                </span>
+                                            )}
+                                            {images.length > 1 && (
+                                                <span className={styles.count}>
+                                                    1 / {images.length}
+                                                </span>
+                                            )}
+                                        </button>
+                                    )
                                 )}
                                 <a
                                     href={project.href}

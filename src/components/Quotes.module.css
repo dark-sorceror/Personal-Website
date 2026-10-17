@@ -1,0 +1,65 @@
+/* See Quotes.tsx. Narrow screens: a quiet line above the footer. */
+
+.quote {
+    max-width: 420px;
+    min-height: 6em;
+    margin: 0 0 60px;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+
+.quote[data-shown] {
+    opacity: 0.6;
+}
+
+.text {
+    margin: 0;
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--text);
+    text-wrap: pretty;
+}
+
+.author {
+    margin-top: 8px;
+    font-family: system-ui, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* Wide screens: float in the margin right of the 930px column (the
+   desktop zoom is 0.72, so this is about 1240 real pixels) */
+@media (min-width: 1240px) {
+    .quote {
+        --w: 300px;
+        position: fixed;
+        z-index: 1;
+        /* Somewhere between the column's edge and the window's, and in
+           the upper two thirds so the record below stays clear */
+        left: calc(
+            50% + 465px + 48px +
+                (50% - 465px - 48px - 48px - var(--w)) * var(--x)
+        );
+        top: calc(16% + 44% * var(--y));
+        width: var(--w);
+        min-height: 0;
+        margin: 0;
+    }
+}
+
+@media (hover: hover) {
+    .quote[data-shown]:hover {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quote {
+        transition: none;
+    }
+}

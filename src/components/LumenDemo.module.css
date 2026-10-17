@@ -1,0 +1,127 @@
+/* The demo sits in a project cover's frame, so it borrows the cover's
+   border, radius and shadow. Tokens before the edit point read as cached
+   text; the edit point and everything after it get a tint as the suffix
+   that must re-prefill. Only uses shared theme tokens. */
+
+.demo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    aspect-ratio: 16 / 10;
+    padding: 10px 12px;
+    border: 1px solid var(--accent-line);
+    border-radius: 6px;
+    background: var(--bg);
+    box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.45);
+}
+
+.label,
+.detail,
+.gallery {
+    font-family: system-ui, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.tokens {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 4px;
+    margin: 0 -2px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.86rem;
+    line-height: 1.35;
+    border-radius: 4px;
+    outline: none;
+}
+
+.tokens:focus-visible {
+    outline: 1px solid var(--link-color);
+    outline-offset: 3px;
+}
+
+.token {
+    padding: 1px 2px;
+    border: 1px solid transparent;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+/* A token that starts with a space sits a gap away from the one before */
+.spaced {
+    margin-left: 0.45em;
+}
+
+.stale {
+    background: color-mix(in srgb, var(--link-color) 14%, transparent);
+    color: var(--link-color);
+}
+
+.edit {
+    border-color: var(--link-color);
+    border-radius: 3px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.readout {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    min-width: 0;
+}
+
+.multiple {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--link-color);
+}
+
+.detail {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.gallery {
+    flex-shrink: 0;
+    padding: 2px 8px;
+    border: 1px solid var(--accent-line);
+    border-radius: 20px;
+    background: none;
+    cursor: zoom-in;
+}
+
+.gallery:focus-visible {
+    border-color: var(--link-color);
+    color: var(--link-color);
+}
+
+@media (hover: hover) {
+    .gallery:hover {
+        border-color: var(--link-color);
+        color: var(--link-color);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .token {
+        transition: none;
+    }
+}

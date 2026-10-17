@@ -6,6 +6,9 @@ export type Project = {
     topic: string;
     // A prize the project won, shown as a chip on its cover
     award?: { label: string; event: string };
+    // Show the KV-cache demo in place of the cover; the gallery opens from
+    // a chip on it instead
+    demo?: boolean;
 };
 
 export const PROJECTS: Project[] = [
@@ -14,6 +17,7 @@ export const PROJECTS: Project[] = [
         href: "https://github.com/dark-sorceror/Lumen",
         description: "LLM context debugger: why one edit costs 99× another",
         topic: "lumen-arch",
+        demo: true,
     },
     {
         title: "Goosetriever",

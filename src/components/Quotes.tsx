@@ -1,0 +1,75 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { QUOTES } from "@/components/quotesData";
+import styles from "./Quotes.module.css";
+
+const SHOW_MS = 9000;
+const FADE_MS = 700;
+
+// Where in the right-hand margin the quote lands, as fractions of the
+// free space across and down
+type Spot = { x: number; y: number };
+
+const randomSpot = (): Spot => ({ x: Math.random(), y: Math.random() });
+
+/**
+ * One quote at a time. On wide screens each quote surfaces at a random
+ * spot in the empty margin right of the content, fades out, and the next
+ * turns up somewhere else; narrower screens keep it in the page flow
+ * above the footer. Hovering holds the current quote.
+ */
+export function Quotes() {
+    const [index, setIndex] = useState(0);
+    // Fixed first spot, so server and client render the same markup
+    const [spot, setSpot] = useState<Spot>({ x: 0.5, y: 0.2 });
+    const [shown, setShown] = useState(true);
+    const [held, setHeld] = useState(false);
+
+    useEffect(() => {
+        if (held) return;
+
+        let swap: ReturnType<typeof setTimeout> | undefined;
+
+        const timer = setInterval(() => {
+            if (document.visibilityState !== "visible") return;
+
+            setShown(false);
+            swap = setTimeout(() => {
+                setIndex((i) => (i + 1) % QUOTES.length);
+                setSpot(randomSpot());
+                setShown(true);
+            }, FADE_MS);
+        }, SHOW_MS);
+
+        return () => {
+            clearInterval(timer);
+            clearTimeout(swap);
+        };
+    }, [held]);
+
+    const quote = QUOTES[index];
+
+    return (
+        <figure
+            className={styles.quote}
+            data-shown={shown || undefined}
+            style={
+                {
+                    "--x": spot.x,
+                    "--y": spot.y,
+                } as React.CSSProperties
+            }
+            aria-live="off"
+            onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
+            onPointerLeave={() => setHeld(false)}
+        >
+            <blockquote className={styles.text}>
+                &ldquo;{quote.text}&rdquo;
+            </blockquote>
+            <figcaption className={styles.author}>
+                &ndash; {quote.author}
+            </figcaption>
+        </figure>
+    );
+}
