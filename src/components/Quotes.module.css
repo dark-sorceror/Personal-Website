@@ -32,6 +32,14 @@
     color: var(--text-muted);
 }
 
+/* Phones: no room held for a longer quote, just a short gap to the footer */
+@media (max-width: 640px) {
+    .quote {
+        min-height: 0;
+        margin-bottom: 28px;
+    }
+}
+
 /* Wide screens: float in the margin right of the 930px column (the
    desktop zoom is 0.72, so this is about 1240 real pixels) */
 @media (min-width: 1240px) {

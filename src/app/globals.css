@@ -73,6 +73,11 @@ main li {
     background: linear-gradient(to right, var(--accent-line), transparent);
 }
 
+/* The phone's link dock */
+.sidebar {
+    --nav-surface: color-mix(in srgb, var(--text) 6%, var(--bg));
+}
+
 /* Vertical divider to the right of the desktop sidebar */
 .sidebar::after {
     content: "";
@@ -103,6 +108,28 @@ main li {
 
     .sidebar::after {
         display: none;
+    }
+
+    /* Reading down the page, the dock shrinks back toward the bottom edge
+       (see DockScroll), still big enough to tap */
+    .sidebar {
+        transform-origin: 50% 100%;
+        transition:
+            transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+            box-shadow 0.4s ease,
+            background 0.3s ease,
+            border-color 0.3s ease;
+    }
+
+    html[data-dock-condensed] .sidebar:not(:focus-within) {
+        transform: translateY(6px) scale(0.84);
+        box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.4);
+    }
+}
+
+@media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+    .sidebar {
+        transition: none;
     }
 }
 
@@ -326,12 +353,12 @@ main li {
     }
 }
 
-/* ---- Experience ledger: dates and places on demand. Each row's right
-   column stacks the full range (with place) and a compact year form in one
-   grid cell, so swapping them never shifts layout. At rest only the years
-   of each headline role show; hovering or focusing anywhere in the list
-   swaps in every full range and place at once. The full text never leaves
-   the accessibility tree; only its opacity changes. */
+/* ---- Experience ledger: dates and places on demand. Each row's date
+   column stacks the full range (with place) and a compact year form in one grid
+   cell, so swapping them never shifts layout. At rest only the years show;
+   hovering or focusing anywhere in the list swaps in every full range and
+   place at once. The full text never leaves the accessibility tree; only
+   its opacity changes. */
 .ledger-meta {
     display: grid;
 }
@@ -342,11 +369,17 @@ main li {
 .ledger-full {
     opacity: 0;
 }
-
-/* Desktop with a real pointer: earlier roles stay bare until the reveal */
+/* Desktop with a real pointer. The place under the full range hangs out
+   of the cell, so one-line rows keep their height and the gap below is
+   tall enough to hold it. */
 @media (hover: hover) and (min-width: 641px) {
-    .ledger-meta--sub .ledger-short {
-        opacity: 0;
+    .ledger-meta--main {
+        position: relative;
+    }
+    .ledger-meta--main .ledger-full {
+        position: absolute;
+        top: 0;
+        right: 0;
     }
     .ledger:hover .ledger-full,
     .ledger:focus-within .ledger-full {
@@ -358,9 +391,9 @@ main li {
     }
 }
 
-/* Touch and phone: nothing to hover, so the compact years always show and
-   the full text is kept for screen readers only */
-@media (hover: none), (max-width: 640px) {
+/* Touch screens wide enough for the column: nothing to hover, so the
+   compact years always show and the full text is for screen readers */
+@media (hover: none) and (min-width: 641px) {
     .ledger-full {
         position: absolute;
         width: 1px;
@@ -368,6 +401,34 @@ main li {
         overflow: hidden;
         clip-path: inset(50%);
         white-space: nowrap;
+    }
+}
+
+/* The byline is the phone's copy of the column */
+@media (min-width: 641px) {
+    .ledger-byline {
+        display: none;
+    }
+}
+
+/* Phones: the column would eat a third of the width, so the full dates and
+   place move into the byline under each role. The column stays in the
+   accessibility tree, since the byline is hidden from it. */
+@media (max-width: 640px) {
+    .ledger-meta {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+    .ledger-short {
+        display: none;
+    }
+    /* No bullets here, so no gap for one: flush with the section label */
+    .ledger > li {
+        padding-left: 0;
     }
 }
 

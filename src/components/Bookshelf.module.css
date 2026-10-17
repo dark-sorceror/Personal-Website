@@ -1,5 +1,5 @@
 /* One row of covers. The content column is sized to fit the whole row
-   on desktop; phones scroll it sideways instead of stacking. Only uses
+   on desktop; phones fold it into a two by two grid. Only uses
    theme tokens shared by every version of globals.css. */
 
 .scroller {
@@ -98,15 +98,55 @@
     }
 }
 
+/* Phones: two by two, so every cover shows without a sideways swipe. Each
+   row gets its own ledge, drawn under each book and across the gap to
+   its neighbour. */
 @media (max-width: 640px) {
     .scroller {
-        --cover-h: 180px;
-        /* Fade the trailing edge so a cut-off cover reads as "more this way" */
-        mask-image: linear-gradient(to right, #000 85%, transparent);
+        --cover-h: 176px;
+        --gap: 20px;
+        overflow: visible;
     }
 
     .shelf {
-        gap: 20px;
-        padding-right: 64px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px var(--gap);
+        width: auto;
+        padding: 0;
+    }
+
+    .shelf::after {
+        content: none;
+    }
+
+    .book {
+        position: relative;
+        width: auto;
+    }
+
+    .book::after {
+        content: "";
+        position: absolute;
+        top: var(--cover-h);
+        left: 0;
+        right: calc(-1 * var(--gap));
+        height: 1px;
+        background: var(--accent-line);
+    }
+
+    .book:nth-child(2n)::after {
+        right: 0;
+    }
+
+    .cover {
+        align-self: flex-start;
+        max-width: 100%;
+        object-fit: contain;
+        object-position: left bottom;
+    }
+
+    .title {
+        margin-top: 12px;
     }
 }

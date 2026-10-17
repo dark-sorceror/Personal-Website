@@ -123,15 +123,7 @@ export class BitLife {
         }
     }
 
-    /**
-     * `allowFlip`, if given, can veto individual stochastic flips, which
-     * lets callers cool parts of the board without a per-cell pass.
-     */
-    step(
-        epsilon = 0,
-        rand: () => number = Math.random,
-        allowFlip?: (c: number, r: number) => boolean,
-    ) {
+    step(epsilon = 0, rand: () => number = Math.random) {
         const { grid, next, shiftHi, shiftLo, rows, wordsPerRow: W } = this;
 
         this.computeShifts();
@@ -204,8 +196,6 @@ export class BitLife {
 
                 const r = Math.floor(i / this.cols);
                 const c = i % this.cols;
-
-                if (allowFlip && !allowFlip(c, r)) continue;
 
                 this.grid[r * this.wordsPerRow + (c >> 5)] ^= 1 << (c & 31);
             }
