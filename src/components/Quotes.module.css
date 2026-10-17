@@ -48,7 +48,7 @@
         position: fixed;
         z-index: 1;
         /* Somewhere between the column's edge and the window's, and in
-           the upper two thirds so the record below stays clear */
+           the upper two thirds of the window */
         left: calc(
             50% + 465px + 48px + (50% - 465px - 48px - 48px - var(--w)) *
                 var(--x)

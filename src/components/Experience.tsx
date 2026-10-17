@@ -2,9 +2,9 @@ import { Fragment } from "react";
 
 import { InlineLink } from "@/components/InlineLink";
 import {
-    formatRange,
-    formatYears,
+    formatDates,
     type Entry,
+    type Role,
 } from "@/components/experienceData";
 
 // Small-caps sans for dates and places, matching the section labels
@@ -45,39 +45,31 @@ function Headline({ entry }: { entry: Entry }) {
     );
 }
 
-// Column metadata: the full range (and place) and a compact year form,
-// stacked in one cell. The ledger rules in globals.css pick which one shows;
-// the year form is visual only, so screen readers always hear the full text.
-function Meta({
-    full,
-    short,
-    className = "",
-}: {
-    full: React.ReactNode;
-    short: string;
-    className?: string;
-}) {
+// The date column: the dates, and under them the place when it's worth
+// naming. Phones show the byline instead.
+function Meta({ role }: { role: Role }) {
+    const dates = formatDates(role);
+
     return (
         <span
-            className={`ledger-meta ${metaClassName} justify-items-end text-right whitespace-nowrap ${className}`}
+            className={`ledger-meta ${metaClassName} whitespace-nowrap leading-[1.6]`}
         >
-            <span className="ledger-full">{full}</span>
-            <span className="ledger-short" aria-hidden="true">
-                {short}
-            </span>
+            {dates}
+            {role.location && (
+                <span className="block font-normal">{role.location}</span>
+            )}
         </span>
     );
 }
 
 // ---- Ledger: résumé rows. Headline and blurb on the left; dates in a
-// fixed right-hand column, on the baseline of each row's first line.
-// Earlier roles at the same place hang underneath on a rule, each with its
-// own dates in the same column. Phones drop the column for a small byline
-// under each role, so the text can use the full width.
+// fixed right-hand column, flush left so every range starts at the same
+// edge, on the baseline of each row's first line. Earlier roles at the same
+// place hang underneath on a rule, each with its own dates in the same
+// column. Phones drop the column for a small byline under each role, so
+// the text can use the full width.
 function LedgerItem({ entry }: { entry: Entry }) {
     const [current, ...earlier] = entry.roles;
-    const dates = formatRange(current.start, current.end);
-    const byline = [dates, entry.location].filter(Boolean).join(" · ");
 
     return (
         <li>
@@ -87,21 +79,9 @@ function LedgerItem({ entry }: { entry: Entry }) {
                         <Headline entry={entry} />
                         {entry.description && <> — {entry.description}</>}
                     </p>
-                    {byline && <Byline>{byline}</Byline>}
+                    <Byline role={current} />
                 </div>
-                <Meta
-                    className="ledger-meta--main leading-[1.6]"
-                    short={formatYears(current.start, current.end)}
-                    full={
-                        <>
-                            {dates}
-                            {dates && entry.location && <br />}
-                            <span className="font-normal">
-                                {entry.location}
-                            </span>
-                        </>
-                    }
-                />
+                <Meta role={current} />
                 {earlier.map((role) => (
                     <Fragment key={role.title}>
                         <div className="mt-[6px] border-l border-(--accent-line) pl-[16px] text-base text-(--text-muted) max-[640px]:mt-[8px] max-[640px]:border-0 max-[640px]:pl-0">
@@ -109,13 +89,9 @@ function LedgerItem({ entry }: { entry: Entry }) {
                                 <span className="italic">prev.</span>{" "}
                                 {role.title}
                             </p>
-                            <Byline>{formatRange(role.start, role.end)}</Byline>
+                            <Byline role={role} />
                         </div>
-                        <Meta
-                            className="ledger-meta--sub"
-                            short={formatYears(role.start, role.end)}
-                            full={formatRange(role.start, role.end)}
-                        />
+                        <Meta role={role} />
                     </Fragment>
                 ))}
             </div>
@@ -123,15 +99,18 @@ function LedgerItem({ entry }: { entry: Entry }) {
     );
 }
 
-// The phone's copy of the date column. Screen readers already hear the
-// column's full text, so this one is hidden from them.
-function Byline({ children }: { children: React.ReactNode }) {
+// The phone's copy of the date column, on one line under the role. Screen
+// readers already hear the column, so this one is hidden from them.
+function Byline({ role }: { role: Role }) {
+    const text = [formatDates(role), role.location].filter(Boolean).join(" · ");
+    if (!text) return null;
+
     return (
         <p
             className={`ledger-byline mt-[4px] leading-[1.4] ${metaClassName}`}
             aria-hidden="true"
         >
-            {children}
+            {text}
         </p>
     );
 }

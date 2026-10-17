@@ -4,7 +4,7 @@ import styles from "./Bookshelf.module.css";
 export function Bookshelf() {
     return (
         // Focusable so keyboard users can scroll the shelf with the arrow keys
-        <div className={styles.scroller} tabIndex={0} aria-label="Bookshelf">
+        <div className={styles.scroller} tabIndex={0} aria-label="On the shelf">
             <ul className={styles.shelf}>
                 {BOOKS.map((book) => (
                     <li key={book.cover} className={styles.book}>

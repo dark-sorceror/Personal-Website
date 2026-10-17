@@ -50,7 +50,6 @@ export function DotCanvas() {
         let rows = 0;
         let baseColor = "rgba(255, 255, 255, 0.06)";
         let activeColor = "rgba(255, 255, 255, 0.26)";
-        let bgColor = "#0d0d0d";
         let baseLayer: HTMLCanvasElement | null = null;
         let deviceScale = 1;
         let lastMs = 0;
@@ -81,7 +80,6 @@ export function DotCanvas() {
 
             activeColor =
                 styles.getPropertyValue("--dot-active").trim() || activeColor;
-            bgColor = styles.getPropertyValue("--bg").trim() || bgColor;
 
             if (nextBase !== baseColor) {
                 baseColor = nextBase;
@@ -257,25 +255,39 @@ export function DotCanvas() {
 
             if (!levels) return;
 
+            // Cut the static base dot out from under each active dot as it
+            // fades in. Cutting rather than painting the page colour over it
+            // lets whatever is behind the canvas show through, including a
+            // background still fading between themes.
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.fillStyle = "#000";
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
                     const level = levels[c * rows + r];
 
                     if (level <= 0.03) continue;
 
-                    const x = c * SPACING + SPACING / 2;
-                    const y = r * SPACING + SPACING / 2;
-
-                    // Cover the static base dot as the active dot fades in
                     ctx.globalAlpha = Math.min(1, level * 2);
-                    ctx.fillStyle = bgColor;
-                    drawDot(x, y, BASE_RADIUS + 0.5);
+                    drawDot(
+                        c * SPACING + SPACING / 2,
+                        r * SPACING + SPACING / 2,
+                        BASE_RADIUS + 0.5,
+                    );
+                }
+            }
+            ctx.globalCompositeOperation = "source-over";
+
+            ctx.fillStyle = activeColor;
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    const level = levels[c * rows + r];
+
+                    if (level <= 0.03) continue;
 
                     ctx.globalAlpha = Math.min(level, 1);
-                    ctx.fillStyle = activeColor;
                     drawDot(
-                        x,
-                        y,
+                        c * SPACING + SPACING / 2,
+                        r * SPACING + SPACING / 2,
                         BASE_RADIUS + BOOST_RADIUS * Math.min(level, 1.4),
                     );
                 }

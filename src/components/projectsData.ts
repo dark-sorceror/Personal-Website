@@ -17,9 +17,9 @@ export const PROJECTS: Project[] = [
     {
         title: "Lumen",
         href: "https://github.com/dark-sorceror/Lumen",
-        description: "LLM context debugger: why one edit costs 99× another",
+        description: "What did my agent forget? Context loss, made visible",
         summary:
-            "Edit an LLM's context mid-generation and keep going. Lumen owns the MLX decode loop, so it keeps the cached prefix and re-prefills only the suffix that changed.",
+            "Context fills to 100%, and every compaction or backtrack quietly throws away something the agent knew. Lumen makes that loss visible: what was kept, what was dropped, and what rebuilding it cost, measured on every request inside Claude Code.",
         topic: "lumen-arch",
         demo: true,
     },

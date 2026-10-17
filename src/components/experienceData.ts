@@ -3,6 +3,9 @@ export type Role = {
     start: string; // "Sep 2026"
     end?: string; // omitted while ongoing
     note?: string; // "Part-time", "Internship"
+    // Shown under the dates. Left off where the name already says it,
+    // like McMaster University in Hamilton.
+    location?: string;
 };
 
 export type Entry = {
@@ -13,7 +16,6 @@ export type Entry = {
     logo: string;
     // Small trailing badge, e.g. the YC batch
     badge?: { logo: string; alt: string; text: string };
-    location?: string;
     description?: string;
 };
 
@@ -24,6 +26,7 @@ export const CURRENTLY: Entry[] = [
                 title: "Founding Engineer",
                 start: "Sep 2026",
                 note: "Part-time",
+                location: "San Francisco, CA",
             },
             {
                 title: "Software Engineer Intern",
@@ -39,7 +42,6 @@ export const CURRENTLY: Entry[] = [
             alt: "Y Combinator",
             text: "YC S25",
         },
-        location: "San Francisco, CA",
         description:
             "building infrastructure that lets AI agents debug and fix themselves",
     },
@@ -48,6 +50,7 @@ export const CURRENTLY: Entry[] = [
             {
                 title: "Embedded Systems & Controls Software Lead",
                 start: "Sep 2026",
+                location: "Hamilton, ON",
             },
             {
                 title: "Embedded Systems Software Engineer",
@@ -56,16 +59,18 @@ export const CURRENTLY: Entry[] = [
             },
         ],
         company: "McMaster Exoskeleton",
+        href: "https://www.macexo.com",
         logo: "/media/mcmaster_exoskeleton_logo.png",
-        location: "Hamilton, ON",
         description:
             "500 Hz IMU acquisition and a distributed CAN network for a powered exoskeleton",
     },
     {
         roles: [{ title: "AI/ML", start: "Nov 2025" }],
         company: "McMaster EcoCAR",
+        href: "https://www.macecocar.ca",
         logo: "/media/mcmaster_ecocar_logo.jpg",
-        location: "Hamilton, ON",
+        description:
+            "model-based controls, diagnostics and perception for an autonomous EV",
     },
     {
         roles: [
@@ -77,7 +82,6 @@ export const CURRENTLY: Entry[] = [
         ],
         company: "McMaster University",
         logo: "/media/mcmaster_logo.png",
-        location: "Hamilton, ON",
     },
 ];
 
@@ -88,12 +92,12 @@ export const PREVIOUSLY: Entry[] = [
                 title: "Autonomous & Mechanical Engineer",
                 start: "Sep 2022",
                 end: "Jun 2025",
+                location: "Calgary, AB",
             },
         ],
         company: "VEX Robotics Team 3388N",
         href: "https://github.com/dark-sorceror/Nova_High-Stakes-2024-25",
         logo: "/media/nova_robotics_logo.png",
-        location: "Calgary, AB",
         description:
             "6th of 200 teams at Canada's largest VEX tournament; built the full autonomous nav stack in C/C++",
     },
@@ -109,25 +113,28 @@ export const PREVIOUSLY: Entry[] = [
         ],
         company: "International Baccalaureate",
         logo: "/media/ib_logo.png",
-        location: "Calgary, AB",
     },
 ];
 
-const year = (d: string) => d.split(" ")[1];
+const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
 
-// "May – Aug 2026" within a year, "Oct 2025 – Sep 2026" across years,
-// "Sep 2026 – Present" while ongoing. Empty when the start is unknown.
-export function formatRange(start: string, end?: string) {
+const parse = (d: string) => {
+    const [month, year] = d.split(" ");
+    return { month, year, index: Number(year) * 12 + MONTHS.indexOf(month) };
+};
+
+// As much detail as the stint needs. Current and short roles keep their
+// months ("Sep 2026 – Now", "May – Aug 2026", "Oct 2025 – Sep 2026"),
+// where a bare year would hide a summer internship. Finished stints of a
+// year or more read as years ("2022 – 2025"). Empty when the start is
+// unknown.
+export function formatDates({ start, end }: Role) {
     if (!start) return "";
-    if (!end) return `${start} – Present`;
-    if (year(start) === year(end)) return `${start.split(" ")[0]} – ${end}`;
+    if (!end) return `${start} – Now`;
+
+    const from = parse(start);
+    const to = parse(end);
+    if (to.index - from.index >= 12) return `${from.year} – ${to.year}`;
+    if (from.year === to.year) return `${from.month} – ${end}`;
     return `${start} – ${end}`;
-}
-
-// Compact form for the quiet state: "2026 – Now", "2022 – 2025", "2026"
-export function formatYears(start: string, end?: string) {
-    if (!start) return "";
-    if (!end) return `${year(start)} – Now`;
-    if (year(start) === year(end)) return year(start);
-    return `${year(start)} – ${year(end)}`;
 }

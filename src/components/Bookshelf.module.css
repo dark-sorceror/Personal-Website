@@ -17,7 +17,6 @@
 }
 
 .shelf {
-    position: relative;
     display: flex;
     gap: 32px;
     width: max-content;
@@ -25,17 +24,6 @@
     /* Room for the hover lift above and the shadow below */
     padding: 10px 0 14px;
     list-style: none;
-}
-
-/* The ledge the covers rest on, running the full length of the row */
-.shelf::after {
-    content: "";
-    position: absolute;
-    top: calc(10px + var(--cover-h));
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--accent-line);
 }
 
 .book {
@@ -98,45 +86,23 @@
     }
 }
 
-/* Phones: two by two, so every cover shows without a sideways swipe. Each
-   row gets its own ledge, drawn under each book and across the gap to
-   its neighbour. */
+/* Phones: two by two, so every cover shows without a sideways swipe */
 @media (max-width: 640px) {
     .scroller {
         --cover-h: 176px;
-        --gap: 20px;
         overflow: visible;
     }
 
     .shelf {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 28px var(--gap);
+        gap: 28px 20px;
         width: auto;
         padding: 0;
     }
 
-    .shelf::after {
-        content: none;
-    }
-
     .book {
-        position: relative;
         width: auto;
-    }
-
-    .book::after {
-        content: "";
-        position: absolute;
-        top: var(--cover-h);
-        left: 0;
-        right: calc(-1 * var(--gap));
-        height: 1px;
-        background: var(--accent-line);
-    }
-
-    .book:nth-child(2n)::after {
-        right: 0;
     }
 
     .cover {

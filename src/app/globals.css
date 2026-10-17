@@ -65,12 +65,15 @@ main li {
     padding-left: 6px;
 }
 
-/* Hairline that trails off after section labels */
+/* Hairline that trails off after section labels. A border rather than a
+   1px background: under the desktop zoom that would be 0.72 of a screen
+   pixel, which a browser may round away, while borders never draw thinner
+   than one. The mask fades it out. */
 .section-label::after {
     content: "";
     flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, var(--accent-line), transparent);
+    border-top: 1px solid var(--accent-line);
+    mask-image: linear-gradient(to right, #000, transparent);
 }
 
 /* The phone's link dock */
@@ -353,56 +356,9 @@ main li {
     }
 }
 
-/* ---- Experience ledger: dates and places on demand. Each row's date
-   column stacks the full range (with place) and a compact year form in one grid
-   cell, so swapping them never shifts layout. At rest only the years show;
-   hovering or focusing anywhere in the list swaps in every full range and
-   place at once. The full text never leaves the accessibility tree; only
-   its opacity changes. */
-.ledger-meta {
-    display: grid;
-}
-.ledger-meta > * {
-    grid-area: 1 / 1;
-    transition: opacity 0.25s ease;
-}
-.ledger-full {
-    opacity: 0;
-}
-/* Desktop with a real pointer. The place under the full range hangs out
-   of the cell, so one-line rows keep their height and the gap below is
-   tall enough to hold it. */
-@media (hover: hover) and (min-width: 641px) {
-    .ledger-meta--main {
-        position: relative;
-    }
-    .ledger-meta--main .ledger-full {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-    .ledger:hover .ledger-full,
-    .ledger:focus-within .ledger-full {
-        opacity: 1;
-    }
-    .ledger:hover .ledger-short,
-    .ledger:focus-within .ledger-short {
-        opacity: 0;
-    }
-}
-
-/* Touch screens wide enough for the column: nothing to hover, so the
-   compact years always show and the full text is for screen readers */
-@media (hover: none) and (min-width: 641px) {
-    .ledger-full {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip-path: inset(50%);
-        white-space: nowrap;
-    }
-}
+/* ---- Experience ledger. Desktop gives the dates (and a place worth
+   naming) their own column; phones would lose a third of the width to it,
+   so they show a one-line byline under each role instead. */
 
 /* The byline is the phone's copy of the column */
 @media (min-width: 641px) {
@@ -411,9 +367,8 @@ main li {
     }
 }
 
-/* Phones: the column would eat a third of the width, so the full dates and
-   place move into the byline under each role. The column stays in the
-   accessibility tree, since the byline is hidden from it. */
+/* The column stays in the accessibility tree on phones, since the byline
+   is hidden from it */
 @media (max-width: 640px) {
     .ledger-meta {
         position: absolute;
@@ -423,17 +378,8 @@ main li {
         clip-path: inset(50%);
         white-space: nowrap;
     }
-    .ledger-short {
-        display: none;
-    }
     /* No bullets here, so no gap for one: flush with the section label */
     .ledger > li {
         padding-left: 0;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .ledger-meta > * {
-        transition: none;
     }
 }

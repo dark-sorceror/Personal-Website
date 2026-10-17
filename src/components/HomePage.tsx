@@ -58,22 +58,17 @@ export function HomePage() {
                         <Projects />
                     </section>
                     <section className="mb-[60px] max-[640px]:mb-[36px]">
-                        <SectionLabel>Bookshelf</SectionLabel>
+                        <SectionLabel>On the shelf</SectionLabel>
                         <Bookshelf />
                     </section>
                     <Quotes />
-                    <footer className="flex items-center justify-between gap-[16px] pb-[80px] font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted) max-[640px]:pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
-                        <span>
-                            Last updated{" "}
-                            {new Date().toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                            })}
-                        </span>
-                        <span className="underline decoration-(--text-muted)/50 decoration-1 underline-offset-4 transition-colors duration-200 hover:text-(--link-color) hover:decoration-(--link-color)">
-                            what are these dots?
-                        </span>
+                    <footer className="pb-[80px] font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted) max-[640px]:pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
+                        Last updated{" "}
+                        {new Date().toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        })}
                     </footer>
                 </main>
             </div>
