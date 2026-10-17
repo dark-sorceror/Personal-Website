@@ -319,14 +319,15 @@ body {
     padding-right: 46px;
 }
 
-.lightbox-nav:hover,
+/* Shown on hover or keyboard focus. Touch screens keep them invisible but
+   still tappable: a tap on either side or a swipe steps, as in phone photo
+   apps, and the dots below mark the place. */
 .lightbox-nav:focus-visible {
     opacity: 1;
 }
 
-/* Nothing to hover on a touch screen, so leave them showing */
-@media (hover: none) {
-    .lightbox-nav {
+@media (hover: hover) {
+    .lightbox-nav:hover {
         opacity: 1;
     }
 }
