@@ -38,6 +38,7 @@ export function Projects() {
                             {project.demo ? (
                                 <LumenDemo
                                     onOpenGallery={() => show(project.topic, 0)}
+                                    held={open !== null}
                                 />
                             ) : (
                                 cover && (

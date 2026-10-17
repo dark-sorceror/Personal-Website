@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QUOTES } from "@/components/quotesData";
 import styles from "./Quotes.module.css";
 
@@ -26,27 +26,27 @@ export function Quotes() {
     const [spot, setSpot] = useState<Spot>({ x: 0.5, y: 0.2 });
     const [shown, setShown] = useState(true);
     const [held, setHeld] = useState(false);
+    // A quote already fading out still brings the next one in, even if a
+    // hover arrives mid-fade; a hold only stops the next fade starting
+    const swap = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+    useEffect(() => () => clearTimeout(swap.current), []);
 
     useEffect(() => {
         if (held) return;
-
-        let swap: ReturnType<typeof setTimeout> | undefined;
 
         const timer = setInterval(() => {
             if (document.visibilityState !== "visible") return;
 
             setShown(false);
-            swap = setTimeout(() => {
+            swap.current = setTimeout(() => {
                 setIndex((i) => (i + 1) % QUOTES.length);
                 setSpot(randomSpot());
                 setShown(true);
             }, FADE_MS);
         }, SHOW_MS);
 
-        return () => {
-            clearInterval(timer);
-            clearTimeout(swap);
-        };
+        return () => clearInterval(timer);
     }, [held]);
 
     const quote = QUOTES[index];

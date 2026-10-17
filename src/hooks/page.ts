@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { visitorSession, type SessionEvent } from "@/lib/session";
+import { sessionField, visitorSession, type SessionEvent } from "@/lib/session";
 
 export function usePageTracking() {
     const pathname = usePathname();
@@ -75,7 +75,7 @@ export function usePageTracking() {
             const fields = patched.embeds[0].fields;
             const idx = fields.findIndex((f) => f.name === "📊 Session");
 
-            fields[idx].value = `\`\`\`ini\n${lines.join("\n")}\`\`\``;
+            fields[idx].value = sessionField(lines);
 
             const parts = webhookUrl.replace(/\?.*$/, "").split("/");
             const token = parts.pop();

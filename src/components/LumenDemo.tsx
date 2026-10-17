@@ -40,6 +40,9 @@ const FILL_MS = 650;
 const COLLAPSE_MS = 900;
 const FADE_AT = 11_200;
 const LOOP_MS = 11_800;
+// From the end of the collapse to the fade nothing moves
+const SETTLED = STARTS[2] + TYPE_MS + COLLAPSE_MS;
+const settled = (t: number) => t >= SETTLED && t < FADE_AT;
 
 const clamp = (x: number) => Math.min(1, Math.max(0, x));
 const ease = (t: number) => 1 - (1 - t) ** 3;
@@ -47,21 +50,30 @@ const pct = (n: number) => `${(n / SCALE) * 100}%`;
 const fmt = (n: number) =>
     n >= 10_000 ? `${(n / 1000).toFixed(1)}k` : n.toLocaleString("en-US");
 
-export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
+export function LumenDemo({
+    onOpenGallery,
+    held = false,
+}: {
+    onOpenGallery: () => void;
+    // Something is covering the page, like the diagrams' lightbox
+    held?: boolean;
+}) {
     const [t, setT] = useState(0);
     const ref = useRef<HTMLDivElement>(null);
     const clock = useRef({
         t: 0,
         visible: false,
-        paused: false,
+        hovered: false,
+        focused: false,
+        held: false,
         still: false,
-        // Starts or stops the frame loop to match visible and paused
+        // Starts or stops the frame loop to match the flags above
         sync: () => {},
     });
 
     // One clock drives the replay. Its frame loop only runs while the card is
-    // on screen and nobody is hovering or focused in it, so it costs nothing
-    // otherwise; reduced motion parks it on the final frame.
+    // on screen, uncovered, and not being pointed at or tabbed through, so it
+    // costs nothing otherwise; reduced motion parks it on the final frame.
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
@@ -76,14 +88,17 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
         let last = 0;
         const tick = (now: number) => {
             if (last) {
-                c.t = (c.t + now - last) % LOOP_MS;
-                setT(c.t);
+                const next = (c.t + now - last) % LOOP_MS;
+
+                // Only render frames that look different
+                if (!(settled(c.t) && settled(next))) setT(next);
+                c.t = next;
             }
             last = now;
             frame = requestAnimationFrame(tick);
         };
         c.sync = () => {
-            const run = c.visible && !c.paused;
+            const run = c.visible && !c.hovered && !c.focused && !c.held;
             if (run && !frame) {
                 last = 0;
                 frame = requestAnimationFrame(tick);
@@ -108,15 +123,26 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
         };
     }, []);
 
-    const pause = (paused: boolean) => {
-        clock.current.paused = paused;
+    useEffect(() => {
+        clock.current.held = held;
+        clock.current.sync();
+    }, [held]);
+
+    const hold = (flag: "hovered" | "focused", on: boolean) => {
+        clock.current[flag] = on;
         clock.current.sync();
     };
 
+    // Asking for a replay means wanting to watch it, so it plays even with
+    // the pointer or focus still on the card
     const replay = () => {
-        if (clock.current.still) return;
-        clock.current.t = 0;
+        const c = clock.current;
+        if (c.still) return;
+        c.t = 0;
+        c.hovered = false;
+        c.focused = false;
         setT(0);
+        c.sync();
     };
 
     // Where the replay is: how many requests have landed, and how far the
@@ -134,10 +160,20 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
         <div
             ref={ref}
             className={styles.demo}
-            onPointerEnter={(e) => e.pointerType === "mouse" && pause(true)}
-            onPointerLeave={() => pause(false)}
-            onFocus={() => pause(true)}
-            onBlur={() => pause(false)}
+            onPointerEnter={(e) =>
+                e.pointerType === "mouse" && hold("hovered", true)
+            }
+            onPointerLeave={() => hold("hovered", false)}
+            // Tabbing in holds it; focus handed back after a click (say, by
+            // the closing lightbox) doesn't
+            onFocus={(e) =>
+                e.target.matches(":focus-visible") && hold("focused", true)
+            }
+            onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) {
+                    hold("focused", false);
+                }
+            }}
         >
             <div className={styles.inner}>
                 <div className={styles.header}>
