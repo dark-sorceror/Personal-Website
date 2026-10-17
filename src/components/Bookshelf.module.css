@@ -31,7 +31,6 @@
     flex-direction: column;
     /* As wide as the cover, so the caption wraps under it */
     width: min-content;
-    padding: 0;
     scroll-snap-align: start;
 }
 
@@ -60,23 +59,13 @@
 }
 
 .title {
-    margin-top: 16px;
-    font-size: 1.05rem;
+    composes: title from "./caption.module.css";
     font-style: normal;
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--link-color);
 }
 
 .author {
+    composes: byline from "./caption.module.css";
     margin-top: 6px;
-    font-family: system-ui, sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: 1.4;
-    text-transform: uppercase;
-    color: var(--text-muted);
 }
 
 /* Narrow desktop windows: shorter covers so the row still fits unscrolled */

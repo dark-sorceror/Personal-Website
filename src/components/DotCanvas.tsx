@@ -27,7 +27,7 @@ const GLIDER = [
     [0, 2],
     [1, 2],
     [2, 2],
-]; // travels +col, +row
+];
 const R_PENTOMINO = [
     [1, 0],
     [2, 0],
@@ -53,7 +53,6 @@ export function DotCanvas() {
         let baseLayer: HTMLCanvasElement | null = null;
         let deviceScale = 1;
         let lastMs = 0;
-        let lastColorRead = 0;
         let raf = 0;
 
         let life = new BitLife(1, 1);
@@ -70,8 +69,19 @@ export function DotCanvas() {
             "(max-width: 640px), (pointer: coarse) and (hover: none)",
         );
         const still = () => reduceMotion || phone.matches;
-        // Reduced motion on a desktop still shows a lived-in board, frozen
-        const paintStill = () => drawGrid(phone.matches ? null : brightness);
+        // Reduced motion on a desktop still shows a lived-in board, frozen;
+        // phones trace the base grid straight onto the canvas, with no
+        // second full-size copy to keep around
+        const paintStill = () => {
+            if (!phone.matches) {
+                drawGrid(brightness);
+
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+            traceBaseDots(ctx);
+        };
 
         const readColors = () => {
             const styles = getComputedStyle(document.documentElement);
@@ -83,10 +93,28 @@ export function DotCanvas() {
 
             if (nextBase !== baseColor) {
                 baseColor = nextBase;
-                renderBaseLayer();
+                if (!phone.matches) renderBaseLayer();
             }
 
             if (still()) paintStill();
+        };
+
+        const traceBaseDots = (target: CanvasRenderingContext2D) => {
+            target.fillStyle = baseColor;
+
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    target.beginPath();
+                    target.arc(
+                        c * SPACING + SPACING / 2,
+                        r * SPACING + SPACING / 2,
+                        BASE_RADIUS,
+                        0,
+                        Math.PI * 2,
+                    );
+                    target.fill();
+                }
+            }
         };
 
         // The base grid never moves, so draw it once per resize/theme and
@@ -106,53 +134,27 @@ export function DotCanvas() {
             }
 
             layerCtx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
-            layerCtx.fillStyle = baseColor;
-
-            for (let c = 0; c < cols; c++) {
-                for (let r = 0; r < rows; r++) {
-                    layerCtx.beginPath();
-                    layerCtx.arc(
-                        c * SPACING + SPACING / 2,
-                        r * SPACING + SPACING / 2,
-                        BASE_RADIUS,
-                        0,
-                        Math.PI * 2,
-                    );
-                    layerCtx.fill();
-                }
-            }
-
+            traceBaseDots(layerCtx);
             baseLayer = layer;
         };
 
         const setWrapped = (c: number, r: number) =>
             life.set(((c % cols) + cols) % cols, ((r % rows) + rows) % rows, 1);
 
-        // Stamp with mirroring (sc, sr) and optional transpose. A glider
-        // mirrored by (sc, sr) travels toward (sc, sr); see GLIDER.
-        const stampAt = (
-            pattern: number[][],
-            c0: number,
-            r0: number,
-            sc: number,
-            sr: number,
-            swap: boolean,
-        ) => {
-            for (const [pc, pr] of pattern) {
-                setWrapped(
-                    c0 + sc * (swap ? pr : pc),
-                    r0 + sr * (swap ? pc : pr),
-                );
-            }
-        };
-
+        // Somewhere on the board, randomly mirrored and maybe transposed
         const stampPattern = (pattern: number[][]) => {
             const c0 = 2 + Math.floor(Math.random() * Math.max(cols - 6, 1));
             const r0 = 2 + Math.floor(Math.random() * Math.max(rows - 6, 1));
             const flipC = Math.random() < 0.5 ? -1 : 1;
             const flipR = Math.random() < 0.5 ? -1 : 1;
+            const swap = Math.random() < 0.5;
 
-            stampAt(pattern, c0, r0, flipC, flipR, Math.random() < 0.5);
+            for (const [pc, pr] of pattern) {
+                setWrapped(
+                    c0 + flipC * (swap ? pr : pc),
+                    r0 + flipR * (swap ? pc : pr),
+                );
+            }
         };
 
         const stampSoup = () => {
@@ -216,6 +218,16 @@ export function DotCanvas() {
             cols = Math.ceil(width / SPACING);
             rows = Math.ceil(height / SPACING);
 
+            // Phones never run the automaton, so skip building one
+            if (phone.matches) {
+                cancelAnimationFrame(raf);
+                raf = 0;
+                baseLayer = null;
+                paintStill();
+
+                return;
+            }
+
             life = new BitLife(cols, rows);
             brightness = new Float32Array(cols * rows);
             seed();
@@ -233,7 +245,7 @@ export function DotCanvas() {
 
             cancelAnimationFrame(raf);
             raf = 0;
-            if (!phone.matches) settleStatic();
+            settleStatic();
             paintStill();
         };
 
@@ -331,22 +343,6 @@ export function DotCanvas() {
             const dt = lastMs ? Math.min((nowMs - lastMs) / 1000, 0.1) : 0;
 
             lastMs = nowMs;
-
-            // Guard against any missed layout change
-            if (
-                canvas.clientWidth !== width ||
-                canvas.clientHeight !== height
-            ) {
-                resize();
-                if (!raf) return;
-            }
-
-            // Re-read theme colors so CSS variable changes apply without a reload
-            if (t - lastColorRead >= 1) {
-                readColors();
-                lastColorRead = t;
-            }
-
             drawLife(t, dt);
 
             raf = requestAnimationFrame(draw);
@@ -370,13 +366,14 @@ export function DotCanvas() {
 
         const observer = new MutationObserver(readColors);
 
+        // Theme switches are the only way the dot colours change; the
+        // palette fades after one, so re-read again once it settles
         observer.observe(document.documentElement, {
             attributes: true,
-            // The palette fades after a switch; re-read once it settles
             attributeFilter: ["data-theme", "data-theme-fading"],
         });
-        window.addEventListener("resize", resize);
 
+        // Covers window resizes, browser zoom and crossing the phone width
         const resizeObserver = new ResizeObserver(resize);
 
         resizeObserver.observe(canvas);
@@ -385,8 +382,6 @@ export function DotCanvas() {
             cancelAnimationFrame(raf);
             observer.disconnect();
             resizeObserver.disconnect();
-            window.removeEventListener("resize", resize);
-
             document.removeEventListener("visibilitychange", onVisibility);
         };
     }, []);

@@ -22,14 +22,8 @@
 }
 
 .author {
+    composes: byline from "./caption.module.css";
     margin-top: 8px;
-    font-family: system-ui, sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: 1.4;
-    text-transform: uppercase;
-    color: var(--text-muted);
 }
 
 /* Phones: no room held for a longer quote, just a short gap to the footer */

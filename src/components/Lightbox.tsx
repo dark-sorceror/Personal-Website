@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import type { GalleryImage } from "@/components/galleryData";
 
@@ -66,38 +66,43 @@ export function Lightbox({
     const image = images[index];
     const many = images.length > 1;
 
-    const step = (delta: number) =>
-        onIndexChange((index + delta + images.length) % images.length);
+    const step = useCallback(
+        (delta: number) =>
+            onIndexChange((index + delta + images.length) % images.length),
+        [index, images.length, onIndexChange],
+    );
 
+    // Focus moves into the dialog on open and back where it was on close
     useEffect(() => {
         const previousFocus = document.activeElement as HTMLElement | null;
-        const dialog = dialogRef.current;
-        dialog?.querySelector<HTMLButtonElement>("button")?.focus();
-        const trapFocus = (event: KeyboardEvent) => {
-            if (event.key !== "Tab" || !dialog) return;
-            const buttons = Array.from(
-                dialog.querySelectorAll<HTMLButtonElement>("button"),
-            );
-            const first = buttons[0];
-            const last = buttons[buttons.length - 1];
-            if (event.shiftKey && document.activeElement === first) {
-                event.preventDefault();
-                last?.focus();
-            } else if (!event.shiftKey && document.activeElement === last) {
-                event.preventDefault();
-                first?.focus();
-            }
-        };
-        document.addEventListener("keydown", trapFocus);
-        return () => {
-            document.removeEventListener("keydown", trapFocus);
-            previousFocus?.focus({ preventScroll: true });
-        };
+
+        dialogRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+
+        return () => previousFocus?.focus({ preventScroll: true });
     }, []);
 
-    // Esc closes, arrows/WASD step through the set.
+    // Tab stays inside the dialog, Esc closes, arrows/WASD step the set
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Tab") {
+                const buttons =
+                    dialogRef.current?.querySelectorAll<HTMLButtonElement>(
+                        "button",
+                    );
+                const first = buttons?.[0];
+                const last = buttons?.[buttons.length - 1];
+
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last?.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first?.focus();
+                }
+
+                return;
+            }
+
             if (e.metaKey || e.ctrlKey || e.altKey) return;
 
             const key = e.key.toLowerCase();
@@ -107,14 +112,14 @@ export function Lightbox({
             else if (move && many) {
                 // Arrow keys would otherwise scroll the page behind us
                 e.preventDefault();
-                onIndexChange((index + move + images.length) % images.length);
+                step(move);
             }
         };
 
         window.addEventListener("keydown", onKey);
 
         return () => window.removeEventListener("keydown", onKey);
-    }, [index, images.length, many, onClose, onIndexChange]);
+    }, [many, onClose, step]);
 
     // Lock the page behind the overlay.
     useEffect(() => {

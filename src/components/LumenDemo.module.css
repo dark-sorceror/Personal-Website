@@ -2,7 +2,7 @@
    Fills its parent's box: full width, and the parent's height when it sets
    one, else 16:10 like a project cover. Type and spacing scale with the
    box's width. Monochrome except the one moment that matters: the cache a
-   /compact destroyed, in the route red. */
+   /compact destroyed, in red. */
 
 .demo {
     container-type: inline-size;
@@ -74,15 +74,6 @@
         border-color: var(--link-color);
         color: var(--link-color);
     }
-}
-
-.srOnly {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
 }
 
 .rows {
@@ -166,7 +157,6 @@
 /* The cache the compaction threw away: solid red as it lands, then it
    empties to an outline of what was there */
 .lost {
-    left: calc(27300 / 56000 * 100%);
     border: 1px dashed var(--accent-red);
 }
 

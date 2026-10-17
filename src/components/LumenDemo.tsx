@@ -50,11 +50,18 @@ const fmt = (n: number) =>
 export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
     const [t, setT] = useState(0);
     const ref = useRef<HTMLDivElement>(null);
-    const clock = useRef({ t: 0, visible: false, paused: false, still: false });
+    const clock = useRef({
+        t: 0,
+        visible: false,
+        paused: false,
+        still: false,
+        // Starts or stops the frame loop to match visible and paused
+        sync: () => {},
+    });
 
-    // One clock drives the replay. It only runs while the card is on screen
-    // and nobody is hovering or focused in it; reduced motion parks it on
-    // the final frame.
+    // One clock drives the replay. Its frame loop only runs while the card is
+    // on screen and nobody is hovering or focused in it, so it costs nothing
+    // otherwise; reduced motion parks it on the final frame.
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
@@ -68,18 +75,28 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
         let frame = 0;
         let last = 0;
         const tick = (now: number) => {
-            if (last && c.visible && !c.paused) {
+            if (last) {
                 c.t = (c.t + now - last) % LOOP_MS;
                 setT(c.t);
             }
             last = now;
             frame = requestAnimationFrame(tick);
         };
-        frame = requestAnimationFrame(tick);
+        c.sync = () => {
+            const run = c.visible && !c.paused;
+            if (run && !frame) {
+                last = 0;
+                frame = requestAnimationFrame(tick);
+            } else if (!run && frame) {
+                cancelAnimationFrame(frame);
+                frame = 0;
+            }
+        };
 
         const observer = new IntersectionObserver(
             ([entry]) => {
                 c.visible = entry.isIntersecting;
+                c.sync();
             },
             { threshold: 0.5 },
         );
@@ -87,11 +104,13 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
         return () => {
             observer.disconnect();
             cancelAnimationFrame(frame);
+            c.sync = () => {};
         };
     }, []);
 
     const pause = (paused: boolean) => {
         clock.current.paused = paused;
+        clock.current.sync();
     };
 
     const replay = () => {
@@ -145,7 +164,7 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
                     </span>
                 </div>
 
-                <p className={styles.srOnly}>
+                <p className="sr-only">
                     A real Claude Code session measured by Lumen&apos;s
                     lumen-cache mod. After reading a file, 89% of the context
                     came from cache and 6,007 tokens were processed again. Two
@@ -209,6 +228,7 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
                                         <span
                                             className={`${styles.lost} ${collapse < 0.15 ? styles.intact : ""}`}
                                             style={{
+                                                left: pct(step.held),
                                                 width: pct(lost),
                                                 opacity: collapse > 0 ? 1 : 0,
                                                 ["--crumble" as string]: clamp(
@@ -246,7 +266,7 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
                             <span className={styles.alarm}>
                                 26,971 cached tokens destroyed
                             </span>
-                            <span className={styles.plain}>
+                            <span>
                                 One /compact, which adds almost nothing, threw
                                 away half the cache.
                             </span>
@@ -256,7 +276,7 @@ export function LumenDemo({ onOpenGallery }: { onOpenGallery: () => void }) {
                             <span className={styles.calm}>
                                 Appending is nearly free
                             </span>
-                            <span className={styles.plain}>
+                            <span>
                                 Two follow-ups: 98% of the context came straight
                                 from cache.
                             </span>

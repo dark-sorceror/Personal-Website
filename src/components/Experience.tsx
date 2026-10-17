@@ -45,20 +45,24 @@ function Headline({ entry }: { entry: Entry }) {
     );
 }
 
-// The date column: the dates, and under them the place when it's worth
-// naming. Phones show the byline instead.
+// A role's dates, and the place when it's worth naming. On desktop this is
+// the right-hand column, with the place on a line of its own; phones have no
+// room for the column, so it becomes one line under the role instead.
 function Meta({ role }: { role: Role }) {
     const dates = formatDates(role);
+    if (!dates && !role.location) return null;
 
     return (
-        <span
-            className={`ledger-meta ${metaClassName} whitespace-nowrap leading-[1.6]`}
+        <p
+            className={`${metaClassName} whitespace-nowrap leading-[1.6] max-[640px]:mt-[4px] max-[640px]:whitespace-normal max-[640px]:leading-[1.4]`}
         >
             {dates}
             {role.location && (
-                <span className="block font-normal">{role.location}</span>
+                <span className="block font-normal max-[640px]:inline max-[640px]:font-semibold max-[640px]:before:content-['_·_']">
+                    {role.location}
+                </span>
             )}
-        </span>
+        </p>
     );
 }
 
@@ -66,20 +70,19 @@ function Meta({ role }: { role: Role }) {
 // fixed right-hand column, flush left so every range starts at the same
 // edge, on the baseline of each row's first line. Earlier roles at the same
 // place hang underneath on a rule, each with its own dates in the same
-// column. Phones drop the column for a small byline under each role, so
-// the text can use the full width.
+// column. On phones the grid falls away and the dates sit under each role,
+// so the text can use the full width.
 function LedgerItem({ entry }: { entry: Entry }) {
     const [current, ...earlier] = entry.roles;
 
     return (
-        <li>
+        <li className="pl-[6px] max-[640px]:pl-0">
             <div className="grid grid-cols-[minmax(0,1fr)_152px] items-baseline gap-x-[32px] max-[640px]:block">
                 <div>
                     <p>
                         <Headline entry={entry} />
                         {entry.description && <> — {entry.description}</>}
                     </p>
-                    <Byline role={current} />
                 </div>
                 <Meta role={current} />
                 {earlier.map((role) => (
@@ -89,7 +92,6 @@ function LedgerItem({ entry }: { entry: Entry }) {
                                 <span className="italic">prev.</span>{" "}
                                 {role.title}
                             </p>
-                            <Byline role={role} />
                         </div>
                         <Meta role={role} />
                     </Fragment>
@@ -99,25 +101,9 @@ function LedgerItem({ entry }: { entry: Entry }) {
     );
 }
 
-// The phone's copy of the date column, on one line under the role. Screen
-// readers already hear the column, so this one is hidden from them.
-function Byline({ role }: { role: Role }) {
-    const text = [formatDates(role), role.location].filter(Boolean).join(" · ");
-    if (!text) return null;
-
-    return (
-        <p
-            className={`ledger-byline mt-[4px] leading-[1.4] ${metaClassName}`}
-            aria-hidden="true"
-        >
-            {text}
-        </p>
-    );
-}
-
 // Phones drop the bullets so entries sit flush with the section label
 const listClassName =
-    "ledger list-disc pl-[18px] ml-[16px] flex flex-col gap-[16px] text-lg leading-relaxed max-[640px]:ml-0 max-[640px]:list-none max-[640px]:gap-[20px] max-[640px]:pl-0";
+    "list-disc pl-[18px] ml-[16px] flex flex-col gap-[16px] text-lg leading-relaxed max-[640px]:ml-0 max-[640px]:list-none max-[640px]:gap-[20px] max-[640px]:pl-0";
 
 export function ExperienceList({ entries }: { entries: Entry[] }) {
     return (

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { linkClassName } from "@/components/linkStyle";
+
 export const metadata: Metadata = { title: "Not found · Hao Yan" };
 
 // Replaces Next's built-in 404, whose own full-height black panel ignored the
@@ -18,10 +20,7 @@ export default function NotFound() {
                 Like a lonely cell in the background, this page didn&apos;t
                 survive.
             </p>
-            <Link
-                href="/"
-                className="mt-[6px] text-lg font-medium text-(--link-color) underline decoration-(--link-color)/40 decoration-[3px] underline-offset-[6px] transition-[text-decoration-color] duration-300 hover:decoration-(--link-color)"
-            >
+            <Link href="/" className={`mt-[6px] text-lg ${linkClassName}`}>
                 Back to Hao Yan
             </Link>
         </main>

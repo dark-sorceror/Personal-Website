@@ -1,15 +1,17 @@
 "use client";
 
+import { linkClassName } from "@/components/linkStyle";
 import { trackLinkClick } from "@/lib/session";
 
-export const linkClassName =
-    "text-(--link-color) font-medium underline decoration-[3px] underline-offset-[6px] decoration-(--link-color)/40 transition-[text-decoration-color] duration-300 hover:decoration-(--link-color) max-[640px]:decoration-[2px] max-[640px]:underline-offset-[3px]";
-
+// A link that opens off-site pages in a new tab and logs the click. Styled
+// as the site's underlined link unless given a class of its own.
 export function InlineLink({
     href,
+    className = linkClassName,
     children,
 }: {
     href: string;
+    className?: string;
     children: React.ReactNode;
 }) {
     const isExternal = href.startsWith("http");
@@ -20,7 +22,7 @@ export function InlineLink({
             href={href}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer" : undefined}
-            className={linkClassName}
+            className={className}
             onClick={() => trackLinkClick(label, href)}
         >
             {children}

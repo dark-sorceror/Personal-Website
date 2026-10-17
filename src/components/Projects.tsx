@@ -3,10 +3,11 @@
 import { useState } from "react";
 
 import { GALLERIES } from "@/components/galleryData";
+import { InlineLink } from "@/components/InlineLink";
 import { Lightbox } from "@/components/Lightbox";
 import { LumenDemo } from "@/components/LumenDemo";
 import { PROJECTS } from "@/components/projectsData";
-import { trackLightboxView, trackLinkClick } from "@/lib/session";
+import { trackLightboxView } from "@/lib/session";
 import styles from "./Projects.module.css";
 
 // Project tiles, captioned like the bookshelf: a cover photo, then the name
@@ -72,17 +73,12 @@ export function Projects() {
                                     </button>
                                 )
                             )}
-                            <a
+                            <InlineLink
                                 href={project.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
                                 className={styles.title}
-                                onClick={() =>
-                                    trackLinkClick(project.title, project.href)
-                                }
                             >
                                 {project.title}
-                            </a>
+                            </InlineLink>
                             <span className={styles.description}>
                                 {project.description}
                             </span>
