@@ -18,10 +18,30 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
+const description = "Hao Yan";
+
+// Link previews (Discord, X, iMessage, Slack, LinkedIn). The card image
+// comes from opengraph-image.png and twitter-image.png beside this file;
+// metadataBase turns their paths into the absolute URLs crawlers need.
 export const metadata: Metadata = {
+    metadataBase: new URL("https://haoyan.ca"),
     title: "Hao Yan",
-    description:
-        "Hao Yan · SWE @ TraceRoot.AI (YC S25) · SWE @ McMaster University",
+    description,
+    alternates: { canonical: "/" },
+    openGraph: {
+        type: "website",
+        url: "/",
+        siteName: "Hao Yan",
+        title: "Hao Yan",
+        description,
+        locale: "en_US",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Hao Yan",
+        description,
+        creator: "@darksorceror_",
+    },
 };
 
 export default function RootLayout({
