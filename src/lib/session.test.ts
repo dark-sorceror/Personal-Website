@@ -28,9 +28,9 @@ describe("sessionField", () => {
 describe("trackLightboxView", () => {
     it("logs each photo once however often it's shown", () => {
         visitorSession.events = [];
-        trackLightboxView("lumen-arch", "Decode loop");
-        trackLightboxView("lumen-arch", "Decode loop");
-        trackLightboxView("lumen-arch", "Cache bench");
+        trackLightboxView("lumen", "Decode loop");
+        trackLightboxView("lumen", "Decode loop");
+        trackLightboxView("lumen", "Cache bench");
 
         expect(visitorSession.events).toHaveLength(2);
     });

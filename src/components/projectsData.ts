@@ -28,7 +28,7 @@ export const PROJECTS: Project[] = [
         description: "What did my agent forget? Context loss, made visible",
         summary:
             "Context fills to 100%, and every compaction or backtrack quietly throws away something the agent knew. Lumen makes that loss visible: what was kept, what was dropped, and what rebuilding it cost, measured on every request inside Claude Code.",
-        topic: "lumen-arch",
+        topic: "lumen",
         demo: true,
     },
     {

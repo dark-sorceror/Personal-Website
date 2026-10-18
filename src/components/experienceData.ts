@@ -34,9 +34,9 @@ export const CURRENTLY: Entry[] = [
         ],
         company: "TraceRoot.AI",
         href: "https://traceroot.ai",
-        logo: "/media/traceroot_ai_logo.png",
+        logo: "/media/logos/traceroot-ai.png",
         badge: {
-            logo: "/media/ycombinator_logo.png",
+            logo: "/media/logos/y-combinator.png",
             alt: "Y Combinator",
             text: "YC S25",
         },
@@ -58,7 +58,7 @@ export const CURRENTLY: Entry[] = [
         ],
         company: "McMaster Exoskeleton",
         href: "https://www.macexo.com",
-        logo: "/media/mcmaster_exoskeleton_logo.png",
+        logo: "/media/logos/mcmaster-exoskeleton.png",
         description:
             "500 Hz IMU acquisition and a distributed CAN network for a powered exoskeleton",
     },
@@ -66,7 +66,7 @@ export const CURRENTLY: Entry[] = [
         roles: [{ title: "AI/ML", start: "Nov 2025" }],
         company: "McMaster EcoCAR",
         href: "https://www.macecocar.ca",
-        logo: "/media/mcmaster_ecocar_logo.jpg",
+        logo: "/media/logos/mcmaster-ecocar.jpg",
         description:
             "model-based controls, diagnostics and perception for an autonomous EV",
     },
@@ -79,7 +79,7 @@ export const CURRENTLY: Entry[] = [
             },
         ],
         company: "McMaster University",
-        logo: "/media/mcmaster_logo.png",
+        logo: "/media/logos/mcmaster.png",
     },
 ];
 
@@ -95,7 +95,7 @@ export const PREVIOUSLY: Entry[] = [
         ],
         company: "VEX Robotics Team 3388N",
         href: "https://github.com/dark-sorceror/Nova_High-Stakes-2024-25",
-        logo: "/media/nova_robotics_logo.png",
+        logo: "/media/logos/nova-robotics.png",
         description:
             "6th of 200 teams at Canada's largest VEX tournament; built the full autonomous nav stack in C/C++",
     },
@@ -103,14 +103,14 @@ export const PREVIOUSLY: Entry[] = [
         roles: [{ title: "Robotics Coach", start: "" }],
         company: "Western Mechatronics",
         href: "https://www.westernmech.ca/",
-        logo: "/media/western_mechatronics_logo.png",
+        logo: "/media/logos/western-mechatronics.png",
     },
     {
         roles: [
             { title: "Diploma Programme", start: "Sep 2022", end: "May 2025" },
         ],
         company: "International Baccalaureate",
-        logo: "/media/ib_logo.png",
+        logo: "/media/logos/ib.png",
     },
 ];
 
