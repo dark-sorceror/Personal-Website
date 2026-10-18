@@ -66,7 +66,6 @@ export function LumenDemo({
         hovered: false,
         focused: false,
         held: false,
-        still: false,
         // Starts or stops the frame loop to match the flags above
         sync: () => {},
     });
@@ -79,7 +78,6 @@ export function LumenDemo({
         if (!el) return;
         const c = clock.current;
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            c.still = true;
             const frame = requestAnimationFrame(() => setT(FADE_AT - 1));
             return () => cancelAnimationFrame(frame);
         }
@@ -133,18 +131,6 @@ export function LumenDemo({
         clock.current.sync();
     };
 
-    // Asking for a replay means wanting to watch it, so it plays even with
-    // the pointer or focus still on the card
-    const replay = () => {
-        const c = clock.current;
-        if (c.still) return;
-        c.t = 0;
-        c.hovered = false;
-        c.focused = false;
-        setT(0);
-        c.sync();
-    };
-
     // Where the replay is: how many requests have landed, and how far the
     // compaction has got
     const shown = STARTS.filter((s) => t >= s).length;
@@ -180,24 +166,14 @@ export function LumenDemo({
                     <span className={styles.caption}>
                         Real Claude Code session
                     </span>
-                    <span className={styles.controls}>
-                        <button
-                            type="button"
-                            className={styles.chip}
-                            onClick={replay}
-                            aria-label="Replay the session"
-                        >
-                            Replay
-                        </button>
-                        <button
-                            type="button"
-                            className={styles.chip}
-                            onClick={onOpenGallery}
-                            aria-label="View Lumen diagrams"
-                        >
-                            Diagrams
-                        </button>
-                    </span>
+                    <button
+                        type="button"
+                        className={styles.chip}
+                        onClick={onOpenGallery}
+                        aria-label="View Lumen diagrams"
+                    >
+                        Diagrams
+                    </button>
                 </div>
 
                 <p className="sr-only">

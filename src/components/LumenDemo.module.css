@@ -49,12 +49,6 @@
     white-space: nowrap;
 }
 
-.controls {
-    display: flex;
-    flex-shrink: 0;
-    gap: 6px;
-}
-
 .chip {
     padding: 2px 8px;
     border: 1px solid var(--accent-line);
