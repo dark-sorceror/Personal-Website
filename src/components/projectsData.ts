@@ -2,6 +2,7 @@ import type { GalleryTopic } from "@/components/galleryData";
 
 export type Project = {
     title: string;
+    // The GitHub repo, linked under the caption by its path
     href: string;
     description: string;
     // A sentence or two of prose, shown in the featured project's caption
@@ -33,7 +34,7 @@ export const PROJECTS: Project[] = [
     },
     {
         title: "Goosetriever",
-        href: "https://github.com/dark-sorceror/hack-the-north-2026",
+        href: "https://github.com/dark-sorceror/Goosetriever",
         description:
             "Voice-controlled assistive robot that fetches dropped items",
         topic: "goosetriever",

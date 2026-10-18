@@ -19,7 +19,7 @@
 @property --text-muted {
     syntax: "<color>";
     inherits: true;
-    initial-value: rgba(255, 255, 255, 0.5);
+    initial-value: rgba(255, 255, 255, 0.56);
 }
 
 @property --accent-line {

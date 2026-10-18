@@ -2,12 +2,19 @@
 
 import { trackLinkClick } from "@/lib/session";
 
-function GithubIcon() {
+// The icons are 25px tall: the desktop zoom (0.72) turns that into a whole
+// 18px, where 26 left a fraction that Safari shaves off the right edge
+
+export function GithubIcon() {
+    // The mark's circle touches the edges of its box, which a fractional size
+    // would shave off, so let it overflow
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="26"
-            height="26"
+            aria-hidden="true"
+            overflow="visible"
+            width="25"
+            height="25"
             viewBox="0 0 1024 1024"
             fill="none"
         >
@@ -26,8 +33,8 @@ function XIcon() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="26"
-            height="24"
+            width="25"
+            height="25"
             viewBox="0 0 300 272"
         >
             <path
@@ -40,7 +47,7 @@ function XIcon() {
 
 function LinkedInIcon() {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 0 72 72">
+        <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 0 72 72">
             <g fill="none" fillRule="evenodd">
                 <path
                     d="M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,0 64,0 L8,0 C3.581722,0 0,3.581722 0,8 L0,64 C0,68.418278 3.581722,72 8,72 Z"
@@ -59,7 +66,7 @@ function GmailIcon() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            height="26"
+            height="25"
             viewBox="52 42 88 66"
         >
             <path fill="#4285f4" d="M58 108h14V74L52 59v43c0 3.32 2.69 6 6 6" />

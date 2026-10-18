@@ -24,7 +24,7 @@
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: 3fr 2fr;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     column-gap: 32px;
 }
 
@@ -117,7 +117,46 @@
     color: var(--text);
 }
 
+/* Where the code lives: the GitHub mark and the repo's path, quiet until
+   pointed at */
+.source {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    justify-self: start;
+    gap: 6px;
+    margin-top: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-underline-offset: 3px;
+    transition:
+        color 0.2s ease,
+        text-decoration-color 0.2s ease;
+}
+
+.source:hover,
+.source:focus-visible {
+    color: var(--link-color);
+    text-decoration-color: currentColor;
+}
+
+/* A whole 9px under the desktop zoom, so Safari doesn't shave the edge off
+   a fraction of a pixel. Phones shrink the text, so the mark follows. */
+.source svg {
+    flex: none;
+    width: 12.5px;
+    height: 12.5px;
+}
+
 @media (max-width: 640px) {
+    .source svg {
+        width: 9px;
+        height: 9px;
+    }
+
     .grid {
         grid-template-columns: minmax(0, 1fr);
         gap: 32px;

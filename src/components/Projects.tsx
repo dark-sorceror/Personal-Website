@@ -7,12 +7,13 @@ import { InlineLink } from "@/components/InlineLink";
 import { Lightbox } from "@/components/Lightbox";
 import { LumenDemo } from "@/components/LumenDemo";
 import { PROJECTS } from "@/components/projectsData";
+import { GithubIcon } from "@/components/SidebarLinks";
 import { trackLightboxView } from "@/lib/session";
 import styles from "./Projects.module.css";
 
 // Project tiles, captioned like the bookshelf: a cover photo, then the name
-// and one line under it. The first project is featured across the row. The
-// cover opens that project's gallery.
+// and one line under it, then where its code lives. The first project is
+// featured across the row. The cover opens that project's gallery.
 export function Projects() {
     const [open, setOpen] = useState<{
         topic: GalleryTopic;
@@ -78,12 +79,9 @@ export function Projects() {
                                     </button>
                                 )
                             )}
-                            <InlineLink
-                                href={project.href}
-                                className={styles.title}
-                            >
+                            <span className={styles.title}>
                                 {project.title}
-                            </InlineLink>
+                            </span>
                             <span className={styles.description}>
                                 {project.description}
                             </span>
@@ -92,6 +90,14 @@ export function Projects() {
                                     {project.summary}
                                 </p>
                             )}
+                            <InlineLink
+                                href={project.href}
+                                className={styles.source}
+                            >
+                                <GithubIcon />
+                                <span className="sr-only">GitHub: </span>
+                                {new URL(project.href).pathname.slice(1)}
+                            </InlineLink>
                         </li>
                     );
                 })}
