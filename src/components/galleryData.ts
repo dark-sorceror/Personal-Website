@@ -22,7 +22,7 @@ export const GALLERIES = {
             height: 700,
             alt: "Lumen decode-loop architecture",
             caption:
-                "Lumen — editable context, a hand-owned MLX decode loop, and between-token inspection",
+                "A hand-rolled MLX decode loop you can inspect between tokens",
         },
         {
             src: "/media/projects/lumen/edit-and-continue.svg",
@@ -30,7 +30,7 @@ export const GALLERIES = {
             height: 700,
             alt: "Edit-and-continue workflow",
             caption:
-                "Edit-and-continue — preserve the common prefix, re-prefill the changed suffix, and resume generation",
+                "Edit the context and keep going, re-prefilling only the changed suffix",
         },
     ],
     goosetriever: [
@@ -38,9 +38,9 @@ export const GALLERIES = {
             src: "/media/projects/goosetriever/robot.jpg",
             width: 806,
             height: 537,
-            alt: "Goosetriever robot",
+            alt: "Wheeled robot with a white SO-101 arm and cardboard wings",
             caption:
-                "Goosetriever, winner of Best use of Huawei's Real-Time Multimodal AI at Hack the North 2026: skid-steer base, lidar underneath, SO-101 arm at the nose",
+                "Winner of Best use of Huawei's Real-Time Multimodal AI at Hack the North 2026",
         },
         {
             src: "/media/projects/goosetriever/showcase.jpg",
@@ -54,7 +54,7 @@ export const GALLERIES = {
             src: "/media/projects/goosetriever/mapping.jpg",
             width: 1280,
             height: 680,
-            alt: "Lidar mapping the room",
+            alt: "Room map filling in on the teleop page",
             caption:
                 "Lidar mapping the room live on the teleop page, at 4× speed",
             video: "/media/projects/goosetriever/mapping.mp4",
@@ -64,8 +64,7 @@ export const GALLERIES = {
             width: 1791,
             height: 953,
             alt: "Finished map on the teleop page",
-            caption:
-                "The finished map: inflated costmap, home marker and the routes driven",
+            caption: "The finished costmap and the routes the robot drove",
         },
         {
             src: "/media/projects/goosetriever/architecture.png",
@@ -73,7 +72,7 @@ export const GALLERIES = {
             height: 1104,
             alt: "Goosetriever system architecture",
             caption:
-                "A cloud LLM picks the skill; a QNX Pi sees, listens and holds the safety interlock; the nav Pi drives and the S100 runs the arm",
+                "A cloud LLM picks the skill and a QNX Pi holds the safety interlock",
         },
         {
             src: "/media/projects/goosetriever/a-star.svg",
@@ -87,14 +86,14 @@ export const GALLERIES = {
             src: "/media/projects/goosetriever/arm-test.jpg",
             width: 806,
             height: 537,
-            alt: "Testing the arm",
+            alt: "The robot's arm reaching up, with someone seated beside it",
             caption: "Testing the arm's pickup and handoff on the robot",
         },
         {
             src: "/media/projects/goosetriever/depth-camera.jpg",
             width: 806,
             height: 538,
-            alt: "Depth camera on the bench",
+            alt: "Laptop showing the depth feed beside the robot",
             caption: "D435i colour and depth streaming to the laptop",
         },
         {
@@ -103,7 +102,7 @@ export const GALLERIES = {
             height: 300,
             alt: "QNX safety heartbeat",
             caption:
-                "The QNX interlock's heartbeat: any steady level, crash or cut wire reads as stop",
+                "A flat QNX heartbeat reads as stop, whether from a crash or a cut wire",
         },
     ],
     neurinese: [
@@ -121,7 +120,7 @@ export const GALLERIES = {
             height: 1027,
             alt: "System diagram",
             caption:
-                "System diagram — CNN recognizer, CVAE encoder, Markov next-char, decoder",
+                "A Markov chain picks the next character and the CVAE draws it in your style",
         },
         {
             src: "/media/projects/neurinese/generation.gif",
@@ -136,7 +135,7 @@ export const GALLERIES = {
             height: 1600,
             alt: "CVAE internals",
             caption:
-                "CVAE internals — LSTM encoder/decoder and the teacher-forcing path",
+                "The CVAE's LSTM encoder and decoder, trained with teacher forcing",
         },
         {
             src: "/media/projects/neurinese/training-curves.png",
