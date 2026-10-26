@@ -22,10 +22,10 @@ export function HomePage() {
     // screen reaches.
     return (
         <div className="flex min-h-dvh justify-center pt-(--top-gap) [--top-gap:clamp(60px,11.5vh,150px)] phone:pt-0">
-            <div className="relative flex w-full max-w-[1040px] px-[24px] min-[900px]:max-w-[930px] pt-[48px] phone:mt-[15px] phone:px-[30px] phone:pt-0">
+            <div className="relative flex w-full max-w-[1040px] px-[24px] pt-[48px] phone:mt-[15px] phone:px-[30px] phone:pt-0">
                 {/* Wide screens centre the content column on its own and hang the
                     link bar in the margin to its left */}
-                <div className="shrink-0 min-[900px]:absolute min-[900px]:top-0 min-[900px]:right-[calc(100%-24px)] min-[900px]:bottom-0">
+                <div className="shrink-0 min-[960px]:absolute min-[960px]:top-0 min-[960px]:right-[calc(100%-24px)] min-[960px]:bottom-0">
                     <aside className="sidebar sticky top-[calc(var(--top-gap)+48px)] mr-[38px] flex w-[72px] shrink-0 flex-col items-center gap-[31px] self-start pt-[5px] pr-[38px] phone:fixed phone:top-auto phone:bottom-[calc(14px+env(safe-area-inset-bottom,0px))] phone:left-1/2 phone:z-[100] phone:m-0 phone:w-auto phone:-translate-x-1/2 phone:flex-row phone:gap-[4px] phone:rounded-full phone:border phone:border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] phone:bg-(--nav-surface) phone:p-[5px] phone:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)]">
                         <SidebarLinks />
                         <span className="hidden mx-[4px] h-[18px] w-px shrink-0 bg-(--accent-line) phone:block" />
@@ -45,7 +45,7 @@ export function HomePage() {
                                 <ThemeToggle />
                             </span>
                             <span className="mb-px ml-[10px]">
-                                Curr: Hamilton, ON
+                                Hamilton, ON
                             </span>
                         </div>
                     </div>

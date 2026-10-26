@@ -34,9 +34,9 @@
     }
 }
 
-/* Wide screens: float in the margin right of the 930px column (the
-   desktop zoom is 0.72, so this is about 1240 real pixels) */
-@media (min-width: 1240px) {
+/* Wide screens: float in the margin right of the 1040px column (the
+   desktop zoom is 0.72, so this is about 1320 real pixels) */
+@media (min-width: 1320px) {
     .quote {
         --w: 300px;
         position: fixed;
@@ -44,7 +44,7 @@
         /* Somewhere between the column's edge and the window's, and in
            the upper two thirds of the window */
         left: calc(
-            50% + 465px + 48px + (50% - 465px - 48px - 48px - var(--w)) *
+            50% + 520px + 48px + (50% - 520px - 48px - 48px - var(--w)) *
                 var(--x)
         );
         top: calc(16% + 44% * var(--y));

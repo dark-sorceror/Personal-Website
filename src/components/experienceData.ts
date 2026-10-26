@@ -44,7 +44,7 @@ export const CURRENTLY: Entry[] = [
             "building infrastructure that lets AI agents debug and fix themselves",
     },
     {
-        roles: [{ title: "Co-Founder", start: "" }],
+        roles: [{ title: "Co-Founder", start: "Nov 2025" }],
         company: "ML³ Labs",
         href: "https://ml3labs.com/",
         logo: "/media/logos/ml3-labs.png",
