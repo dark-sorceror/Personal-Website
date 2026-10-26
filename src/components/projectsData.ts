@@ -26,9 +26,9 @@ export const PROJECTS: Project[] = [
     {
         title: "Lumen",
         href: "https://github.com/dark-sorceror/Lumen",
-        description: "What did my agent forget? Context loss, made visible",
+        description: "See what your agent sees",
         summary:
-            "Context fills to 100%, and every compaction or backtrack quietly throws away something the agent knew. Lumen makes that loss visible: what was kept, what was dropped, and what rebuilding it cost, measured on every request inside Claude Code.",
+            "Most AI chats show you the answer, not the context behind it. Lumen puts local models, your own keys, Claude Code and Codex in one place, and shows what each reply had to work with: what compaction dropped, and the files, commands and quotes it drew on.",
         topic: "lumen",
         demo: true,
     },
