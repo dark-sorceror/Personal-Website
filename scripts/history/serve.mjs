@@ -29,13 +29,13 @@ const isFile = (p) => fs.existsSync(p) && fs.statSync(p).isFile();
 const isDir = (p) => fs.existsSync(p) && fs.statSync(p).isDirectory();
 
 /**
- * `prefix` serves `root` under a sub-path, e.g. "/history" so a snapshot
- * cache can be loaded at the URLs it was built for.
+ * A request handler for `root`. `prefix` serves it under a sub-path, e.g.
+ * "/history" so a snapshot cache can be loaded at the URLs it was built for.
  */
-export function createPagesServer(root, { prefix = "", log = false } = {}) {
+export function pagesHandler(root, { prefix = "", log = false } = {}) {
     const base = path.resolve(root);
 
-    return http.createServer((req, res) => {
+    return (req, res) => {
         const url = new URL(req.url ?? "/", "http://localhost");
         let rel = decodeURIComponent(url.pathname);
 
@@ -76,7 +76,11 @@ export function createPagesServer(root, { prefix = "", log = false } = {}) {
         if (isFile(p.replace(/\/$/, "") + ".html"))
             return send(p.replace(/\/$/, "") + ".html");
         notFound();
-    });
+    };
+}
+
+export function createPagesServer(root, options) {
+    return http.createServer(pagesHandler(root, options));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

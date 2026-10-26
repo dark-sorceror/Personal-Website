@@ -11,7 +11,8 @@
         "format": "prettier --write .",
         "history:build": "node scripts/history/build.mjs",
         "history:suggest": "node scripts/history/suggest.mjs",
-        "history:preview": "node scripts/history/preview.mjs"
+        "history:preview": "node scripts/history/preview.mjs",
+        "history:dev": "node scripts/history/dev.mjs"
     },
     "dependencies": {
         "next": "^16.2.10",

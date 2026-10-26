@@ -6,15 +6,42 @@
         "note": "draft · never went live"
     },
     {
+        "key": "2025-12-28",
+        "sha": "b9bf4eeca0259e12c7365b34e85565d9c8720297",
+        "label": "Went dark, with a gradient name",
+        "note": "draft · never went live"
+    },
+    {
+        "key": "2026-01-11",
+        "sha": "9df0aeee90169e077ccbda906ae8dc261ebae6c3",
+        "label": "A starry sky and a glowing planet",
+        "note": "draft · never went live"
+    },
+    {
         "key": "2026-01-23",
         "sha": "0d9621bd3f247b987ea2525d09ed7d7da18455d1",
-        "label": "Went dark, with a gradient name and stars",
+        "label": "Name on the left, an orbit of dots, tabs that scroll",
         "note": "draft · never went live"
+    },
+    {
+        "key": "2026-01-25",
+        "sha": "f3d462e4ad07297603c5d7f5c4ec9fb0a0cb4e23",
+        "label": "Started over as a short list: the first live site"
+    },
+    {
+        "key": "2026-01-31",
+        "sha": "b88732e06aa1298a2db267e96dc2ab3d47ab5e2b",
+        "label": "Dark, with Currently and Previously lists"
+    },
+    {
+        "key": "2026-02-21",
+        "sha": "d3bb431b9973cd4805db05d64936517de9fa4a51",
+        "label": "Experience, Projects and Contact pages filled in"
     },
     {
         "key": "2026-03-09",
         "sha": "612624f68e96396c7593cc7b1d84d5db76a6b6c9",
-        "label": "First live site, with tabs and photo galleries"
+        "label": "A link bar on the left, more photos and a lightbox"
     },
     {
         "key": "2026-03-31",
@@ -22,9 +49,14 @@
         "label": "Shorter write-ups and photo captions"
     },
     {
+        "key": "2026-05-28",
+        "sha": "08a4ed097fdaee0eda3c3d53833ebc9a6c35ad6a",
+        "label": "Rebuilt in Next.js as one serif page"
+    },
+    {
         "key": "2026-07-05",
         "sha": "556636de55e1c289fb8d9158dae52694b885dd3f",
-        "label": "Rebuilt as one serif page over still dots"
+        "label": "Moved to San Francisco, added a last-updated footer"
     },
     {
         "key": "2026-07-18",
@@ -35,5 +67,15 @@
         "key": "2026-08-21",
         "sha": "9306e8fb9050f2a8af3f44586379d8cc5306802c",
         "label": "Added Lumen and a new TraceRoot title"
+    },
+    {
+        "key": "2026-10-15",
+        "sha": "5ff3111f4dad5f4bf2dea4e8c749f41cb87d0fbc",
+        "label": "Project tiles with photos, a bookshelf and dated roles"
+    },
+    {
+        "key": "2026-10-25",
+        "sha": "f8756cba939c13f8b394b1b3cf96edc56daf1997",
+        "label": "Centred, with quotes, ML³ Labs and Lumen's cache-loss replay"
     }
 ]
