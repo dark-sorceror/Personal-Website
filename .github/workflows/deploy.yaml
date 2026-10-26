@@ -21,6 +21,9 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  # The past versions under /history/ are built from old commits
+                  fetch-depth: 0
 
             - name: Set up Node
               uses: actions/setup-node@v4
@@ -52,6 +55,30 @@ jobs:
               run: npm run build
               env:
                   NEXT_PUBLIC_DISCORD_WEBHOOK_URL: ${{ secrets.VITE_DISCORD_WEBHOOK_URL }}
+
+            # Past versions never change, so each is built once and kept in
+            # the cache. A new history.json entry misses the exact key, falls
+            # back to the last cache, and only the new version gets built.
+            - name: Restore past versions
+              id: history-cache
+              uses: actions/cache@v4
+              with:
+                  path: .history-cache
+                  key: ${{ runner.os }}-history-${{ hashFiles('history.json', 'scripts/history/**') }}
+                  restore-keys: |
+                      ${{ runner.os }}-history-
+
+            - name: Install Chromium for thumbnails
+              if: steps.history-cache.outputs.cache-hit != 'true'
+              run: npx playwright install --with-deps chromium
+              continue-on-error: true
+
+            # No webhook here: the Build step's env doesn't reach this one,
+            # and the script strips any that would. A version that fails to
+            # build is skipped, and nothing here can stop the deploy.
+            - name: Add past versions
+              run: node scripts/history/build.mjs --out out
+              continue-on-error: true
 
             - name: Add .nojekyll
               run: touch out/.nojekyll

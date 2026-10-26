@@ -8,7 +8,10 @@
         "lint": "eslint",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "history:build": "node scripts/history/build.mjs",
+        "history:suggest": "node scripts/history/suggest.mjs",
+        "history:preview": "node scripts/history/preview.mjs"
     },
     "dependencies": {
         "next": "^16.2.10",
@@ -22,6 +25,7 @@
         "@types/react-dom": "^19",
         "eslint": "^9",
         "eslint-config-next": "^16.2.10",
+        "playwright": "^1.57.0",
         "prettier": "^3.9.4",
         "tailwindcss": "^4",
         "typescript": "^5",

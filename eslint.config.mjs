@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
         "out/**",
         "build/**",
         "next-env.d.ts",
+        // Past versions' built code, from scripts/history
+        ".history-cache/**",
     ]),
 ]);
 

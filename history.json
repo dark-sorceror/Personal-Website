@@ -1,0 +1,34 @@
+[
+    {
+        "key": "2025-11-14",
+        "sha": "916dfe58a024211930802086f1886321f9c1c86c",
+        "label": "Cream page with a big purple name",
+        "note": "draft · never went live"
+    },
+    {
+        "key": "2025-12-28",
+        "sha": "b9bf4eeca0259e12c7365b34e85565d9c8720297",
+        "label": "Went dark, with a gradient name",
+        "note": "draft · never went live"
+    },
+    {
+        "key": "2026-03-09",
+        "sha": "612624f68e96396c7593cc7b1d84d5db76a6b6c9",
+        "label": "First live site, with tabs and photo galleries"
+    },
+    {
+        "key": "2026-03-31",
+        "sha": "3e640b2a8df8526bcfc4350d4f4f65e2738366e3",
+        "label": "Shorter write-ups and photo captions"
+    },
+    {
+        "key": "2026-07-18",
+        "sha": "b0a3eaad156597bcf1e36475bc6363c5be71e513",
+        "label": "One serif page over Game of Life dots"
+    },
+    {
+        "key": "2026-08-21",
+        "sha": "9306e8fb9050f2a8af3f44586379d8cc5306802c",
+        "label": "Added Lumen and a new TraceRoot title"
+    }
+]
