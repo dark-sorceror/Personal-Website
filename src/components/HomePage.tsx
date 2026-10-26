@@ -16,13 +16,17 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 export function HomePage() {
+    // The gap above the page grows with the window's height, so a short
+    // window doesn't spend a quarter of itself on it. It stays between 60px
+    // and 150px, the original, which a full-height window on a 1440p
+    // screen reaches.
     return (
-        <div className="flex min-h-dvh justify-center pt-[150px] phone:pt-0">
+        <div className="flex min-h-dvh justify-center pt-(--top-gap) [--top-gap:clamp(60px,11.5vh,150px)] phone:pt-0">
             <div className="relative flex w-full max-w-[1040px] px-[24px] min-[900px]:max-w-[930px] pt-[48px] phone:mt-[15px] phone:px-[30px] phone:pt-0">
                 {/* Wide screens centre the content column on its own and hang the
                     link bar in the margin to its left */}
                 <div className="shrink-0 min-[900px]:absolute min-[900px]:top-0 min-[900px]:right-[calc(100%-24px)] min-[900px]:bottom-0">
-                    <aside className="sidebar sticky top-[198px] mr-[38px] flex w-[72px] shrink-0 flex-col items-center gap-[31px] self-start pt-[5px] pr-[38px] phone:fixed phone:top-auto phone:bottom-[calc(14px+env(safe-area-inset-bottom,0px))] phone:left-1/2 phone:z-[100] phone:m-0 phone:w-auto phone:-translate-x-1/2 phone:flex-row phone:gap-[4px] phone:rounded-full phone:border phone:border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] phone:bg-(--nav-surface) phone:p-[5px] phone:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)]">
+                    <aside className="sidebar sticky top-[calc(var(--top-gap)+48px)] mr-[38px] flex w-[72px] shrink-0 flex-col items-center gap-[31px] self-start pt-[5px] pr-[38px] phone:fixed phone:top-auto phone:bottom-[calc(14px+env(safe-area-inset-bottom,0px))] phone:left-1/2 phone:z-[100] phone:m-0 phone:w-auto phone:-translate-x-1/2 phone:flex-row phone:gap-[4px] phone:rounded-full phone:border phone:border-[color-mix(in_srgb,var(--text-muted)_25%,transparent)] phone:bg-(--nav-surface) phone:p-[5px] phone:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)]">
                         <SidebarLinks />
                         <span className="hidden mx-[4px] h-[18px] w-px shrink-0 bg-(--accent-line) phone:block" />
                         <span className="hidden size-[40px] narrow:size-[36px] rounded-full bg-[color-mix(in_srgb,var(--text)_8%,transparent)] phone:flex [&>button]:size-full [&_svg]:size-[18px]">
