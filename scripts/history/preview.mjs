@@ -5,7 +5,13 @@
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
-import { ROOT, assemble, buildAll, snapshotEnv } from "./build.mjs";
+import {
+    ROOT,
+    assemble,
+    buildAll,
+    captureLive,
+    snapshotEnv,
+} from "./build.mjs";
 import { createPagesServer } from "./serve.mjs";
 
 const PORT = Number(process.env.PORT ?? 3300);
@@ -25,6 +31,7 @@ if (next.status !== 0) process.exit(next.status ?? 1);
 const copied = assemble(cache, versions, path.join(ROOT, "out"));
 
 console.log(`Copied ${copied.length} version(s) into out/history/`);
+await captureLive(path.join(ROOT, "out"));
 
 createPagesServer(path.join(ROOT, "out"), { log: true }).listen(
     { port: PORT, host: "::", ipv6Only: false },

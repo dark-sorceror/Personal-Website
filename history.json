@@ -6,9 +6,9 @@
         "note": "draft · never went live"
     },
     {
-        "key": "2025-12-28",
-        "sha": "b9bf4eeca0259e12c7365b34e85565d9c8720297",
-        "label": "Went dark, with a gradient name",
+        "key": "2026-01-23",
+        "sha": "0d9621bd3f247b987ea2525d09ed7d7da18455d1",
+        "label": "Went dark, with a gradient name and stars",
         "note": "draft · never went live"
     },
     {
@@ -22,9 +22,14 @@
         "label": "Shorter write-ups and photo captions"
     },
     {
+        "key": "2026-07-05",
+        "sha": "556636de55e1c289fb8d9158dae52694b885dd3f",
+        "label": "Rebuilt as one serif page over still dots"
+    },
+    {
         "key": "2026-07-18",
         "sha": "b0a3eaad156597bcf1e36475bc6363c5be71e513",
-        "label": "One serif page over Game of Life dots"
+        "label": "The background dots start playing the Game of Life"
     },
     {
         "key": "2026-08-21",

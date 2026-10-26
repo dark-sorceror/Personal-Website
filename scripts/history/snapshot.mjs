@@ -170,6 +170,33 @@ export function writeRouteShells(dir, routes) {
     }
 }
 
+/**
+ * Deletes files under media/ that no page, script or stylesheet mentions.
+ * A commit can still carry a file its pages had stopped using, like a logo
+ * for a role that was taken off the site; it shouldn't be reachable by URL.
+ */
+export function pruneUnreferencedMedia(dir) {
+    const mediaDir = path.join(dir, "media");
+
+    if (!fs.existsSync(mediaDir)) return [];
+
+    const text = walk(dir)
+        .filter((f) => TEXT_EXT.has(path.extname(f)))
+        .map((f) => fs.readFileSync(f, "utf8"))
+        .join("\n");
+    const pruned = [];
+
+    for (const file of walk(mediaDir)) {
+        const rel = path.relative(dir, file).split(path.sep).join("/");
+
+        if (text.includes(rel) || text.includes(encodeURI(rel))) continue;
+        fs.rmSync(file);
+        pruned.push(rel);
+    }
+
+    return pruned;
+}
+
 const WEBHOOK_RE = /discord(app)?\.com\/api\/webhooks\/\d{6,}\/[\w-]{20,}/;
 
 export function findWebhookLeaks(dir) {
@@ -217,6 +244,7 @@ export async function postprocess(
     }
 
     const fonts = await vendorGoogleFonts(dir, basePath);
+    const pruned = pruneUnreferencedMedia(dir);
 
     writeRouteShells(dir, routes);
 
@@ -225,5 +253,5 @@ export async function postprocess(
     if (leaks.length)
         throw new Error(`Webhook URL found in ${leaks.join(", ")}`);
 
-    return { rewrites, fonts, routes: routes.length };
+    return { rewrites, fonts, pruned, routes: routes.length };
 }

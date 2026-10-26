@@ -51,14 +51,11 @@ jobs:
             - name: Test
               run: npm test
 
-            - name: Build
-              run: npm run build
-              env:
-                  NEXT_PUBLIC_DISCORD_WEBHOOK_URL: ${{ secrets.VITE_DISCORD_WEBHOOK_URL }}
-
             # Past versions never change, so each is built once and kept in
             # the cache. A new history.json entry misses the exact key, falls
             # back to the last cache, and only the new version gets built.
+            # They come before the site's build, which hashes their
+            # screenshots into /history/'s image URLs.
             - name: Restore past versions
               id: history-cache
               uses: actions/cache@v4
@@ -68,16 +65,29 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-history-
 
+            # Only new versions need it. The live site's screenshots, taken
+            # on every deploy, fall back to the Chrome the runner comes with.
             - name: Install Chromium for thumbnails
               if: steps.history-cache.outputs.cache-hit != 'true'
               run: npx playwright install --with-deps chromium
               continue-on-error: true
 
-            # No webhook here: the Build step's env doesn't reach this one,
-            # and the script strips any that would. A version that fails to
-            # build is skipped, and nothing here can stop the deploy.
+            # No webhook here: the Build step's env doesn't reach these, and
+            # the script strips any that would. A version that fails to build
+            # is skipped, and nothing here can stop the deploy.
+            - name: Build past versions
+              run: node scripts/history/build.mjs
+              continue-on-error: true
+
+            - name: Build
+              run: npm run build
+              env:
+                  NEXT_PUBLIC_DISCORD_WEBHOOK_URL: ${{ secrets.VITE_DISCORD_WEBHOOK_URL }}
+
+            # The live site, built with the webhook, is screenshotted with
+            # requests to other sites refused, so the visit log can't fire
             - name: Add past versions
-              run: node scripts/history/build.mjs --out out
+              run: node scripts/history/build.mjs --out out --no-build
               continue-on-error: true
 
             - name: Add .nojekyll

@@ -51,9 +51,14 @@ html[data-theme-fading] {
 }
 
 /* Everything else just follows the variables; its own transitions would
-   only fight them. The toggle icon keeps its morph. */
+   only fight them. The toggle icon keeps its morph, and anything marked
+   data-theme-follow keeps its own fade: a dark and a light picture can't
+   follow a colour variable, so they crossfade over the same 350ms (the
+   /history/ previews). */
 html[data-theme-fading] body,
-html[data-theme-fading] body *:not([data-theme-icon] *),
+html[data-theme-fading]
+    body
+    *:not([data-theme-icon] *):not([data-theme-follow]),
 html[data-theme-fading] *::before,
 html[data-theme-fading] *::after {
     transition: none !important;

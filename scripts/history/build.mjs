@@ -1,11 +1,14 @@
 // Builds the past versions listed in history.json into a local cache, once
 // each, and copies them into the site's out/history/.
 //
-//   node scripts/history/build.mjs [--cache .history-cache] [--out out] [--strict]
+//   node scripts/history/build.mjs [--cache .history-cache] [--out out]
+//                                  [--no-build] [--strict]
 //
 // A version is rebuilt only when its cache folder is missing or was built
 // from another commit. A version that fails to build is logged and skipped,
 // so one broken old commit can't stop a deploy (--strict makes it fatal).
+// Run it before the site's build, which hashes the cached screenshots into
+// /history/'s image URLs, then with --out --no-build after it.
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -19,7 +22,7 @@ export const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 
 // Bump when the build or post-processing changes, so cached snapshots made
 // the old way get rebuilt
-const PIPELINE = 1;
+const PIPELINE = 2;
 
 const KEY_RE = /^[a-z0-9][a-z0-9-]*$/i;
 const SHA_RE = /^[0-9a-f]{7,40}$/;
@@ -29,7 +32,13 @@ export function readVersions(file = path.join(ROOT, "history.json")) {
     const keys = new Set();
 
     for (const v of versions) {
-        if (!KEY_RE.test(v.key) || !SHA_RE.test(v.sha) || !v.label) {
+        // "live" is where the live site's own thumbnails go
+        if (
+            !KEY_RE.test(v.key) ||
+            v.key === "live" ||
+            !SHA_RE.test(v.sha) ||
+            !v.label
+        ) {
             throw new Error(`history.json: bad entry ${JSON.stringify(v)}`);
         }
         if (keys.has(v.key))
@@ -143,9 +152,11 @@ function patchNextConfig(src) {
         .map((f) => path.join(src, f))
         .find(fs.existsSync);
     const code = fs.readFileSync(file, "utf8");
+    // Type errors don't change the output, and a draft that never shipped
+    // may not have passed the type check
     const patched = code.replace(
         /export default (\w+);?/,
-        "export default { ...$1, basePath: process.env.HISTORY_BASE_PATH };",
+        "export default { ...$1, basePath: process.env.HISTORY_BASE_PATH, typescript: { ...$1.typescript, ignoreBuildErrors: true } };",
     );
 
     if (patched === code)
@@ -204,7 +215,9 @@ export async function buildVersion(cache, v) {
             era = "vite";
             patchViteRouter(src);
             routes = viteRoutes(src);
-            run("npm", ["run", "build", "--", `--base=${basePath}/`], {
+            // Straight to Vite, past the script's "tsc -b": type errors don't
+            // change the output, and the 2026-01-23 draft never type-checked
+            run("npx", ["vite", "build", `--base=${basePath}/`], {
                 cwd: src,
                 env,
                 log,
@@ -262,63 +275,162 @@ export async function buildVersion(cache, v) {
     }
 }
 
-/** Screenshots each built version that has no thumbnail yet. */
-export async function captureThumbnails(cache, versions) {
-    const todo = versions.filter(
-        (v) =>
-            isBuilt(cache, v) &&
-            !fs.existsSync(path.join(cache, v.key, "thumbnail.jpg")),
-    );
+export const THEMES = ["dark", "light"];
 
-    if (!todo.length) return 0;
+const hasThumbnails = (dir) =>
+    THEMES.every((t) => fs.existsSync(path.join(dir, `thumbnail-${t}.jpg`)));
 
+async function launchBrowser() {
     let chromium;
 
     try {
         ({ chromium } = await import("playwright"));
     } catch {
-        console.warn("Playwright isn't installed; skipping thumbnails");
-        return 0;
+        return null;
     }
 
-    const server = createPagesServer(cache, { prefix: "/history" });
+    // Playwright's own Chromium, else the Chrome a CI runner already has
+    for (const options of [{}, { channel: "chrome" }]) {
+        try {
+            return await chromium.launch(options);
+        } catch {
+            // try the next one
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Screenshots `url` once per theme into `<dir>/thumbnail-<theme>.jpg`.
+ * Each version kept its theme its own way: "theme" in the Next.js site,
+ * "darkMode" in the first draft, the system setting in the rest, so all
+ * three are set. Requests to other sites are refused: the live site's
+ * visitor log must not fire, and old builds have nothing to fetch.
+ */
+async function screenshotThemes(browser, url, dir) {
+    const origin = new URL(url).origin;
+
+    for (const theme of THEMES) {
+        const context = await browser.newContext({
+            viewport: { width: 1280, height: 800 },
+            colorScheme: theme,
+        });
+
+        await context.route("**/*", (route) =>
+            route.request().url().startsWith(origin)
+                ? route.continue()
+                : route.abort(),
+        );
+        await context.addInitScript((t) => {
+            try {
+                localStorage.setItem("theme", t);
+                localStorage.setItem("darkMode", String(t === "dark"));
+            } catch {
+                // storage blocked; the default look is fine
+            }
+        }, theme);
+
+        try {
+            const page = await context.newPage();
+
+            await page.goto(url, { waitUntil: "networkidle" });
+            // Let fade-ins and the dot grid settle
+            await page.waitForTimeout(2500);
+            await page.screenshot({
+                path: path.join(dir, `thumbnail-${theme}.jpg`),
+                type: "jpeg",
+                quality: 80,
+            });
+        } finally {
+            await context.close();
+        }
+    }
+}
+
+async function withServer(root, options, run) {
+    const server = createPagesServer(root, options);
 
     await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 
-    const { port } = server.address();
-    const browser = await chromium.launch();
+    try {
+        return await run(`http://127.0.0.1:${server.address().port}`);
+    } finally {
+        server.close();
+    }
+}
+
+/** Screenshots each built version that has no thumbnails yet. */
+export async function captureThumbnails(cache, versions) {
+    const todo = versions.filter(
+        (v) => isBuilt(cache, v) && !hasThumbnails(path.join(cache, v.key)),
+    );
+
+    if (!todo.length) return 0;
+
+    const browser = await launchBrowser();
+
+    if (!browser) {
+        warn("No browser for Playwright; skipping thumbnails");
+        return 0;
+    }
+
     let count = 0;
 
     try {
-        for (const v of todo) {
-            const page = await browser.newPage({
-                viewport: { width: 1280, height: 800 },
-            });
+        await withServer(cache, { prefix: "/history" }, async (base) => {
+            for (const v of todo) {
+                const dir = path.join(cache, v.key);
 
-            try {
-                await page.goto(`http://127.0.0.1:${port}/history/${v.key}/`, {
-                    waitUntil: "networkidle",
-                });
-                // Let fade-ins and the dot grid settle
-                await page.waitForTimeout(2500);
-                await page.screenshot({
-                    path: path.join(cache, v.key, "thumbnail.jpg"),
-                    type: "jpeg",
-                    quality: 80,
-                });
-                count++;
-            } catch (err) {
-                console.warn(`Thumbnail for ${v.key} failed: ${err.message}`);
-            } finally {
-                await page.close();
+                try {
+                    await screenshotThemes(
+                        browser,
+                        `${base}/history/${v.key}/`,
+                        dir,
+                    );
+                    // From before there was one per theme
+                    fs.rmSync(path.join(dir, "thumbnail.jpg"), { force: true });
+                    count++;
+                } catch (err) {
+                    warn(`Thumbnail for ${v.key} failed: ${err.message}`);
+                }
             }
-        }
+        });
     } finally {
         await browser.close();
-        server.close();
     }
 
     return count;
+}
+
+/**
+ * Screenshots the freshly built live site in `out` into
+ * `<out>/history/live/`. It changes with every deploy, so it isn't cached.
+ * /history/ falls back to the link preview card if this is skipped.
+ */
+export async function captureLive(out) {
+    const browser = await launchBrowser();
+
+    if (!browser) {
+        warn("No browser for Playwright; skipping the live thumbnails");
+        return false;
+    }
+
+    const dir = path.join(out, "history", "live");
+
+    fs.mkdirSync(dir, { recursive: true });
+
+    try {
+        await withServer(out, {}, (base) =>
+            screenshotThemes(browser, `${base}/`, dir),
+        );
+        return true;
+    } catch (err) {
+        warn(`Live thumbnails failed: ${err.message}`);
+        return false;
+    } finally {
+        await browser.close();
+    }
 }
 
 /** Copies the listed, built versions into `<out>/history/`. */
@@ -396,10 +508,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const cache = path.resolve(ROOT, flag("--cache", ".history-cache"));
     const out = flag("--out", null);
 
-    const { versions } = await buildAll({
-        cache,
-        strict: args.includes("--strict"),
-    });
+    // --no-build only copies what's cached, for after the site's own build
+    const { versions } = args.includes("--no-build")
+        ? { versions: readVersions() }
+        : await buildAll({ cache, strict: args.includes("--strict") });
 
     if (out) {
         const copied = assemble(cache, versions, path.resolve(ROOT, out));
@@ -407,5 +519,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         console.log(
             `Copied ${copied.length} version(s) into ${out}/history/: ${copied.join(", ")}`,
         );
+        if (await captureLive(path.resolve(ROOT, out))) {
+            console.log("Captured the live site's thumbnails");
+        }
     }
 }
