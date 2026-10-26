@@ -38,11 +38,22 @@ const STARTS = [300, 2300, 4600];
 const TYPE_MS = 450;
 const FILL_MS = 650;
 const COLLAPSE_MS = 900;
-const FADE_AT = 11_200;
-const LOOP_MS = 11_800;
+export const FADE_AT = 11_200;
+export const LOOP_MS = 11_800;
 // From the end of the collapse to the fade nothing moves
 const SETTLED = STARTS[2] + TYPE_MS + COLLAPSE_MS;
 const settled = (t: number) => t >= SETTLED && t < FADE_AT;
+// The last frame before the fade, with everything landed
+const END = FADE_AT - 1;
+
+// The clock dt ms on. While someone is pointing at the card or tabbing
+// through it, the replay plays on to its end and holds there instead of
+// fading out and starting over; a fade already under way finishes first.
+// Stopping wherever it happened to be left it frozen mid-word.
+export function advance(t: number, dt: number, watched: boolean) {
+    if (watched && t <= END && t + dt >= END) return END;
+    return (t + dt) % LOOP_MS;
+}
 
 const clamp = (x: number) => Math.min(1, Math.max(0, x));
 const ease = (t: number) => 1 - (1 - t) ** 3;
@@ -71,8 +82,9 @@ export function LumenDemo({
     });
 
     // One clock drives the replay. Its frame loop only runs while the card is
-    // on screen, uncovered, and not being pointed at or tabbed through, so it
-    // costs nothing otherwise; reduced motion parks it on the final frame.
+    // on screen, uncovered, and not holding its end for someone reading it,
+    // so it costs nothing otherwise; reduced motion parks it on the final
+    // frame.
     useEffect(() => {
         const el = ref.current;
         if (!el) return;
@@ -84,19 +96,21 @@ export function LumenDemo({
 
         let frame = 0;
         let last = 0;
+        const watched = () => c.hovered || c.focused;
+        const holding = () => watched() && c.t === END;
         const tick = (now: number) => {
             if (last) {
-                const next = (c.t + now - last) % LOOP_MS;
+                const next = advance(c.t, now - last, watched());
 
                 // Only render frames that look different
                 if (!(settled(c.t) && settled(next))) setT(next);
                 c.t = next;
             }
             last = now;
-            frame = requestAnimationFrame(tick);
+            frame = holding() ? 0 : requestAnimationFrame(tick);
         };
         c.sync = () => {
-            const run = c.visible && !c.hovered && !c.focused && !c.held;
+            const run = c.visible && !c.held && !holding();
             if (run && !frame) {
                 last = 0;
                 frame = requestAnimationFrame(tick);
