@@ -44,8 +44,4 @@ export const QUOTES: Quote[] = [
         text: "The best way to predict the future is to invent it.",
         author: "Alan Kay",
     },
-    {
-        text: "Talk is cheap. Show me the code.",
-        author: "Linus Torvalds",
-    },
 ];
