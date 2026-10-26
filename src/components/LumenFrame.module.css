@@ -1,0 +1,74 @@
+/* The card a Lumen replay plays in (see LumenFrame.tsx). Full width, and
+   the replay's --aspect tall, 16:10 like a project cover by default, but
+   never shorter than its content: a narrow card whose text wraps more
+   grows rather than clipping it. Spacing scales with the box's width. */
+
+.demo {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Grows in height only: without this, the aspect ratio would carry a
+       taller content height over into a wider minimum width */
+    min-width: 0;
+    aspect-ratio: var(--aspect, 16 / 10);
+    border: 1px solid var(--accent-line);
+    border-radius: 6px;
+    background: var(--bg);
+    box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.45);
+}
+
+/* Container units only see an ancestor, so the scaled layout sits inside */
+.inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 0 auto;
+    gap: clamp(6px, 2.2cqi, 18px);
+    padding: clamp(12px, 4cqi, 32px);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.caption,
+.chip {
+    font-family: system-ui, sans-serif;
+    font-size: clamp(0.56rem, 2.1cqi, 0.76rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.caption {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chip {
+    padding: 2px 8px;
+    border: 1px solid var(--accent-line);
+    border-radius: 20px;
+    background: none;
+    cursor: pointer;
+}
+
+.chip:focus-visible {
+    border-color: var(--link-color);
+    color: var(--link-color);
+    outline: none;
+}
+
+@media (hover: hover) {
+    .chip:hover {
+        border-color: var(--link-color);
+        color: var(--link-color);
+    }
+}

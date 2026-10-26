@@ -1,220 +1,255 @@
-/* A replay of a real Claude Code session as the lumen-cache mod saw it.
-   Fills its parent's box: full width, and the parent's height when it sets
-   one, else 16:10 like a project cover. Type and spacing scale with the
-   box's width. Monochrome except the one moment that matters: the cache a
-   /compact destroyed, in red. */
+/* The glass box: everything the model held for one reply, as a map of
+   tiles sized by their tokens, after Lumen's "What takes the room". The
+   text is the size of the project summary beside the card, in rem rather
+   than scaled with the card, and the map takes what height it leaves.
+   Each tile is tinted by where it came from, mixed well toward the
+   background so the map reads as quiet glass in either theme; the tiles the
+   reply drew on go to full strength, and the rest recede under a hatch. */
 
-.demo {
-    container-type: inline-size;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 16 / 10;
-    border: 1px solid var(--accent-line);
-    border-radius: 6px;
-    background: var(--bg);
-    box-shadow: 0 8px 16px -10px rgba(0, 0, 0, 0.45);
+/* A little taller than a cover's 16:10 on a desktop, for room between the
+   lines; a phone's card is narrower, so it stands taller still */
+.card {
+    --aspect: 3 / 2;
 }
 
-/* Container units only see an ancestor, so the scaled layout sits inside */
-.inner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(6px, 2.2cqi, 18px);
-    height: 100%;
-    padding: clamp(12px, 4cqi, 32px);
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.caption,
-.chip {
-    font-family: system-ui, sans-serif;
-    font-size: clamp(0.56rem, 2.1cqi, 0.76rem);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-.caption {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.chip {
-    padding: 2px 8px;
-    border: 1px solid var(--accent-line);
-    border-radius: 20px;
-    background: none;
-    cursor: pointer;
-}
-
-.chip:focus-visible {
-    border-color: var(--link-color);
-    color: var(--link-color);
-    outline: none;
-}
-
-@media (hover: hover) {
-    .chip:hover {
-        border-color: var(--link-color);
-        color: var(--link-color);
+@media (max-width: 640px) {
+    .card {
+        --aspect: 4 / 3;
     }
 }
 
-.rows {
+/* Everything under the header, so the map can take what the text leaves */
+.body {
     display: flex;
+    flex: 1 0 auto;
     flex-direction: column;
-    gap: clamp(5px, 1.8cqi, 12px);
+    gap: clamp(6px, 2cqi, 14px);
+}
+
+/* The line above the map: the tally as it fills, then what it drew on */
+.takeaway {
     margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.row {
-    display: grid;
-    grid-template-columns: 8.6em minmax(0, 1fr) 3.4em;
-    align-items: center;
-    gap: 0.8em;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: clamp(0.62rem, 2.6cqi, 0.92rem);
-    line-height: 1.3;
-}
-
-.legend {
-    display: flex;
-    gap: 1.2em;
+    overflow: hidden;
     font-family: system-ui, sans-serif;
-    font-size: 0.8em;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    white-space: nowrap;
     color: var(--text-muted);
 }
 
-.keyHeld,
-.keyHot {
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-}
-
-.keyHeld::before,
-.keyHot::before {
-    content: "";
-    width: 0.8em;
-    height: 0.8em;
-    border-radius: 2px;
-}
-
-.keyHeld::before {
-    background: var(--accent-line);
-}
-
-.keyHot::before {
-    background: var(--link-color);
-}
-
-.prompt {
-    overflow: hidden;
-    white-space: nowrap;
+.takeaway b {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     color: var(--text);
 }
 
-.bar {
-    position: relative;
-    height: 0.9em;
+/* The closing tally takes the token count's place */
+.swap {
+    display: inline-grid;
 }
 
-.held,
-.lost,
-.reprocessed {
-    position: absolute;
-    top: 0;
-    bottom: 0;
+.swap > * {
+    grid-area: 1 / 1;
+}
+
+.tokens {
+    opacity: calc(1 - var(--closed));
+}
+
+/* The key: solid for what it drew on, hatched for the rest */
+.drewKey,
+.restKey {
+    display: inline-block;
+    width: 0.75em;
+    height: 0.75em;
+    margin-right: 0.35em;
     border-radius: 2px;
+    vertical-align: -0.05em;
 }
 
-.held {
-    left: 0;
-    background: var(--accent-line);
+.drewKey {
+    background: var(--text);
 }
 
-/* The cache the compaction threw away: solid red as it lands, then it
-   empties to an outline of what was there */
-.lost {
-    border: 1px dashed var(--accent-red);
+.restKey {
+    border: 1px solid var(--text-muted);
+    background: repeating-linear-gradient(
+        135deg,
+        var(--text-muted) 0 1px,
+        transparent 1px 3px
+    );
 }
 
-.lost::before {
+/* The parts of the context, in the hues of Lumen's map */
+.map {
+    --instr: #6366f1;
+    /* Violet, not pink, so no tile can read as the red of a loss */
+    --tools: #a855f7;
+    --added: #9b9b97;
+    --you: #047857;
+    --work: #ca8a04;
+    display: grid;
+    flex: 1 0 auto;
+    /* Never shorter than their labels; any room to spare is shared */
+    grid-template-rows: minmax(min-content, 1fr) minmax(min-content, 1fr);
+    gap: clamp(2px, 0.5cqi, 4px);
+}
+
+@media (max-width: 640px) {
+    .map {
+        grid-template-rows: minmax(min-content, 2fr) minmax(min-content, 3fr);
+    }
+}
+
+/* The smaller tiles under a column's top one, as wide as their tokens */
+.row {
+    display: flex;
+    gap: clamp(2px, 0.5cqi, 4px);
+}
+
+/* Clipped rather than hidden, so a tile still grows to fit its label */
+.tile {
+    position: relative;
+    display: grid;
+    align-content: start;
+    flex: 1 1 0px;
+    overflow: clip;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--hue) 30%, var(--bg));
+}
+
+.instr {
+    --hue: var(--instr);
+    --on: #ffffff;
+}
+
+.tools {
+    --hue: var(--tools);
+    --on: #ffffff;
+}
+
+.added {
+    --hue: var(--added);
+    --on: #1a1a1a;
+}
+
+.you {
+    --hue: var(--you);
+    --on: #ffffff;
+}
+
+.work {
+    --hue: var(--work);
+    --on: #221800;
+}
+
+/* The hatch over the tiles it didn't draw on */
+.tile::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--accent-red);
-    opacity: calc(1 - var(--crumble));
+    background: repeating-linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--text) 22%, transparent) 0 1px,
+        transparent 1px 6px
+    );
+    opacity: var(--rest, 0);
 }
 
-/* For a beat it is still the cache the last request left */
-.intact {
-    border-color: transparent;
+/* Full strength and an outline, for the tiles the reply drew on */
+.tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--hue);
+    box-shadow: inset 0 0 0 2px var(--link-color);
+    opacity: var(--lit, 0);
 }
 
-.intact::before {
-    background: var(--accent-line);
-    opacity: 1;
-}
-
-.reprocessed {
-    background: var(--link-color);
-}
-
-.count {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-muted);
-}
-
-.story {
+.label {
+    position: relative;
+    z-index: 1;
+    grid-area: 1 / 1;
     display: flex;
     flex-direction: column;
-    gap: 0.2em;
-    min-height: 2.9em;
+    padding: clamp(3px, 1cqi, 6px) clamp(4px, 1.3cqi, 8px);
     font-family: system-ui, sans-serif;
-    font-size: clamp(0.66rem, 2.7cqi, 0.95rem);
-    line-height: 1.3;
-    color: var(--text-muted);
-}
-
-.alarm,
-.calm {
-    font-size: 1.35em;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     line-height: 1.15;
+    color: var(--text);
 }
 
-.alarm {
-    color: var(--accent-red);
+/* The narrowest phones can't fit three columns of labels at full size,
+   so there they come down a step and sit tighter */
+@media (width < 379px) {
+    .label {
+        padding: 2px 3px;
+        font-size: 0.9rem;
+    }
 }
 
-.calm {
-    color: var(--link-color);
+.size,
+.tag {
+    font-size: 0.85em;
 }
 
-.status {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: clamp(0.58rem, 2.2cqi, 0.8rem);
+.size {
+    font-weight: 400;
     font-variant-numeric: tabular-nums;
     color: var(--text-muted);
 }
 
-.statusHot {
+.litLabel {
+    color: var(--on);
+}
+
+.tag {
+    font-weight: 800;
+}
+
+.talk {
+    display: grid;
+    row-gap: clamp(4px, 1.5cqi, 10px);
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.talk p {
+    margin: 0;
+}
+
+.message {
+    color: var(--text-muted);
+}
+
+.reply {
     color: var(--text);
+}
+
+/* The rest of the text, laid out so nothing moves as it types */
+.untyped {
+    visibility: hidden;
+}
+
+/* The passage the reply quotes from your message, marked in both */
+.quote {
+    color: var(--link-color);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+.drew {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* An item wraps to the next line whole */
+.drew b {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--link-color);
 }

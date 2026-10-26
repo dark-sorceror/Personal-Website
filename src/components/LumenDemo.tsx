@@ -1,65 +1,166 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
+import { LumenFrame } from "@/components/LumenFrame";
+import { useReplayClock, type Timing } from "@/components/useReplayClock";
 import styles from "./LumenDemo.module.css";
 
-// A replay of the live experiment in Lumen's log: a real Claude Code
-// session read off the lumen-cache mod's pane. Each request's context is
-// split into what came from cache (held) and what the model had to process
-// again. The figures are the log's own; nothing here is estimated.
-type Step = {
-    prompt: string;
-    held: number;
-    reprocessed: number;
-    reused: number;
-    // Cached prefix the request failed to reuse, drawn as it collapses
-    lost?: number;
+// A preview of Lumen's Drew on line, which is still being built. The card
+// opens up the model's context like Lumen's "What takes the room" map:
+// everything Claude Code held for one reply, as tiles roughly sized by
+// tokens and grouped by where they came from. Then the few the reply drew
+// on light up, each for evidence Lumen saw itself: a file the agent
+// opened, a command it ran, a passage it quoted word for word. The rest
+// recede under a hatch, the key for what it didn't draw on.
+type Tile = {
+    name: string;
+    // Who put it there, which picks its tint
+    from: "instr" | "tools" | "added" | "you" | "work";
+    tokens: number;
+    // How many of the context's items it stands for
+    items: number;
+    // When it lands, in ms
+    at: number;
+    // For the tiles the reply drew on, its place in the Drew on line
+    drew?: number;
 };
 
-const STEPS: Step[] = [
-    { prompt: "read a file", held: 47_300, reprocessed: 6_007, reused: 89 },
-    { prompt: "2 follow-ups", held: 53_300, reprocessed: 971, reused: 98 },
+// The map is laid out by hand rather than squarified, so every label fits:
+// three columns, each as wide as its tokens, and in each a tile over a row
+// of smaller ones. The rows are never shorter than their labels need and
+// share what's left: evenly on a desktop's wide card, 2:3 on a phone's,
+// where the row that lights up gets the room. Heights aren't to scale.
+type Column = { top: Tile; below: Tile[] };
+
+// The timeline, in ms. What it already held lands tile by tile, by where
+// it came from; then your message types in, the agent opens a file and
+// runs the tests, and the reply streams. Then what it drew on lights up in
+// the Drew on line's order; the rest recede as the line above the map
+// closes on the tally.
+const FILL_AT = 200;
+const EVERY_MS = 280;
+const GROW_MS = 300;
+const MESSAGE_AT = 2_500;
+const TYPE_MS = 900;
+const OPEN_AT = 3_700;
+const RUN_AT = 4_150;
+const REPLY_AT = 4_600;
+const STREAM_MS = 1_300;
+const LIGHTS = [6_300, 6_900, 7_500];
+const LIGHT_MS = 350;
+const CLOSE_AT = 8_100;
+const CLOSE_MS = 500;
+const TIMING: Timing = {
+    fadeAt: 12_900,
+    loop: 13_500,
+    // From the tally on to the fade nothing moves
+    still: CLOSE_AT + CLOSE_MS,
+};
+
+const landing = (i: number) => FILL_AT + i * EVERY_MS;
+
+// 41 items, 22,310 tokens, in eight tiles. The tiles the reply drew on sit
+// in the bottom row. Your message gets a tile of its own, so the one that
+// lights is that message; at about 30 tokens it's drawn as big as its
+// label needs, not to scale.
+const COLUMNS: Column[] = [
     {
-        prompt: "/compact",
-        held: 27_300,
-        reprocessed: 12_300,
-        reused: 69,
-        lost: 26_971,
+        top: {
+            name: "How to work",
+            from: "instr",
+            tokens: 7_000,
+            items: 1,
+            at: landing(0),
+        },
+        below: [
+            {
+                name: "4 earlier messages",
+                from: "you",
+                tokens: 1_470,
+                items: 4,
+                at: landing(3),
+            },
+            {
+                name: "Your message",
+                from: "you",
+                tokens: 30,
+                items: 1,
+                at: MESSAGE_AT,
+                drew: 2,
+            },
+        ],
+    },
+    {
+        top: {
+            name: "Bash, Read and 14 more",
+            from: "tools",
+            tokens: 5_000,
+            items: 16,
+            at: landing(1),
+        },
+        below: [
+            {
+                name: "CLAUDE.md",
+                from: "added",
+                tokens: 1_200,
+                items: 1,
+                at: landing(2),
+            },
+        ],
+    },
+    {
+        top: {
+            name: "Its replies and 12 results",
+            from: "work",
+            tokens: 5_610,
+            items: 16,
+            at: landing(4),
+        },
+        below: [
+            {
+                name: "retry.ts",
+                from: "work",
+                tokens: 1_200,
+                items: 1,
+                at: OPEN_AT,
+                drew: 0,
+            },
+            {
+                name: "pnpm test",
+                from: "work",
+                tokens: 800,
+                items: 1,
+                at: RUN_AT,
+                drew: 1,
+            },
+        ],
     },
 ];
 
-// Every bar shares one scale, a little over the largest window
-const SCALE = 56_000;
+const tilesOf = (column: Column) => [column.top, ...column.below];
+const TILES = COLUMNS.flatMap(tilesOf);
+// The columns' widths, by tokens
+const WIDTHS = COLUMNS.map(
+    (column) =>
+        `${tilesOf(column).reduce((sum, tile) => sum + tile.tokens, 0)}fr`,
+).join(" ");
 
-// The timeline, in ms. Each request types its prompt, then its bar fills;
-// the third first shows the cache it had, then loses most of it.
-const STARTS = [300, 2300, 4600];
-const TYPE_MS = 450;
-const FILL_MS = 650;
-const COLLAPSE_MS = 900;
-export const FADE_AT = 11_200;
-export const LOOP_MS = 11_800;
-// From the end of the collapse to the fade nothing moves
-const SETTLED = STARTS[2] + TYPE_MS + COLLAPSE_MS;
-const settled = (t: number) => t >= SETTLED && t < FADE_AT;
-// The last frame before the fade, with everything landed
-const END = FADE_AT - 1;
-
-// The clock dt ms on. While someone is pointing at the card or tabbing
-// through it, the replay plays on to its end and holds there instead of
-// fading out and starting over; a fade already under way finishes first.
-// Stopping wherever it happened to be left it frozen mid-word.
-export function advance(t: number, dt: number, watched: boolean) {
-    if (watched && t <= END && t + dt >= END) return END;
-    return (t + dt) % LOOP_MS;
-}
+const MESSAGE =
+    "why does the retry test time out? backoff should be in seconds";
+const REPLY =
+    "As you said, backoff should be in seconds. backoff() returns milliseconds, so each retry waits 1000× too long.";
+// Said in both, word for word
+const QUOTE = "backoff should be in seconds";
+// The Drew on line, each item led by the tag its tile gets
+const DREW = [
+    ["Opened", "retry.ts"],
+    ["Ran", "pnpm test"],
+    ["Quotes", "your message"],
+];
 
 const clamp = (x: number) => Math.min(1, Math.max(0, x));
 const ease = (t: number) => 1 - (1 - t) ** 3;
-const pct = (n: number) => `${(n / SCALE) * 100}%`;
-const fmt = (n: number) =>
-    n >= 10_000 ? `${(n / 1000).toFixed(1)}k` : n.toLocaleString("en-US");
+const size = (tokens: number) =>
+    tokens < 500 ? `≈${tokens}` : `≈${(tokens / 1000).toFixed(1)}k`;
 
 export function LumenDemo({
     onOpenGallery,
@@ -69,265 +170,174 @@ export function LumenDemo({
     // Something is covering the page, like the diagrams' lightbox
     held?: boolean;
 }) {
-    const [t, setT] = useState(0);
-    const ref = useRef<HTMLDivElement>(null);
-    const clock = useRef({
-        t: 0,
-        visible: false,
-        hovered: false,
-        focused: false,
-        held: false,
-        // Starts or stops the frame loop to match the flags above
-        sync: () => {},
-    });
+    const clock = useReplayClock(TIMING, held);
+    const { t, fade } = clock;
 
-    // One clock drives the replay. Its frame loop only runs while the card is
-    // on screen, uncovered, and not holding its end for someone reading it,
-    // so it costs nothing otherwise; reduced motion parks it on the final
-    // frame.
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const c = clock.current;
-        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            const frame = requestAnimationFrame(() => setT(FADE_AT - 1));
-            return () => cancelAnimationFrame(frame);
-        }
+    // How far each tile has landed, and how lit each drawn-on one is
+    const grown = (tile: Tile) => ease(clamp((t - tile.at) / GROW_MS));
+    const lit = (drew?: number) =>
+        drew === undefined ? 0 : ease(clamp((t - LIGHTS[drew]) / LIGHT_MS));
+    const closed = ease(clamp((t - CLOSE_AT) / CLOSE_MS));
 
-        let frame = 0;
-        let last = 0;
-        const watched = () => c.hovered || c.focused;
-        const holding = () => watched() && c.t === END;
-        const tick = (now: number) => {
-            if (last) {
-                const next = advance(c.t, now - last, watched());
-
-                // Only render frames that look different
-                if (!(settled(c.t) && settled(next))) setT(next);
-                c.t = next;
-            }
-            last = now;
-            frame = holding() ? 0 : requestAnimationFrame(tick);
-        };
-        c.sync = () => {
-            const run = c.visible && !c.held && !holding();
-            if (run && !frame) {
-                last = 0;
-                frame = requestAnimationFrame(tick);
-            } else if (!run && frame) {
-                cancelAnimationFrame(frame);
-                frame = 0;
-            }
-        };
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                c.visible = entry.isIntersecting;
-                c.sync();
-            },
-            { threshold: 0.5 },
+    // The tally counts up as the tiles land
+    const count = (of: (tile: Tile) => number) =>
+        Math.round(
+            TILES.reduce((sum, tile) => sum + of(tile) * grown(tile), 0),
         );
-        observer.observe(el);
-        return () => {
-            observer.disconnect();
-            cancelAnimationFrame(frame);
-            c.sync = () => {};
-        };
-    }, []);
+    const items = count((tile) => tile.items);
+    const tokens = count((tile) => tile.tokens);
 
-    useEffect(() => {
-        clock.current.held = held;
-        clock.current.sync();
-    }, [held]);
-
-    const hold = (flag: "hovered" | "focused", on: boolean) => {
-        clock.current[flag] = on;
-        clock.current.sync();
+    // A tile wipes in from the left as it lands. If the reply drew on it,
+    // it then goes to its full colour with an outline, and its size gives
+    // way to its tag, the one label fading out before the other fades in.
+    // Both share one cell, so lighting moves nothing. If not, it recedes
+    // under the hatch as the tally closes.
+    const draw = (tile: Tile) => {
+        const l = lit(tile.drew);
+        const rest = tile.drew === undefined ? closed : 0;
+        return (
+            <span
+                key={tile.name}
+                className={`${styles.tile} ${styles[tile.from]}`}
+                style={{
+                    flexGrow: tile.tokens,
+                    clipPath: `inset(0 ${(1 - grown(tile)) * 100}% 0 0)`,
+                    opacity: 1 - 0.5 * rest,
+                    ["--lit" as string]: l,
+                    ["--rest" as string]: rest,
+                }}
+            >
+                <span
+                    className={styles.label}
+                    style={{ opacity: clamp(1 - 2 * l) }}
+                >
+                    <span>{tile.name}</span>
+                    <span className={styles.size}>{size(tile.tokens)}</span>
+                </span>
+                {tile.drew !== undefined && (
+                    <span
+                        className={`${styles.label} ${styles.litLabel}`}
+                        style={{ opacity: clamp(2 * l - 1) }}
+                    >
+                        <span>{tile.name}</span>
+                        <span className={styles.tag}>{DREW[tile.drew][0]}</span>
+                    </span>
+                )}
+            </span>
+        );
     };
 
-    // Where the replay is: how many requests have landed, and how far the
-    // compaction has got
-    const shown = STARTS.filter((s) => t >= s).length;
-    const filled = (i: number) =>
-        ease(clamp((t - STARTS[i] - TYPE_MS) / FILL_MS));
-    const collapse = clamp((t - STARTS[2] - TYPE_MS) / COLLAPSE_MS);
-    const landed = STARTS.filter((s) => t >= s + TYPE_MS).length;
-    const current = landed ? STEPS[landed - 1] : null;
-    const collapsed = landed === 3 && collapse > 0.35;
-    const fade = 1 - clamp((t - FADE_AT) / (LOOP_MS - FADE_AT - 100));
+    // Text typed out to n characters. The rest is laid out but hidden, so
+    // each line wraps to its full height from the first frame and the map
+    // above never moves; the quoted passage is marked once the Quotes light
+    // comes on.
+    const typed = (text: string, n: number) => {
+        const i = text.indexOf(QUOTE);
+        const cuts = [0, i, i + QUOTE.length, text.length];
+        const quoted = lit(2) > 0.5;
+        return cuts.slice(1).map((end, k) => {
+            const shown = Math.max(cuts[k], Math.min(end, n));
+            return (
+                <span
+                    key={k}
+                    className={k === 1 && quoted ? styles.quote : undefined}
+                >
+                    {text.slice(cuts[k], shown)}
+                    <span className={styles.untyped}>
+                        {text.slice(shown, end)}
+                    </span>
+                </span>
+            );
+        });
+    };
+    const typedMessage = Math.ceil(
+        clamp((t - MESSAGE_AT) / TYPE_MS) * MESSAGE.length,
+    );
+    const streamed = Math.ceil(
+        clamp((t - REPLY_AT) / STREAM_MS) * REPLY.length,
+    );
 
     return (
-        <div
-            ref={ref}
-            className={styles.demo}
-            onPointerEnter={(e) =>
-                e.pointerType === "mouse" && hold("hovered", true)
-            }
-            onPointerLeave={() => hold("hovered", false)}
-            // Tabbing in holds it; focus handed back after a click (say, by
-            // the closing lightbox) doesn't
-            onFocus={(e) =>
-                e.target.matches(":focus-visible") && hold("focused", true)
-            }
-            onBlur={(e) => {
-                if (!e.currentTarget.contains(e.relatedTarget)) {
-                    hold("focused", false);
-                }
-            }}
+        <LumenFrame
+            clock={clock}
+            caption="Preview · Drew on"
+            onOpenGallery={onOpenGallery}
+            className={styles.card}
         >
-            <div className={styles.inner}>
-                <div className={styles.header}>
-                    <span className={styles.caption}>
-                        Real Claude Code session
-                    </span>
-                    <button
-                        type="button"
-                        className={styles.chip}
-                        onClick={onOpenGallery}
-                        aria-label="View Lumen diagrams"
-                    >
-                        Diagrams
-                    </button>
-                </div>
+            <p className="sr-only">
+                A preview of Lumen&apos;s Drew on line, still being built. For
+                one reply, Claude Code had 41 items in its context, 22,310
+                tokens in all, drawn as a map of tiles as wide as their tokens:
+                its instructions on how to work, its tools, CLAUDE.md, your 4
+                earlier messages and this one, and its own work, the files it
+                read, the commands it ran and its replies. You asked: why does
+                the retry test time out? backoff should be in seconds. It opened
+                src/retry.ts and ran pnpm test, then replied: As you said,
+                backoff should be in seconds. backoff() returns milliseconds, so
+                each retry waits 1000× too long. Under the reply, Lumen shows
+                what it drew on: Opened retry.ts, Ran pnpm test, Quotes your
+                message. It drew on 3 items and didn&apos;t draw on the other
+                38, which the map hatches.
+            </p>
 
-                <p className="sr-only">
-                    A real Claude Code session measured by Lumen&apos;s
-                    lumen-cache mod. After reading a file, 89% of the context
-                    came from cache and 6,007 tokens were processed again. Two
-                    follow-up messages pushed reuse to 98%, with only 971 tokens
-                    processed again. Then one /compact command destroyed 26,971
-                    tokens of cached prefix, dropping reuse to 69%.
+            <div
+                className={styles.body}
+                style={{ opacity: fade }}
+                aria-hidden="true"
+            >
+                <p
+                    className={styles.takeaway}
+                    style={{ ["--closed" as string]: closed }}
+                >
+                    Had <b>{items}</b> items
+                    <span className={styles.swap}>
+                        <span className={styles.tokens}>
+                            {"\u00a0· "}
+                            <b>{tokens.toLocaleString("en-US")}</b> tokens
+                        </span>
+                        <span style={{ opacity: closed }}>
+                            {"\u00a0· "}
+                            <span className={styles.drewKey} />
+                            drew on <b>3</b> ·{" "}
+                            <span className={styles.restKey} />
+                            didn&apos;t draw on <b>38</b>
+                        </span>
+                    </span>
                 </p>
 
-                <ol
-                    className={styles.rows}
-                    style={{ opacity: fade }}
-                    aria-hidden="true"
-                >
-                    <li className={styles.row}>
-                        <span />
-                        <span className={styles.legend}>
-                            <span className={styles.keyHeld}>from cache</span>
-                            <span className={styles.keyHot}>reprocessed</span>
-                        </span>
-                    </li>
-                    {STEPS.map((step, i) => {
-                        const visible = i < shown;
-                        const typed = clamp((t - STARTS[i]) / TYPE_MS);
-                        const text = `› ${step.prompt}`;
-                        const p = filled(i);
-                        // Before the compaction lands, its bar starts as
-                        // the cache the previous request left behind
-                        const lost = step.lost ?? 0;
-                        const reprocessedShare =
-                            step.lost === undefined
-                                ? p
-                                : ease(clamp((collapse - 0.45) / 0.55));
-                        return (
-                            <li
-                                key={step.prompt}
-                                className={styles.row}
-                                style={{
-                                    visibility: visible ? "visible" : "hidden",
-                                }}
-                            >
-                                <span className={styles.prompt}>
-                                    {text.slice(
-                                        0,
-                                        Math.ceil(typed * text.length),
-                                    )}
-                                </span>
-                                <span className={styles.bar}>
-                                    <span
-                                        className={styles.held}
-                                        style={{
-                                            width: pct(
-                                                step.lost === undefined
-                                                    ? step.held * p
-                                                    : collapse > 0
-                                                      ? step.held
-                                                      : 0,
-                                            ),
-                                        }}
-                                    />
-                                    {step.lost !== undefined && (
-                                        <span
-                                            className={`${styles.lost} ${collapse < 0.15 ? styles.intact : ""}`}
-                                            style={{
-                                                left: pct(step.held),
-                                                width: pct(lost),
-                                                opacity: collapse > 0 ? 1 : 0,
-                                                ["--crumble" as string]: clamp(
-                                                    (collapse - 0.15) / 0.5,
-                                                ),
-                                            }}
-                                        />
-                                    )}
-                                    <span
-                                        className={styles.reprocessed}
-                                        style={{
-                                            left: pct(step.held),
-                                            width: pct(
-                                                step.reprocessed *
-                                                    reprocessedShare,
-                                            ),
-                                        }}
-                                    />
-                                </span>
-                                <span className={styles.count}>
-                                    {p > 0 ? fmt(step.reprocessed) : ""}
-                                </span>
-                            </li>
-                        );
-                    })}
-                </ol>
-
                 <div
-                    className={styles.story}
-                    style={{ opacity: fade }}
-                    aria-hidden="true"
+                    className={styles.map}
+                    style={{ gridTemplateColumns: WIDTHS }}
                 >
-                    {collapsed ? (
-                        <>
-                            <span className={styles.alarm}>
-                                26,971 cached tokens destroyed
-                            </span>
-                            <span>
-                                One /compact, which adds almost nothing, threw
-                                away half the cache.
-                            </span>
-                        </>
-                    ) : landed >= 2 ? (
-                        <>
-                            <span className={styles.calm}>
-                                Appending is nearly free
-                            </span>
-                            <span>
-                                Two follow-ups: 98% of the context came straight
-                                from cache.
-                            </span>
-                        </>
-                    ) : null}
+                    {COLUMNS.map((column) => draw(column.top))}
+                    {COLUMNS.map((column, i) => (
+                        <span key={i} className={styles.row}>
+                            {column.below.map(draw)}
+                        </span>
+                    ))}
                 </div>
 
-                <div
-                    className={styles.status}
-                    style={{ opacity: fade }}
-                    aria-hidden="true"
-                >
-                    {current ? (
-                        <>
-                            cache {current.reused}% ·{" "}
-                            <span className={styles.statusHot}>
-                                {current.reprocessed.toLocaleString("en-US")}{" "}
-                                reprocessed
+                <div className={styles.talk}>
+                    <p className={styles.message}>
+                        <span className={t < MESSAGE_AT ? styles.untyped : ""}>
+                            ›{" "}
+                        </span>
+                        {typed(MESSAGE, typedMessage)}
+                    </p>
+                    <p className={styles.reply}>{typed(REPLY, streamed)}</p>
+                    <p className={styles.drew}>
+                        <span style={{ opacity: lit(0) }}>Drew on </span>
+                        {DREW.map(([tag, what], i) => (
+                            <span key={tag} style={{ opacity: lit(i) }}>
+                                {i > 0 && " · "}
+                                <b>
+                                    {tag} {what}
+                                </b>
                             </span>
-                        </>
-                    ) : (
-                        "cache —"
-                    )}
+                        ))}
+                    </p>
                 </div>
             </div>
-        </div>
+        </LumenFrame>
     );
 }

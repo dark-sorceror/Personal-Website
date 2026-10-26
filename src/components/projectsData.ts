@@ -17,7 +17,7 @@ export type Project = {
         // itself stays short
         prize?: string;
     };
-    // Show the KV-cache demo in place of the cover; the gallery opens from
+    // Show the Drew on demo in place of the cover; the gallery opens from
     // a chip on it instead
     demo?: boolean;
 };
