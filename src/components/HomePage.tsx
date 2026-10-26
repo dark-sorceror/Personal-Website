@@ -41,7 +41,7 @@ export function HomePage() {
                                 <ThemeToggle />
                             </span>
                             <span className="mb-px ml-[10px]">
-                                Curr: Calgary, AB
+                                Curr: Hamilton, ON
                             </span>
                         </div>
                     </div>

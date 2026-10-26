@@ -44,6 +44,13 @@ export const CURRENTLY: Entry[] = [
             "building infrastructure that lets AI agents debug and fix themselves",
     },
     {
+        roles: [{ title: "Co-Founder", start: "" }],
+        company: "ML³ Labs",
+        href: "https://ml3labs.com/",
+        logo: "/media/logos/ml3-labs.png",
+        description: "when late means wrong",
+    },
+    {
         roles: [
             {
                 title: "Embedded Systems & Controls Software Lead",
