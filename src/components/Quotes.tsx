@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { QUOTES } from "@/components/quotesData";
 import styles from "./Quotes.module.css";
 
@@ -14,13 +14,34 @@ type Spot = { x: number; y: number };
 
 const randomSpot = (): Spot => ({ x: Math.random(), y: Math.random() });
 
+// A fresh order each visit, walked through so no quote comes back before
+// the rest have had a turn
+function shuffledOrder() {
+    const order = QUOTES.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+    }
+    return order;
+}
+
+// Drawn once per page load. The server can't know it, so its markup
+// keeps the quote hidden rather than show one that's about to be swapped
+const ORDER = typeof window === "undefined" ? [] : shuffledOrder();
+const subscribe = () => () => {};
+
 /**
- * One quote at a time. On wide screens each quote surfaces at a random
- * spot in the empty margin right of the content, fades out, and the next
- * turns up somewhere else; narrower screens keep it in the page flow
- * above the footer. Hovering holds the current quote.
+ * One quote at a time, in a random order. On wide screens each quote
+ * surfaces at a random spot in the empty margin right of the content,
+ * fades out, and the next turns up somewhere else; narrower screens keep
+ * it in the page flow above the footer. Hovering holds the current quote.
  */
 export function Quotes() {
+    const order = useSyncExternalStore(
+        subscribe,
+        () => ORDER,
+        () => null,
+    );
     const [index, setIndex] = useState(0);
     // Fixed first spot, so server and client render the same markup
     const [spot, setSpot] = useState<Spot>({ x: 0.5, y: 0.2 });
@@ -49,12 +70,12 @@ export function Quotes() {
         return () => clearInterval(timer);
     }, [held]);
 
-    const quote = QUOTES[index];
+    const quote = QUOTES[order?.[index] ?? 0];
 
     return (
         <figure
             className={styles.quote}
-            data-shown={shown || undefined}
+            data-shown={(order && shown) || undefined}
             style={
                 {
                     "--x": spot.x,
