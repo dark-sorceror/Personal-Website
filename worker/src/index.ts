@@ -1,6 +1,6 @@
 import { buildEmbed, type Embed, type Visit } from "./embed";
 import { hashIp } from "./hash";
-import { cleanVia, referrerHost, text } from "./input";
+import { cleanGalleries, cleanVia, referrerHost, text } from "./input";
 import { parseUA } from "./ua";
 
 interface Env {
@@ -123,9 +123,14 @@ async function updateSession(
         return new Response("Forbidden", { status: 403 });
 
     await env.DB.prepare(
-        "UPDATE visits SET session = ?, updated_at = ? WHERE id = ?",
+        "UPDATE visits SET session = ?, galleries = ?, updated_at = ? WHERE id = ?",
     )
-        .bind(session, new Date().toISOString(), id)
+        .bind(
+            session,
+            cleanGalleries(body.galleries),
+            new Date().toISOString(),
+            id,
+        )
         .run();
 
     // The IP isn't stored, so the embed shows the one this update came

@@ -20,6 +20,7 @@ export interface Visit {
     message_id: string | null;
     edit_token: string;
     session: string | null;
+    galleries: string | null;
     updated_at: string;
 }
 

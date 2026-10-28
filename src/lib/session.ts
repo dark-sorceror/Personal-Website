@@ -1,7 +1,15 @@
 export type SessionEvent =
     | { type: "page"; path: string; enteredAt: number; engaged: boolean }
     | { type: "click"; label: string; href: string; timestamp: number }
-    | { type: "photo"; topic: string; label: string; timestamp: number };
+    | {
+          type: "gallery";
+          topic: string;
+          title: string;
+          // The photos looked at, each once
+          seen: string[];
+          total: number;
+          timestamp: number;
+      };
 
 interface VisitorSessionState {
     // The visit as the Worker counted it, with the token to update it
@@ -29,20 +37,39 @@ export function trackLinkClick(label: string, href: string) {
     });
 }
 
-// Each photo once per visit: paging back and forth, or holding an arrow
-// key, would otherwise log the same views over and over
-export function trackLightboxView(topic: string, label: string) {
-    const seen = visitorSession.events.some(
-        (e) => e.type === "photo" && e.topic === topic && e.label === label,
+// One line per gallery: when it was first opened, then how much of it was
+// seen. Paging back and forth, or holding an arrow key, only fills it in.
+export function trackGalleryView(
+    topic: string,
+    title: string,
+    label: string,
+    total: number,
+) {
+    const gallery = visitorSession.events.find(
+        (e): e is Extract<SessionEvent, { type: "gallery" }> =>
+            e.type === "gallery" && e.topic === topic,
     );
-    if (seen) return;
 
-    visitorSession.events.push({
-        type: "photo",
-        topic,
-        label,
-        timestamp: Date.now(),
-    });
+    if (!gallery) {
+        visitorSession.events.push({
+            type: "gallery",
+            topic,
+            title,
+            seen: [label],
+            total,
+            timestamp: Date.now(),
+        });
+        return;
+    }
+
+    if (!gallery.seen.includes(label)) gallery.seen.push(label);
+}
+
+// The galleries opened this visit, for the Worker to count
+export function openedGalleries() {
+    return visitorSession.events.flatMap((e) =>
+        e.type === "gallery" ? [e.topic] : [],
+    );
 }
 
 // Discord rejects embed fields over 1024 characters, and a rejected patch

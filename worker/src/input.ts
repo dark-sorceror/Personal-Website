@@ -17,6 +17,23 @@ export function cleanVia(value: unknown) {
     return /^[a-z0-9-]{1,40}$/.test(via) ? via : null;
 }
 
+// The galleries a visit opened, by topic. Kept as JSON so they can be
+// counted later; anything that isn't a plain topic is dropped.
+export function cleanGalleries(value: unknown) {
+    if (!Array.isArray(value)) return null;
+
+    const topics = [
+        ...new Set(
+            value.filter(
+                (t): t is string =>
+                    typeof t === "string" && /^[a-z0-9-]{1,32}$/.test(t),
+            ),
+        ),
+    ].slice(0, 20);
+
+    return topics.length ? JSON.stringify(topics) : null;
+}
+
 export function referrerHost(referrer: string | null) {
     if (!referrer) return null;
 

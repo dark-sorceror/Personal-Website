@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cleanVia, referrerHost, text } from "./input";
+import { cleanGalleries, cleanVia, referrerHost, text } from "./input";
 
 describe("cleanVia", () => {
     it("keeps a short plain code, lowercased", () => {
@@ -18,6 +18,23 @@ describe("cleanVia", () => {
         expect(cleanVia("")).toBeNull();
         expect(cleanVia(null)).toBeNull();
         expect(cleanVia(42)).toBeNull();
+    });
+});
+
+describe("cleanGalleries", () => {
+    it("keeps each plain topic once", () => {
+        expect(cleanGalleries(["lumen", "goosetriever", "lumen"])).toBe(
+            '["lumen","goosetriever"]',
+        );
+    });
+
+    it("drops anything else", () => {
+        expect(cleanGalleries(["lumen", "<b>", 7, "a".repeat(33)])).toBe(
+            '["lumen"]',
+        );
+        expect(cleanGalleries([])).toBeNull();
+        expect(cleanGalleries("lumen")).toBeNull();
+        expect(cleanGalleries(null)).toBeNull();
     });
 });
 

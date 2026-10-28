@@ -8,7 +8,7 @@ import { Lightbox } from "@/components/Lightbox";
 import { LumenDemo } from "@/components/LumenDemo";
 import { PROJECTS } from "@/components/projectsData";
 import { GithubIcon } from "@/components/SidebarLinks";
-import { trackLightboxView } from "@/lib/session";
+import { trackGalleryView } from "@/lib/session";
 import styles from "./Projects.module.css";
 
 // Project tiles, captioned like the bookshelf: a cover photo, then the name
@@ -21,8 +21,11 @@ export function Projects() {
     } | null>(null);
 
     const show = (topic: GalleryTopic, index: number) => {
+        const images = GALLERIES[topic];
+        const title = PROJECTS.find((p) => p.topic === topic)?.title ?? topic;
+
         setOpen({ topic, index });
-        trackLightboxView(topic, GALLERIES[topic][index].alt);
+        trackGalleryView(topic, title, images[index].alt, images.length);
     };
 
     return (

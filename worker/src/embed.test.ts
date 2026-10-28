@@ -23,6 +23,7 @@ const visit: Visit = {
     message_id: null,
     edit_token: "token",
     session: null,
+    galleries: null,
     updated_at: "2026-10-27T08:00:00.000Z",
 };
 

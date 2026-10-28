@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { sessionField, visitorSession, type SessionEvent } from "@/lib/session";
+import {
+    openedGalleries,
+    sessionField,
+    visitorSession,
+    type SessionEvent,
+} from "@/lib/session";
 
 export function usePageTracking() {
     const pathname = usePathname();
@@ -57,8 +62,8 @@ export function usePageTracking() {
                 if (e.type === "page")
                     return e.engaged ? `; ${e.path} (20s+)` : `; ${e.path}`;
 
-                if (e.type === "photo")
-                    return `[ Viewed ${e.topic}: ${e.label} ]`;
+                if (e.type === "gallery")
+                    return `[ Opened ${e.title} gallery · ${e.seen.length}/${e.total} ]`;
 
                 return `[ Visited ${e.label} ]`;
             });
@@ -71,6 +76,7 @@ export function usePageTracking() {
                     JSON.stringify({
                         token: visit.token,
                         session: sessionField(lines),
+                        galleries: openedGalleries(),
                     }),
                 );
                 return;
