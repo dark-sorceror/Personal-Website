@@ -15,6 +15,8 @@ export interface Visit {
     language: string | null;
     entry: string | null;
     referrer: string | null;
+    referrer_host: string | null;
+    via: string | null;
     message_id: string | null;
     edit_token: string;
     session: string | null;
@@ -30,6 +32,9 @@ export const FIELD_LIMIT = 1024;
 // they're marked three ways: the title, this colour and the footer
 const COLOR = 0x393a41;
 const DEV_COLOR = 0xf0b232;
+// A visit from a tagged link gets its own colour, except in dev, where the
+// dev colour always shows
+const VIA_COLOR = 0x57f287;
 
 const WAITING = "```ini\nTracking (has not left website yet)...```";
 
@@ -72,15 +77,21 @@ export function buildEmbed(visit: Visit, ip: string | null, dev: boolean) {
         { name: "📄 Entry", value: `\`${visit.entry ?? "/"}\``, inline: true },
         {
             name: "🔗 Referrer",
-            value: referrerLink(visit.referrer),
+            value:
+                visit.referrer && visit.referrer_host
+                    ? `[${visit.referrer_host}](${visit.referrer})`
+                    : "Direct",
             inline: true,
         },
+        ...(visit.via
+            ? [{ name: "🎯 Link", value: `\`${visit.via}\``, inline: true }]
+            : []),
         { name: "📊 Session", value: visit.session ?? WAITING, inline: false },
     ];
 
     return {
         title: visitorTitle(visit.id, dev),
-        color: dev ? DEV_COLOR : COLOR,
+        color: dev ? DEV_COLOR : visit.via ? VIA_COLOR : COLOR,
         fields: fields.map((field) => ({
             ...field,
             value: clip(field.value),
@@ -125,15 +136,5 @@ function localTime(at: string, timeZone: string | null) {
         });
     } catch {
         return "?";
-    }
-}
-
-function referrerLink(referrer: string | null) {
-    if (!referrer) return "Direct";
-
-    try {
-        return `[${new URL(referrer).hostname}](${referrer})`;
-    } catch {
-        return "Direct";
     }
 }

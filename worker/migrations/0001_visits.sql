@@ -17,6 +17,10 @@ CREATE TABLE visits (
     language TEXT,
     entry TEXT,
     referrer TEXT,
+    -- Just the referrer's site, to group by
+    referrer_host TEXT,
+    -- The tag of a shared link (?via=code), saying which one brought them
+    via TEXT,
     message_id TEXT,
     -- Lets the visitor's own page update its session, and nobody else
     edit_token TEXT NOT NULL,
@@ -26,3 +30,4 @@ CREATE TABLE visits (
 
 CREATE INDEX visits_created_at ON visits (created_at);
 CREATE INDEX visits_country ON visits (country);
+CREATE INDEX visits_via ON visits (via);

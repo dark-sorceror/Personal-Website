@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { visitorSession } from "@/lib/session";
+import { takeVia } from "@/lib/via";
 
 const WEBHOOK_URL = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL as string;
 
@@ -107,8 +108,21 @@ function visitEndpoint() {
     return null;
 }
 
+// Reads the shared link's tag and takes it off the address bar
+function readVia() {
+    const { via, href } = takeVia(window.location.href);
+
+    // Next wraps replaceState in an effect that runs after this one. Going
+    // through its wrapper tells the router about the new address, where the
+    // bare one would leave it to put the tag back on its next render.
+    if (via !== null)
+        setTimeout(() => window.history.replaceState(null, "", href));
+
+    return via;
+}
+
 // The Worker reads the location and device from the request itself
-async function logVisit(endpoint: string) {
+async function logVisit(endpoint: string, via: string | null) {
     try {
         const res = await fetch(`${endpoint}/visit`, {
             method: "POST",
@@ -118,6 +132,7 @@ async function logVisit(endpoint: string) {
                 entry: window.location.pathname || "/",
                 referrer: document.referrer,
                 language: navigator.language,
+                via,
             }),
         });
 
@@ -139,6 +154,9 @@ export function useVisitorLog() {
         if (logged) return;
         logged = true;
 
+        // Taken off on every load, though only the Worker keeps it
+        const via = readVia();
+
         // Development logs every load, so a reload is a new visit to test
         if (process.env.NODE_ENV !== "development") {
             // Storage access throws when site data is blocked; an uncaught
@@ -155,7 +173,7 @@ export function useVisitorLog() {
         const endpoint = visitEndpoint();
 
         if (endpoint) {
-            logVisit(endpoint);
+            logVisit(endpoint, via);
             return;
         }
 

@@ -18,6 +18,8 @@ const visit: Visit = {
     language: "en-CA",
     entry: "/",
     referrer: "https://github.com/dark-sorceror",
+    referrer_host: "github.com",
+    via: null,
     message_id: null,
     edit_token: "token",
     session: null,
@@ -101,6 +103,7 @@ describe("buildEmbed", () => {
                 asn: null,
                 org: null,
                 referrer: null,
+                referrer_host: null,
             },
             null,
             false,
@@ -109,6 +112,28 @@ describe("buildEmbed", () => {
         expect(field(embed, "📍 Location")).toBe("?, ?\n?\n`?`");
         expect(field(embed, "🌐 Network")).toBe("`unknown`\n?");
         expect(field(embed, "🔗 Referrer")).toBe("Direct");
+    });
+
+    it("tags and colours a visit from a shared link", () => {
+        const plain = buildEmbed(visit, null, false);
+        const tagged = buildEmbed({ ...visit, via: "linkedin" }, null, false);
+
+        expect(field(plain, "🎯 Link")).toBeUndefined();
+        expect(field(tagged, "🎯 Link")).toBe("`linkedin`");
+        expect(tagged.color).not.toBe(plain.color);
+        // Before the session, which spans the whole width
+        expect(tagged.fields.at(-1)?.name).toBe("📊 Session");
+    });
+
+    it("keeps dev's marks on a tagged dev visit", () => {
+        const dev = buildEmbed({ ...visit, via: "linkedin" }, null, true);
+
+        expect(dev.title).toBe("[dev] Visitor #1,234");
+        expect(dev.color).toBe(buildEmbed(visit, null, true).color);
+        expect(dev.color).not.toBe(
+            buildEmbed({ ...visit, via: "linkedin" }, null, false).color,
+        );
+        expect(field(dev, "🎯 Link")).toBe("`linkedin`");
     });
 
     it("shows the latest session", () => {

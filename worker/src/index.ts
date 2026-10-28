@@ -1,5 +1,6 @@
-import { buildEmbed, FIELD_LIMIT, type Embed, type Visit } from "./embed";
+import { buildEmbed, type Embed, type Visit } from "./embed";
 import { hashIp } from "./hash";
+import { cleanVia, referrerHost, text } from "./input";
 import { parseUA } from "./ua";
 
 interface Env {
@@ -59,6 +60,7 @@ async function logVisit(request: Request, env: Env) {
         request.headers.get("User-Agent") ?? "",
     );
     const now = new Date();
+    const referrer = text(body.referrer);
 
     const row = {
         created_at: now.toISOString(),
@@ -75,7 +77,9 @@ async function logVisit(request: Request, env: Env) {
         os,
         language: text(body.language),
         entry: text(body.entry),
-        referrer: text(body.referrer),
+        referrer,
+        referrer_host: referrerHost(referrer),
+        via: cleanVia(body.via),
         edit_token: crypto.randomUUID(),
         updated_at: now.toISOString(),
     };
@@ -149,13 +153,6 @@ async function readBody(request: Request) {
     } catch {
         return null;
     }
-}
-
-// Whatever the page sends is clipped to what an embed field can show
-function text(value: unknown) {
-    return typeof value === "string" && value
-        ? value.slice(0, FIELD_LIMIT)
-        : null;
 }
 
 function isDev(env: Env) {
