@@ -28,9 +28,8 @@ worker/         # Visit counter: a Cloudflare Worker with D1
 Discord as "Visitor #1,234", then edits that message as the visit goes on. The
 site uses it when `NEXT_PUBLIC_VISIT_ENDPOINT` is set, and in development, where
 `history:dev` passes `/__visits/` on to the Worker, so a phone on the LAN reaches
-it through the site. Otherwise the site posts to the Discord webhook directly,
-as before. A link tagged `?via=code` is counted with its tag, which is then
-taken off the address.
+it through the site. A link tagged `?via=code` is counted with its tag, which
+is then taken off the address.
 
 To run it locally, in two terminals:
 

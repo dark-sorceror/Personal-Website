@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { buildEmbed, FIELD_LIMIT, visitorTitle, type Visit } from "./embed";
+import {
+    buildEmbed,
+    FIELD_LIMIT,
+    sessionField,
+    visitorTitle,
+    type Visit,
+} from "./embed";
 
 const visit: Visit = {
     id: 1234,
@@ -153,24 +159,50 @@ describe("buildEmbed", () => {
         );
     });
 
-    it("shows the latest session", () => {
-        const session = "```ini\n; /\n[ Visited GitHub ]```";
+    it("shows the session's steps, or that it's still going", () => {
+        const session = JSON.stringify([
+            { type: "page", path: "/", ms: 35_000 },
+            {
+                type: "gallery",
+                topic: "lumen",
+                title: "Lumen",
+                seen: 2,
+                total: 3,
+            },
+            { type: "click", label: "GitHub" },
+        ]);
         const embed = buildEmbed({ ...visit, session }, null, false);
 
-        expect(field(embed, "📊 Session")).toBe(session);
+        expect(field(embed, "📊 Session")).toBe(
+            "```ini\n; /  (35s)\n[ Opened Lumen gallery · 2/3 ]\n[ Visited GitHub ]```",
+        );
+        expect(field(buildEmbed(visit, null, false), "📊 Session")).toBe(
+            "```ini\nTracking (has not left website yet)...```",
+        );
     });
 
     it("keeps every field under Discord's limit", () => {
         const long = "x".repeat(5000);
-        const embed = buildEmbed(
-            { ...visit, entry: `/${long}`, session: long },
-            null,
-            false,
-        );
+        const embed = buildEmbed({ ...visit, entry: `/${long}` }, null, false);
 
         for (const f of embed.fields) {
             expect(f.value.length).toBeLessThanOrEqual(FIELD_LIMIT);
         }
         expect(field(embed, "📄 Entry")).toMatch(/^`\/x+…$/);
+    });
+});
+
+describe("sessionField", () => {
+    it("keeps the newest steps under Discord's limit and notes the rest", () => {
+        const steps = Array.from({ length: 80 }, (_, i) => ({
+            type: "click" as const,
+            label: `link number ${i}`,
+        }));
+        const value = sessionField(steps);
+
+        expect(value.length).toBeLessThanOrEqual(FIELD_LIMIT);
+        expect(value).toContain("link number 79 ]```");
+        expect(value).not.toContain("link number 0 ]");
+        expect(value).toMatch(/; … \d+ earlier/);
     });
 });

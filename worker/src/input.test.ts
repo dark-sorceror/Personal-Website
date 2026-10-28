@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
-    cleanDuration,
-    cleanGalleries,
-    cleanPages,
+    cleanSteps,
     cleanVia,
     cleanVisitor,
     referrerHost,
+    sessionColumns,
     text,
 } from "./input";
 
@@ -29,23 +28,6 @@ describe("cleanVia", () => {
     });
 });
 
-describe("cleanGalleries", () => {
-    it("keeps each plain topic once", () => {
-        expect(cleanGalleries(["lumen", "goosetriever", "lumen"])).toBe(
-            '["lumen","goosetriever"]',
-        );
-    });
-
-    it("drops anything else", () => {
-        expect(cleanGalleries(["lumen", "<b>", 7, "a".repeat(33)])).toBe(
-            '["lumen"]',
-        );
-        expect(cleanGalleries([])).toBeNull();
-        expect(cleanGalleries("lumen")).toBeNull();
-        expect(cleanGalleries(null)).toBeNull();
-    });
-});
-
 describe("cleanVisitor", () => {
     it("keeps a random id and nothing else", () => {
         expect(cleanVisitor("0F8FAD5B-D9CB-469F-A165-70867728950E")).toBe(
@@ -58,35 +40,99 @@ describe("cleanVisitor", () => {
     });
 });
 
-describe("cleanDuration", () => {
-    it("rounds, and holds a forgotten tab to a day", () => {
-        expect(cleanDuration(1234.6)).toBe(1235);
-        expect(cleanDuration(9e9)).toBe(86_400_000);
-        expect(cleanDuration(-1)).toBeNull();
-        expect(cleanDuration(NaN)).toBeNull();
-        expect(cleanDuration("5")).toBeNull();
+describe("cleanSteps", () => {
+    const gallery = {
+        type: "gallery",
+        topic: "lumen",
+        title: "Lumen",
+        seen: 2,
+        total: 3,
+    };
+
+    it("keeps each step that looks like one, in order", () => {
+        expect(
+            cleanSteps([
+                { type: "page", path: "/", ms: 35_000.4 },
+                gallery,
+                { type: "click", label: "GitHub" },
+            ]),
+        ).toEqual([
+            { type: "page", path: "/", ms: 35_000 },
+            gallery,
+            { type: "click", label: "GitHub" },
+        ]);
+    });
+
+    it("holds a forgotten tab to a day", () => {
+        expect(cleanSteps([{ type: "page", path: "/", ms: 9e9 }])).toEqual([
+            { type: "page", path: "/", ms: 86_400_000 },
+        ]);
+    });
+
+    it("drops anything else", () => {
+        expect(
+            cleanSteps([
+                { type: "page", path: "https://elsewhere", ms: 1 },
+                { type: "page", path: "/history" },
+                { type: "page", path: "/", ms: -1 },
+                { ...gallery, topic: "<b>" },
+                { ...gallery, seen: 1.5 },
+                { type: "click", label: "" },
+                { type: "photo", label: "Old" },
+                null,
+                7,
+            ]),
+        ).toBeNull();
+        expect(cleanSteps([])).toBeNull();
+        expect(cleanSteps("/")).toBeNull();
     });
 });
 
-describe("cleanPages", () => {
-    it("keeps each page that has a path and a time", () => {
-        expect(
-            cleanPages([
-                { path: "/", ms: 35_000 },
-                { path: "https://elsewhere", ms: 1 },
-                { path: "/history" },
-                null,
-            ]),
-        ).toBe('[{"path":"/","ms":35000}]');
-        expect(cleanPages([])).toBeNull();
-        expect(cleanPages("/")).toBeNull();
+describe("sessionColumns", () => {
+    it("stores the steps, and the pages, time and galleries from them", () => {
+        const columns = sessionColumns([
+            { type: "page", path: "/", ms: 35_000 },
+            {
+                type: "gallery",
+                topic: "lumen",
+                title: "Lumen",
+                seen: 1,
+                total: 2,
+            },
+            { type: "page", path: "/history", ms: 60_000 },
+            {
+                type: "gallery",
+                topic: "lumen",
+                title: "Lumen",
+                seen: 2,
+                total: 2,
+            },
+        ]);
+
+        expect(JSON.parse(columns.session)).toHaveLength(4);
+        expect(columns.pages).toBe(
+            '[{"path":"/","ms":35000},{"path":"/history","ms":60000}]',
+        );
+        expect(columns.galleries).toBe('["lumen"]');
+        expect(columns.duration_ms).toBe(95_000);
+    });
+
+    it("has no pages or galleries to count from a bare click", () => {
+        const columns = sessionColumns([{ type: "click", label: "GitHub" }]);
+
+        expect(columns.pages).toBeNull();
+        expect(columns.galleries).toBeNull();
+        expect(columns.duration_ms).toBe(0);
     });
 });
 
 describe("referrerHost", () => {
     it("keeps just the site", () => {
         expect(referrerHost("https://www.linkedin.com/feed/?x=1")).toBe(
-            "www.linkedin.com",
+            "linkedin.com",
+        );
+        expect(referrerHost("https://github.com/dark-sorceror")).toBe(
+            "github.com",
         );
     });
 

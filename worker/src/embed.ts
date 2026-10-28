@@ -1,3 +1,5 @@
+import type { Step } from "./input";
+
 // A row of the visits table
 export interface Visit {
     id: number;
@@ -19,6 +21,7 @@ export interface Visit {
     via: string | null;
     message_id: string | null;
     edit_token: string;
+    // Its steps, as JSON
     session: string | null;
     galleries: string | null;
     visitor: string | null;
@@ -40,7 +43,7 @@ const DEV_COLOR = 0xf0b232;
 // dev colour always shows
 const VIA_COLOR = 0x57f287;
 
-const WAITING = "```ini\nTracking (has not left website yet)...```";
+const WAITING = "Tracking (has not left website yet)...";
 
 export function visitorTitle(id: number, dev: boolean) {
     const title = `Visitor #${id.toLocaleString("en-US")}`;
@@ -95,7 +98,7 @@ export function buildEmbed(visit: Visit, ip: string | null, dev: boolean) {
                 visit.duration_ms === null
                     ? "📊 Session"
                     : `📊 Session · ${duration(visit.duration_ms)}`,
-            value: visit.session ?? WAITING,
+            value: sessionField(steps(visit.session)),
             inline: false,
         },
     ];
@@ -123,20 +126,59 @@ export function duration(ms: number) {
     return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`;
 }
 
+// The stored steps; none until the page first sends them
+function steps(session: string | null): Step[] {
+    try {
+        const parsed: unknown = JSON.parse(session ?? "[]");
+
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
+}
+
+function stepLine(step: Step) {
+    if (step.type === "page") return `; ${step.path}  (${duration(step.ms)})`;
+    if (step.type === "gallery")
+        return `[ Opened ${step.title} gallery · ${step.seen}/${step.total} ]`;
+
+    return `[ Visited ${step.label} ]`;
+}
+
+// A line per step in an ini block, which colours them. A field over the
+// limit would leave the message stuck as it was, so a long visit keeps its
+// newest lines and notes how many came before.
+export function sessionField(visitSteps: Step[]) {
+    const wrap = (lines: string[]) => `\`\`\`ini\n${lines.join("\n")}\`\`\``;
+    const lines = visitSteps.map(stepLine);
+    if (!lines.length) return wrap([WAITING]);
+
+    const kept = [...lines];
+
+    while (kept.length && wrap(kept).length > FIELD_LIMIT) {
+        kept.shift();
+        const note = `; … ${lines.length - kept.length} earlier`;
+        if (wrap([note, ...kept]).length <= FIELD_LIMIT)
+            return wrap([note, ...kept]);
+    }
+
+    return wrap(kept);
+}
+
 function clip(value: string) {
     return value.length > FIELD_LIMIT
         ? `${value.slice(0, FIELD_LIMIT - 1)}…`
         : value;
 }
 
+const REGIONS = new Intl.DisplayNames(["en"], { type: "region" });
+
 // D1 keeps the two-letter code, for stats; the embed spells it out
 function countryName(code: string | null) {
     if (!code) return "?";
 
     try {
-        return (
-            new Intl.DisplayNames(["en"], { type: "region" }).of(code) ?? code
-        );
+        return REGIONS.of(code) ?? code;
     } catch {
         return code;
     }

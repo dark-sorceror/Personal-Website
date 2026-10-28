@@ -14,9 +14,9 @@
         "port": 8788,
         "local_protocol": "http",
     },
+    // Development takes visits from any origin
     "vars": {
         "ENVIRONMENT": "development",
-        "ALLOWED_ORIGINS": "https://haoyan.ca",
     },
     "d1_databases": [
         {
@@ -32,7 +32,7 @@
             "name": "haoyan-analytics",
             "vars": {
                 "ENVIRONMENT": "production",
-                "ALLOWED_ORIGINS": "https://haoyan.ca",
+                "ALLOWED_ORIGIN": "https://haoyan.ca",
             },
             // Bindings aren't inherited, so the database is named again,
             // with the id `wrangler d1 create haoyan-analytics` gave

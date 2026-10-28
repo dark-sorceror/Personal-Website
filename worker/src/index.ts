@@ -1,12 +1,11 @@
 import { buildEmbed, type Embed, type Visit } from "./embed";
 import { hashIp } from "./hash";
 import {
-    cleanDuration,
-    cleanGalleries,
-    cleanPages,
+    cleanSteps,
     cleanVia,
     cleanVisitor,
     referrerHost,
+    sessionColumns,
     text,
 } from "./input";
 import { parseUA } from "./ua";
@@ -14,7 +13,8 @@ import { parseUA } from "./ua";
 interface Env {
     DB: D1Database;
     ENVIRONMENT: string;
-    ALLOWED_ORIGINS: string;
+    // The site, the one origin the deploy takes visits from
+    ALLOWED_ORIGIN?: string;
     DISCORD_WEBHOOK_URL?: string;
     SALT?: string;
 }
@@ -41,7 +41,7 @@ export default {
 
         const res = session
             ? await updateSession(request, env, ctx, Number(session[1]))
-            : await logVisit(request, env);
+            : await logVisit(request, env, ctx);
 
         if (origin) res.headers.set("Access-Control-Allow-Origin", origin);
 
@@ -51,14 +51,10 @@ export default {
 
 // Any origin in development, so localhost and the LAN address both work
 function allowed(origin: string | null, env: Env) {
-    if (env.ENVIRONMENT === "development") return true;
-
-    const origins = env.ALLOWED_ORIGINS.split(",").map((o) => o.trim());
-
-    return origin !== null && origins.includes(origin);
+    return isDev(env) || origin === env.ALLOWED_ORIGIN;
 }
 
-async function logVisit(request: Request, env: Env) {
+async function logVisit(request: Request, env: Env, ctx: ExecutionContext) {
     const body = await readBody(request);
     if (!body) return new Response("Bad request", { status: 400 });
 
@@ -104,15 +100,28 @@ async function logVisit(request: Request, env: Env) {
         .first<Visit>();
     if (!visit) throw new Error("The visit wasn't saved");
 
-    const messageId = await post(env, buildEmbed(visit, ip, isDev(env)));
-
-    if (messageId) {
-        await env.DB.prepare("UPDATE visits SET message_id = ? WHERE id = ?")
-            .bind(messageId, visit.id)
-            .run();
-    }
+    // The page has its visit back at once, to send its session to; the
+    // post carries on without it
+    ctx.waitUntil(announce(env, visit, ip));
 
     return Response.json({ id: visit.id, token: visit.edit_token });
+}
+
+// Posts the visit, keeping the message's id for the session to edit
+async function announce(env: Env, visit: Visit, ip: string | null) {
+    const messageId = await post(env, buildEmbed(visit, ip, isDev(env)));
+    if (!messageId) return;
+
+    const saved = await env.DB.prepare(
+        "UPDATE visits SET message_id = ? WHERE id = ? RETURNING *",
+    )
+        .bind(messageId, visit.id)
+        .first<Visit>();
+
+    // A session that came in before there was a message to edit is put
+    // in now
+    if (saved && saved.updated_at !== visit.updated_at)
+        await edit(env, messageId, buildEmbed(saved, ip, isDev(env)));
 }
 
 async function updateSession(
@@ -122,37 +131,33 @@ async function updateSession(
     id: number,
 ) {
     const body = await readBody(request);
-    const session = text(body?.session);
-    if (!body || !session) return new Response("Bad request", { status: 400 });
+    const steps = cleanSteps(body?.steps);
+    if (!body || !steps) return new Response("Bad request", { status: 400 });
 
-    const visit = await env.DB.prepare("SELECT * FROM visits WHERE id = ?")
-        .bind(id)
-        .first<Visit>();
-    if (!visit || body.token !== visit.edit_token)
-        return new Response("Forbidden", { status: 403 });
-
-    const duration = cleanDuration(body.duration);
-    // A page from before durations were sent keeps what the row has
-    await env.DB.prepare(
-        `UPDATE visits SET session = ?, galleries = ?,
-            duration_ms = COALESCE(?, duration_ms), pages = COALESCE(?, pages),
-            updated_at = ?
-         WHERE id = ?`,
+    const { session, pages, galleries, duration_ms } = sessionColumns(steps);
+    // Only the page holding the visit's token can update it
+    const visit = await env.DB.prepare(
+        `UPDATE visits SET session = ?, pages = ?, galleries = ?,
+            duration_ms = ?, updated_at = ?
+         WHERE id = ? AND edit_token = ?
+         RETURNING *`,
     )
         .bind(
             session,
-            cleanGalleries(body.galleries),
-            duration,
-            cleanPages(body.pages),
+            pages,
+            galleries,
+            duration_ms,
             new Date().toISOString(),
             id,
+            typeof body.token === "string" ? body.token : "",
         )
-        .run();
+        .first<Visit>();
+    if (!visit) return new Response("Forbidden", { status: 403 });
 
     // The IP isn't stored, so the embed shows the one this update came
     // from, which is the same visitor's
     const embed = buildEmbed(
-        { ...visit, session, duration_ms: duration ?? visit.duration_ms },
+        visit,
         request.headers.get("CF-Connecting-IP"),
         isDev(env),
     );
@@ -180,52 +185,49 @@ function isDev(env: Env) {
     return env.ENVIRONMENT === "development";
 }
 
-// Returns the message's id, to edit it as the visit goes on. Without a
-// webhook, as when trying it locally, it logs what it would have sent.
+// Returns the message's id, to edit it as the visit goes on
 async function post(env: Env, embed: Embed) {
-    const payload = { ...SENDER, embeds: [embed] };
+    const message = await discord<{ id: string }>(env, "POST", "?wait=true", {
+        ...SENDER,
+        embeds: [embed],
+    });
 
+    return message?.id ?? null;
+}
+
+async function edit(env: Env, messageId: string | null, embed: Embed) {
+    // A dry run has no message, but still shows the edit
+    if (messageId || !env.DISCORD_WEBHOOK_URL)
+        await discord(env, "PATCH", `/messages/${messageId}`, {
+            embeds: [embed],
+        });
+}
+
+// Through the webhook, and quietly: the visit still counts when Discord is
+// down. Without one, as when trying it locally, it logs what it would have
+// sent.
+async function discord<T>(
+    env: Env,
+    method: "POST" | "PATCH",
+    path: string,
+    payload: object,
+) {
     if (!env.DISCORD_WEBHOOK_URL) {
-        console.log("[dry run] POST", JSON.stringify(payload, null, 2));
+        console.log(`[dry run] ${method}`, JSON.stringify(payload, null, 2));
         return null;
     }
 
     try {
-        const res = await fetch(`${env.DISCORD_WEBHOOK_URL}?wait=true`, {
-            method: "POST",
+        const res = await fetch(`${env.DISCORD_WEBHOOK_URL}${path}`, {
+            method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
 
-        return (await res.json<{ id: string }>()).id;
+        return await res.json<T>();
     } catch (err) {
-        // The visit still counts when Discord is down
-        console.error("Discord post failed:", err);
+        console.error(`Discord ${method} failed:`, err);
         return null;
-    }
-}
-
-async function edit(env: Env, messageId: string | null, embed: Embed) {
-    const payload = { embeds: [embed] };
-
-    if (!env.DISCORD_WEBHOOK_URL) {
-        console.log("[dry run] PATCH", JSON.stringify(payload, null, 2));
-        return;
-    }
-    if (!messageId) return;
-
-    try {
-        const res = await fetch(
-            `${env.DISCORD_WEBHOOK_URL}/messages/${messageId}`,
-            {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            },
-        );
-        if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
-    } catch (err) {
-        console.error("Discord edit failed:", err);
     }
 }
