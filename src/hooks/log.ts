@@ -70,7 +70,8 @@ async function logVisit(endpoint: string, via: string | null) {
             }),
         });
 
-        if (res.ok) {
+        // A crawler gets nothing back, and isn't counted
+        if (res.status === 200) {
             const { id, token } = await res.json();
 
             visitorSession.visit = { endpoint, id, token };
@@ -88,15 +89,20 @@ export function useVisitorLog() {
         if (logged) return;
         logged = true;
 
-        // Taken off on every load, even one that isn't counted
+        // Taken off on every load, whether it's counted or not
         const via = readVia();
+
+        // A browser run by a script, as link scanners are, says so
+        if (navigator.webdriver) return;
 
         // Development logs every load, so a reload is a new visit to test
         if (process.env.NODE_ENV !== "development") {
             // Storage access throws when site data is blocked; an uncaught
             // throw here would take the whole page down with it
             try {
-                if (sessionStorage.getItem("__visited")) return;
+                // A tagged link counts even in a tab that's been here: it's
+                // how they came this time. Its tag is gone on a reload.
+                if (sessionStorage.getItem("__visited") && via === null) return;
 
                 sessionStorage.setItem("__visited", "1");
             } catch {

@@ -49,11 +49,12 @@ function count(value: unknown) {
         : null;
 }
 
-// The visit's steps in order, keeping only what looks like one
+// The visit's steps in order, keeping only what looks like one. No visit
+// takes a thousand, so past that it's the newest that count.
 export function cleanSteps(value: unknown) {
     if (!Array.isArray(value)) return null;
 
-    const steps = value.slice(0, 100).flatMap((raw): Step[] => {
+    const steps = value.slice(-1000).flatMap((raw): Step[] => {
         const step = (raw ?? {}) as Record<string, unknown>;
 
         if (step.type === "page") {
@@ -91,8 +92,9 @@ export function cleanSteps(value: unknown) {
     return steps.length ? steps : null;
 }
 
-// The steps as stored, and what the stats count from them: each page and
-// its time, and the galleries opened, by topic
+// The newest steps, kept to show, and what the stats count from all of
+// them: each page and its time, and the galleries opened, by topic. The time
+// only grows as the visit goes on, which tells a late beacon from a new one.
 export function sessionColumns(steps: Step[]) {
     const pages = steps.flatMap((s) =>
         s.type === "page" ? [{ path: s.path, ms: s.ms }] : [],
@@ -104,7 +106,7 @@ export function sessionColumns(steps: Step[]) {
     ];
 
     return {
-        session: JSON.stringify(steps),
+        session: JSON.stringify(steps.slice(-100)),
         pages: pages.length ? JSON.stringify(pages) : null,
         galleries: galleries.length ? JSON.stringify(galleries) : null,
         duration_ms: Math.min(

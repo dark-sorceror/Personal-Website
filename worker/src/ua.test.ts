@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseUA } from "./ua";
+import { isBot, parseUA } from "./ua";
 
 describe("parseUA", () => {
     it("reads Chrome on a Mac", () => {
@@ -78,5 +78,28 @@ describe("parseUA", () => {
 
         expect(parseUA("curl/8.7.1")).toEqual(unknown);
         expect(parseUA("")).toEqual(unknown);
+    });
+});
+
+describe("isBot", () => {
+    it("knows crawlers and headless browsers", () => {
+        for (const ua of [
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            "Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)",
+            "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)",
+            "LinkedInBot/1.0 (compatible; Mozilla/5.0; Apache-HttpClient +http://www.linkedin.com)",
+            "",
+        ])
+            expect(isBot(ua)).toBe(true);
+    });
+
+    it("lets people's browsers through", () => {
+        for (const ua of [
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Mobile/15E148 Safari/604.1",
+            "Mozilla/5.0 (Linux; Android 14; Cubot P50) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36",
+        ])
+            expect(isBot(ua)).toBe(false);
     });
 });

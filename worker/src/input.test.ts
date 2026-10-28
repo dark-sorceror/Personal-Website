@@ -117,6 +117,22 @@ describe("sessionColumns", () => {
         expect(columns.duration_ms).toBe(95_000);
     });
 
+    it("shows a long visit's newest steps but counts all its time", () => {
+        const steps = Array.from({ length: 130 }, (_, i) => ({
+            type: "page" as const,
+            path: `/${i}`,
+            ms: 1_000,
+        }));
+        const columns = sessionColumns(steps);
+        const kept = JSON.parse(columns.session);
+
+        expect(kept).toHaveLength(100);
+        expect(kept.at(-1).path).toBe("/129");
+        expect(kept[0].path).toBe("/30");
+        expect(columns.duration_ms).toBe(130_000);
+        expect(JSON.parse(columns.pages!)).toHaveLength(130);
+    });
+
     it("has no pages or galleries to count from a bare click", () => {
         const columns = sessionColumns([{ type: "click", label: "GitHub" }]);
 

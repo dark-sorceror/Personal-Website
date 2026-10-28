@@ -8,7 +8,7 @@ import {
     sessionColumns,
     text,
 } from "./input";
-import { parseUA } from "./ua";
+import { isBot, parseUA } from "./ua";
 
 interface Env {
     DB: D1Database;
@@ -58,11 +58,13 @@ async function logVisit(request: Request, env: Env, ctx: ExecutionContext) {
     const body = await readBody(request);
     if (!body) return new Response("Bad request", { status: 400 });
 
+    const ua = request.headers.get("User-Agent") ?? "";
+    // Not a visitor, so not counted, and nothing to send a session to
+    if (isBot(ua)) return new Response(null, { status: 204 });
+
     const cf = request.cf;
     const ip = request.headers.get("CF-Connecting-IP");
-    const { browser, os, device } = parseUA(
-        request.headers.get("User-Agent") ?? "",
-    );
+    const { browser, os, device } = parseUA(ua);
     const now = new Date();
     const referrer = text(body.referrer);
 
@@ -135,11 +137,13 @@ async function updateSession(
     if (!body || !steps) return new Response("Bad request", { status: 400 });
 
     const { session, pages, galleries, duration_ms } = sessionColumns(steps);
-    // Only the page holding the visit's token can update it
+    // Only the page holding the visit's token can update it, and a beacon
+    // that arrives after a newer one changes nothing
     const visit = await env.DB.prepare(
-        `UPDATE visits SET session = ?, pages = ?, galleries = ?,
-            duration_ms = ?, updated_at = ?
-         WHERE id = ? AND edit_token = ?
+        `UPDATE visits SET session = ?1, pages = ?2, galleries = ?3,
+            duration_ms = ?4, updated_at = ?5
+         WHERE id = ?6 AND edit_token = ?7
+            AND (duration_ms IS NULL OR duration_ms <= ?4)
          RETURNING *`,
     )
         .bind(

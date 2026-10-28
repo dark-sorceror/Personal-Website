@@ -4,6 +4,13 @@ export interface Device {
     device: "Desktop" | "Mobile" | "Tablet";
 }
 
+// Crawlers, and the headless browsers that mail scanners and previews open
+// links in, run the page like anyone else. Their user agents say what they
+// are; a real browser always sends one.
+export function isBot(ua: string) {
+    return !ua || /headless|bot[/;)-]|crawler|spider|lighthouse/i.test(ua);
+}
+
 export function parseUA(ua: string): Device {
     let browser = "Unknown Browser";
 
