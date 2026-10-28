@@ -28,7 +28,7 @@ export const PROJECTS: Project[] = [
         href: "https://github.com/dark-sorceror/Lumen",
         description: "See what your agent sees",
         summary:
-            "Most AI chats show you the answer, not the context behind it. Lumen puts local models, your own keys, Claude Code and Codex in one place, and shows what each reply had to work with: what compaction dropped, and the files, commands and quotes it drew on.",
+            "Agents answer from context you never get to see. Lumen shows it, reply by reply: the files, commands and messages each answer drew on, and what got cut when the context ran out. So when an agent goes wrong, you can see why. It works with local models, your own API keys, Claude Code and Codex.",
         topic: "lumen",
         demo: true,
     },
