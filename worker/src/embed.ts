@@ -1,0 +1,136 @@
+// A row of the visits table
+export interface Visit {
+    id: number;
+    created_at: string;
+    country: string | null;
+    region: string | null;
+    city: string | null;
+    timezone: string | null;
+    asn: number | null;
+    org: string | null;
+    ip_hash: string | null;
+    device: string | null;
+    browser: string | null;
+    os: string | null;
+    language: string | null;
+    entry: string | null;
+    referrer: string | null;
+    message_id: string | null;
+    edit_token: string;
+    session: string | null;
+    updated_at: string;
+}
+
+export type Embed = ReturnType<typeof buildEmbed>;
+
+// Discord rejects a field over 1024 characters, and the whole message with it
+export const FIELD_LIMIT = 1024;
+
+const COLOR = 0x393a41;
+// Visits from wrangler dev stand out from real ones in the channel
+const DEV_COLOR = 0xf0b232;
+
+const WAITING = "```ini\nTracking (has not left website yet)...```";
+
+export function visitorTitle(id: number, dev: boolean) {
+    const title = `Visitor #${id.toLocaleString("en-US")}`;
+
+    return dev ? `[dev] ${title}` : title;
+}
+
+// The raw IP isn't stored, so it's passed in from the request
+export function buildEmbed(visit: Visit, ip: string | null, dev: boolean) {
+    const isp = visit.asn
+        ? `${visit.org ?? "?"} (AS${visit.asn})`
+        : (visit.org ?? "?");
+
+    const fields = [
+        {
+            name: "📍 Location",
+            value: `${visit.city ?? "?"}, ${visit.region ?? "?"}\n${countryName(visit.country)}\n\`${localTime(visit.created_at, visit.timezone)}\``,
+            inline: true,
+        },
+        {
+            name: "🌐 Network",
+            value:
+                visit.device === "Desktop"
+                    ? `\`${ip ?? "unknown"}\`\n${isp}`
+                    : isp,
+            inline: true,
+        },
+        {
+            name: "🖥 Device",
+            value: `${visit.browser ?? "?"}\n${visit.os ?? "?"}`,
+            inline: true,
+        },
+        {
+            name: "🌍 Language",
+            value: `\`${visit.language ?? "?"}\``,
+            inline: true,
+        },
+        { name: "📄 Entry", value: `\`${visit.entry ?? "/"}\``, inline: true },
+        {
+            name: "🔗 Referrer",
+            value: referrerLink(visit.referrer),
+            inline: true,
+        },
+        { name: "📊 Session", value: visit.session ?? WAITING, inline: false },
+    ];
+
+    return {
+        title: visitorTitle(visit.id, dev),
+        color: dev ? DEV_COLOR : COLOR,
+        fields: fields.map((field) => ({
+            ...field,
+            value: clip(field.value),
+        })),
+        footer: { text: "haoyan.ca analytics" },
+        timestamp: visit.created_at,
+    };
+}
+
+function clip(value: string) {
+    return value.length > FIELD_LIMIT
+        ? `${value.slice(0, FIELD_LIMIT - 1)}…`
+        : value;
+}
+
+// D1 keeps the two-letter code, for stats; the embed spells it out
+function countryName(code: string | null) {
+    if (!code) return "?";
+
+    try {
+        return (
+            new Intl.DisplayNames(["en"], { type: "region" }).of(code) ?? code
+        );
+    } catch {
+        return code;
+    }
+}
+
+// The visitor's own clock when they arrived
+function localTime(at: string, timeZone: string | null) {
+    if (!timeZone) return "?";
+
+    try {
+        return new Date(at).toLocaleString("en-US", {
+            timeZone,
+            weekday: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+        });
+    } catch {
+        return "?";
+    }
+}
+
+function referrerLink(referrer: string | null) {
+    if (!referrer) return "Direct";
+
+    try {
+        return `[${new URL(referrer).hostname}](${referrer})`;
+    } catch {
+        return "Direct";
+    }
+}

@@ -1,0 +1,39 @@
+// The visit counter: counts each visit in D1 and posts it to Discord.
+// The top level is local development; `env.production` is how the deploy
+// would differ (wrangler deploy --env production).
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "haoyan-analytics",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-10-23",
+    "vars": {
+        "ENVIRONMENT": "development",
+        "ALLOWED_ORIGINS": "https://haoyan.ca",
+    },
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "haoyan-analytics",
+            // A placeholder: local D1 doesn't need a real one
+            "database_id": "00000000-0000-0000-0000-000000000000",
+        },
+    ],
+    "env": {
+        "production": {
+            "name": "haoyan-analytics",
+            "vars": {
+                "ENVIRONMENT": "production",
+                "ALLOWED_ORIGINS": "https://haoyan.ca",
+            },
+            // Bindings aren't inherited, so the database is named again,
+            // with the id `wrangler d1 create haoyan-analytics` gives
+            "d1_databases": [
+                {
+                    "binding": "DB",
+                    "database_name": "haoyan-analytics",
+                    "database_id": "00000000-0000-0000-0000-000000000000",
+                },
+            ],
+        },
+    },
+}

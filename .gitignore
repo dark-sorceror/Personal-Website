@@ -47,3 +47,8 @@ next-env.d.ts
 
 # built past versions for /history/ (scripts/history)
 /.history-cache/
+
+# the visit counter Worker's local secrets, state and packages
+worker/.dev.vars
+worker/.wrangler/
+worker/node_modules/

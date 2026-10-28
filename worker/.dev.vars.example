@@ -1,0 +1,10 @@
+# Copy to .dev.vars (gitignored) for wrangler dev. In production these are
+# secrets: wrangler secret put DISCORD_WEBHOOK_URL --env production
+
+# A Discord webhook to post visits to. Leave it empty for a dry run, which
+# logs the embed it would have sent instead.
+DISCORD_WEBHOOK_URL=
+
+# Any long random string. It's hashed with each IP so unique visitors can be
+# counted without keeping their addresses; without it no hash is stored.
+SALT=

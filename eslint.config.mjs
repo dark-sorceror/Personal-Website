@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
         "next-env.d.ts",
         // Past versions' built code, from scripts/history
         ".history-cache/**",
+        // The visit counter Worker, a package of its own
+        "worker/**",
     ]),
 ]);
 
