@@ -79,13 +79,15 @@ jobs:
               run: node scripts/history/build.mjs
               continue-on-error: true
 
+            # Visits go to the counter Worker, which keeps the webhook to
+            # itself, so it's no longer in the site's code
             - name: Build
               run: npm run build
               env:
-                  NEXT_PUBLIC_DISCORD_WEBHOOK_URL: ${{ secrets.VITE_DISCORD_WEBHOOK_URL }}
+                  NEXT_PUBLIC_VISIT_ENDPOINT: https://haoyan-analytics.ml3-bot.workers.dev
 
-            # The live site, built with the webhook, is screenshotted with
-            # requests to other sites refused, so the visit log can't fire
+            # The live site is screenshotted with requests to other sites
+            # refused, so the visit log can't fire
             - name: Add past versions
               run: node scripts/history/build.mjs --out out --no-build
               continue-on-error: true
