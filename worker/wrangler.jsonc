@@ -6,6 +6,14 @@
     "name": "haoyan-analytics",
     "main": "src/index.ts",
     "compatibility_date": "2026-10-23",
+    // HTTPS on every interface, like the site's dev server, so pages from
+    // localhost and from phones on the LAN can reach it without mixed
+    // content. Not wrangler's usual 8787, which other Workers here use.
+    "dev": {
+        "ip": "0.0.0.0",
+        "port": 8788,
+        "local_protocol": "https",
+    },
     "vars": {
         "ENVIRONMENT": "development",
         "ALLOWED_ORIGINS": "https://haoyan.ca",
@@ -14,7 +22,8 @@
         {
             "binding": "DB",
             "database_name": "haoyan-analytics",
-            // A placeholder: local D1 doesn't need a real one
+            // wrangler dev counts in a local copy, so testing never moves
+            // the live visitor numbers; it needs no real id
             "database_id": "00000000-0000-0000-0000-000000000000",
         },
     ],

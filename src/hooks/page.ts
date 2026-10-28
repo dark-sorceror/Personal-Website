@@ -36,9 +36,10 @@ export function usePageTracking() {
             if (firedRef.current) return;
             if (final) firedRef.current = true;
 
-            const { messageId, webhookUrl, embedPayload, events } =
+            const { visit, messageId, webhookUrl, embedPayload, events } =
                 visitorSession;
-            if (!messageId || !webhookUrl || !embedPayload) return;
+            // Nowhere to send it until the visit itself has been logged
+            if (!visit && !messageId) return;
             if (events.length === 0) return;
 
             const last = [...events]
@@ -61,6 +62,20 @@ export function usePageTracking() {
 
                 return `[ Visited ${e.label} ]`;
             });
+
+            // The Worker edits the message itself. A beacon outlives the
+            // page, and as text it needs no CORS preflight.
+            if (visit) {
+                navigator.sendBeacon(
+                    `${visit.endpoint}/visit/${visit.id}/session`,
+                    JSON.stringify({
+                        token: visit.token,
+                        session: sessionField(lines),
+                    }),
+                );
+                return;
+            }
+            if (!messageId || !webhookUrl || !embedPayload) return;
 
             const patched = structuredClone(embedPayload) as {
                 embeds: Array<{

@@ -95,18 +95,71 @@ function formatOrg(org: string): string {
     return m ? `${m[2]} (${m[1]})` : org;
 }
 
+// The visit counter Worker: set for the deploy once it's live, and in
+// development beside the dev server, on whichever host the page came from
+// so phones on the LAN reach it too
+function visitEndpoint() {
+    if (process.env.NEXT_PUBLIC_VISIT_ENDPOINT)
+        return process.env.NEXT_PUBLIC_VISIT_ENDPOINT;
+    if (process.env.NODE_ENV === "development")
+        return `https://${location.hostname}:8788`;
+
+    return null;
+}
+
+// The Worker reads the location and device from the request itself
+async function logVisit(endpoint: string) {
+    try {
+        const res = await fetch(`${endpoint}/visit`, {
+            method: "POST",
+            // As text it's a simple request, with no CORS preflight
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({
+                entry: window.location.pathname || "/",
+                referrer: document.referrer,
+                language: navigator.language,
+            }),
+        });
+
+        if (res.ok) {
+            const { id, token } = await res.json();
+
+            visitorSession.visit = { endpoint, id, token };
+        }
+    } catch (err) {
+        console.error("[useVisitorLog] visit failed:", err);
+    }
+}
+
+// React runs effects twice in development; this keeps it to one visit
+let logged = false;
+
 export function useVisitorLog() {
     useEffect(() => {
-        // Storage access throws when site data is blocked; an uncaught
-        // throw here would take the whole page down with it
-        try {
-            if (sessionStorage.getItem("__visited")) return;
+        if (logged) return;
+        logged = true;
 
-            sessionStorage.setItem("__visited", "1");
-        } catch {
+        // Development logs every load, so a reload is a new visit to test
+        if (process.env.NODE_ENV !== "development") {
+            // Storage access throws when site data is blocked; an uncaught
+            // throw here would take the whole page down with it
+            try {
+                if (sessionStorage.getItem("__visited")) return;
+
+                sessionStorage.setItem("__visited", "1");
+            } catch {
+                return;
+            }
+        }
+
+        const endpoint = visitEndpoint();
+
+        if (endpoint) {
+            logVisit(endpoint);
             return;
         }
 
+        // Until the Worker is deployed, straight to Discord as before
         if (!WEBHOOK_URL) return;
 
         (async () => {

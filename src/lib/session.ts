@@ -4,6 +4,8 @@ export type SessionEvent =
     | { type: "photo"; topic: string; label: string; timestamp: number };
 
 interface VisitorSessionState {
+    // The visit as the Worker counted it, with the token to update it
+    visit: { endpoint: string; id: number; token: string } | null;
     messageId: string | null;
     webhookUrl: string | null;
     embedPayload: object | null;
@@ -11,6 +13,7 @@ interface VisitorSessionState {
 }
 
 export const visitorSession: VisitorSessionState = {
+    visit: null,
     messageId: null,
     webhookUrl: null,
     embedPayload: null,

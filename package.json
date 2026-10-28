@@ -12,7 +12,8 @@
         "history:build": "node scripts/history/build.mjs",
         "history:suggest": "node scripts/history/suggest.mjs",
         "history:preview": "node scripts/history/preview.mjs",
-        "history:dev": "node scripts/history/dev.mjs"
+        "history:dev": "node scripts/history/dev.mjs",
+        "visits:dev": "node scripts/visits/dev.mjs"
     },
     "dependencies": {
         "next": "^16.2.10",

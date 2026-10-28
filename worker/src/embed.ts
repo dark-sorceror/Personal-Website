@@ -26,8 +26,9 @@ export type Embed = ReturnType<typeof buildEmbed>;
 // Discord rejects a field over 1024 characters, and the whole message with it
 export const FIELD_LIMIT = 1024;
 
+// Visits from wrangler dev post to the same channel as live ones, so
+// they're marked three ways: the title, this colour and the footer
 const COLOR = 0x393a41;
-// Visits from wrangler dev stand out from real ones in the channel
 const DEV_COLOR = 0xf0b232;
 
 const WAITING = "```ini\nTracking (has not left website yet)...```";
@@ -84,7 +85,9 @@ export function buildEmbed(visit: Visit, ip: string | null, dev: boolean) {
             ...field,
             value: clip(field.value),
         })),
-        footer: { text: "haoyan.ca analytics" },
+        footer: {
+            text: dev ? "haoyan.ca analytics · dev" : "haoyan.ca analytics",
+        },
         timestamp: visit.created_at,
     };
 }

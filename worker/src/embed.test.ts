@@ -64,11 +64,14 @@ describe("buildEmbed", () => {
         expect(embed.timestamp).toBe(visit.created_at);
     });
 
-    it("colours development visits differently", () => {
+    it("marks development visits by title, colour and footer", () => {
+        const live = buildEmbed(visit, null, false);
         const dev = buildEmbed(visit, null, true);
 
+        expect(live.footer.text).toBe("haoyan.ca analytics");
         expect(dev.title).toBe("[dev] Visitor #1,234");
-        expect(dev.color).not.toBe(buildEmbed(visit, null, false).color);
+        expect(dev.color).not.toBe(live.color);
+        expect(dev.footer.text).toBe("haoyan.ca analytics · dev");
     });
 
     it("shows the IP on desktops only", () => {
