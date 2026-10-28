@@ -96,14 +96,14 @@ function formatOrg(org: string): string {
     return m ? `${m[2]} (${m[1]})` : org;
 }
 
-// The visit counter Worker: set for the deploy once it's live, and in
-// development beside the dev server, on whichever host the page came from
-// so phones on the LAN reach it too
+// The visit counter Worker: set for the deploy once it's live. In
+// development the dev server (history:dev) passes /__visits/ on to it, so
+// it's the page's own origin, from localhost or a phone on the LAN alike.
 function visitEndpoint() {
     if (process.env.NEXT_PUBLIC_VISIT_ENDPOINT)
         return process.env.NEXT_PUBLIC_VISIT_ENDPOINT;
     if (process.env.NODE_ENV === "development")
-        return `https://${location.hostname}:8788`;
+        return `${location.origin}/__visits`;
 
     return null;
 }

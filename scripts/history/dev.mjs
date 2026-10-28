@@ -1,9 +1,11 @@
 // One local server for the whole site while working on it: next dev for
 // the site itself, with every past version under /history/<key>/ served
 // from the snapshot cache, the way the deploy will. Build the past
-// versions first (npm run history:build).
+// versions first (npm run history:build). Visits under /__visits/ go on to
+// the visit counter Worker (npm run visits:dev).
 //
 //   npm run history:dev [-- --port 3100 --key key.pem --cert cert.pem]
+//                       [--visits-port 8788]
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
@@ -31,6 +33,7 @@ const key = flag("--key");
 const cert = flag("--cert");
 // next dev runs out of sight on the next port, behind this one
 const nextPort = port + 1;
+const visitsPort = Number(flag("--visits-port", "8788"));
 
 const next = spawn(
     "npx",
@@ -52,13 +55,13 @@ const isPast = (pathname) => {
 
 const servePast = pagesHandler(cache, { prefix: "/history" });
 
-const toNext = (req, res) => {
+const proxy = (port, unavailable) => (req, res, path) => {
     const upstream = http.request(
         {
             host: "127.0.0.1",
-            port: nextPort,
+            port,
             method: req.method,
-            path: req.url,
+            path,
             headers: req.headers,
         },
         (reply) => {
@@ -68,16 +71,26 @@ const toNext = (req, res) => {
     );
     upstream.on("error", () => {
         if (!res.headersSent) res.writeHead(502);
-        res.end("next dev isn't up yet; try again in a moment");
+        res.end(unavailable);
     });
     req.pipe(upstream);
 };
 
-const handler = (req, res) => {
-    const { pathname } = new URL(req.url ?? "/", "http://localhost");
+const toNext = proxy(nextPort, "next dev isn't up yet; try again in a moment");
+// The Worker listens on loopback only. Through here it's the page's own
+// origin, which phones on the LAN already reach: no CORS, no second cert,
+// and no firewall to let workerd through.
+const toVisits = proxy(visitsPort, "the visit counter isn't running");
+const VISITS = "/__visits";
 
+const handler = (req, res) => {
+    const url = req.url ?? "/";
+    const { pathname } = new URL(url, "http://localhost");
+
+    if (url.startsWith(`${VISITS}/`))
+        return toVisits(req, res, url.slice(VISITS.length));
     if (isPast(decodeURIComponent(pathname))) return servePast(req, res);
-    toNext(req, res);
+    toNext(req, res, url);
 };
 
 const server =

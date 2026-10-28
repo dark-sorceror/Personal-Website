@@ -27,17 +27,22 @@ worker/         # Visit counter: a Cloudflare Worker with D1
 `worker/` is a Cloudflare Worker that numbers each visit in D1 and posts it to
 Discord as "Visitor #1,234", then edits that message as the visit goes on. The
 site uses it when `NEXT_PUBLIC_VISIT_ENDPOINT` is set, and in development, where
-it looks for the Worker on port 8788 of the host the page came from. Otherwise
-the site posts to the Discord webhook directly, as before. A link tagged
-`?via=code` is counted with its tag, which is then taken off the address.
+`history:dev` passes `/__visits/` on to the Worker, so a phone on the LAN reaches
+it through the site. Otherwise the site posts to the Discord webhook directly,
+as before. A link tagged `?via=code` is counted with its tag, which is then
+taken off the address.
 
-To run it locally beside the site, with the same self-signed certs:
+To run it locally, in two terminals:
 
 ```sh
 npm --prefix worker install
-npm run visits:dev -- --key key.pem --cert cert.pem   # Worker on :8788
+npm run visits:dev        # Worker on http://127.0.0.1:8788, loopback only
 npm run history:dev -- --port 3100 --key key.pem --cert cert.pem
 ```
+
+On another port, pass it to both: `npm run visits:dev -- --port 8790` and
+`--visits-port 8790` to `history:dev`. Plain `npm run dev` doesn't pass visits
+on, so nothing is counted there.
 
 `visits:dev` applies the D1 migrations to the local database first, and
 counts there only, so testing never moves the live numbers. Without a webhook

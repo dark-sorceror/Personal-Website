@@ -6,13 +6,13 @@
     "name": "haoyan-analytics",
     "main": "src/index.ts",
     "compatibility_date": "2026-10-23",
-    // HTTPS on every interface, like the site's dev server, so pages from
-    // localhost and from phones on the LAN can reach it without mixed
-    // content. Not wrangler's usual 8787, which other Workers here use.
+    // Plain HTTP on loopback: browsers reach it through the site's dev
+    // server (history:dev), at /__visits/. Not wrangler's usual 8787, which
+    // other Workers here use.
     "dev": {
-        "ip": "0.0.0.0",
+        "ip": "127.0.0.1",
         "port": 8788,
-        "local_protocol": "https",
+        "local_protocol": "http",
     },
     "vars": {
         "ENVIRONMENT": "development",

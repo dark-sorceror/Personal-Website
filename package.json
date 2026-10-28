@@ -13,7 +13,7 @@
         "history:suggest": "node scripts/history/suggest.mjs",
         "history:preview": "node scripts/history/preview.mjs",
         "history:dev": "node scripts/history/dev.mjs",
-        "visits:dev": "node scripts/visits/dev.mjs"
+        "visits:dev": "npm --prefix worker run migrate:local && npm --prefix worker run dev --"
     },
     "dependencies": {
         "next": "^16.2.10",
