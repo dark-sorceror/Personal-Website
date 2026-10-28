@@ -34,6 +34,46 @@ export function cleanGalleries(value: unknown) {
     return topics.length ? JSON.stringify(topics) : null;
 }
 
+// The browser's own random id: hex, with or without dashes
+export function cleanVisitor(value: unknown) {
+    if (typeof value !== "string") return null;
+
+    const id = value.toLowerCase();
+
+    return /^[0-9a-f-]{16,64}$/.test(id) ? id : null;
+}
+
+const DAY = 86_400_000;
+
+// Milliseconds on the site, up to a day; a tab left open longer is still
+// a day
+export function cleanDuration(value: unknown) {
+    return typeof value === "number" && Number.isFinite(value) && value >= 0
+        ? Math.min(Math.round(value), DAY)
+        : null;
+}
+
+// Each page and its time, as JSON, keeping only what looks like one
+export function cleanPages(value: unknown) {
+    if (!Array.isArray(value)) return null;
+
+    const pages = value
+        .flatMap((p) => {
+            const path = (p as { path?: unknown })?.path;
+            const ms = cleanDuration((p as { ms?: unknown })?.ms);
+
+            return typeof path === "string" &&
+                path.startsWith("/") &&
+                path.length <= 200 &&
+                ms !== null
+                ? [{ path, ms }]
+                : [];
+        })
+        .slice(0, 50);
+
+    return pages.length ? JSON.stringify(pages) : null;
+}
+
 export function referrerHost(referrer: string | null) {
     if (!referrer) return null;
 

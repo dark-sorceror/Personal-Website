@@ -3,10 +3,16 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import {
+    enterPage,
+    formatDuration,
     openedGalleries,
+    pausePage,
+    resumePage,
     sessionField,
+    sessionLines,
     visitorSession,
-    type SessionEvent,
+    visitPages,
+    visitTime,
 } from "@/lib/session";
 
 export function usePageTracking() {
@@ -14,26 +20,7 @@ export function usePageTracking() {
     const firedRef = useRef(false);
 
     useEffect(() => {
-        const now = Date.now();
-        const prev = [...visitorSession.events]
-            .reverse()
-            .find(
-                (e): e is Extract<SessionEvent, { type: "page" }> =>
-                    e.type === "page",
-            );
-
-        if (prev && !prev.engaged) {
-            prev.engaged = now - prev.enteredAt >= 10_000;
-        }
-
-        if (prev?.path === pathname) return;
-
-        visitorSession.events.push({
-            type: "page",
-            path: pathname,
-            enteredAt: now,
-            engaged: false,
-        });
+        enterPage(pathname, Date.now(), document.visibilityState === "visible");
     }, [pathname]);
 
     useEffect(() => {
@@ -47,26 +34,9 @@ export function usePageTracking() {
             if (!visit && !messageId) return;
             if (events.length === 0) return;
 
-            const last = [...events]
-                .reverse()
-                .find(
-                    (e): e is Extract<SessionEvent, { type: "page" }> =>
-                        e.type === "page",
-                );
-
-            if (last && !last.engaged) {
-                last.engaged = Date.now() - last.enteredAt >= 10_000;
-            }
-
-            const lines = events.map((e: SessionEvent) => {
-                if (e.type === "page")
-                    return e.engaged ? `; ${e.path} (20s+)` : `; ${e.path}`;
-
-                if (e.type === "gallery")
-                    return `[ Opened ${e.title} gallery · ${e.seen.length}/${e.total} ]`;
-
-                return `[ Visited ${e.label} ]`;
-            });
+            const now = Date.now();
+            const lines = sessionLines(now);
+            const time = visitTime(now);
 
             // The Worker edits the message itself. A beacon outlives the
             // page, and as text it needs no CORS preflight.
@@ -77,6 +47,8 @@ export function usePageTracking() {
                         token: visit.token,
                         session: sessionField(lines),
                         galleries: openedGalleries(),
+                        duration: time,
+                        pages: visitPages(now),
                     }),
                 );
                 return;
@@ -96,6 +68,7 @@ export function usePageTracking() {
             const fields = patched.embeds[0].fields;
             const idx = fields.findIndex((f) => f.name === "📊 Session");
 
+            fields[idx].name = `📊 Session · ${formatDuration(time)}`;
             fields[idx].value = sessionField(lines);
 
             const parts = webhookUrl.replace(/\?.*$/, "").split("/");
@@ -112,14 +85,24 @@ export function usePageTracking() {
         };
 
         const onBeforeUnload = () => {
+            pausePage(Date.now());
             patch(true);
+            // Still here: the leave was called off
             setTimeout(() => {
                 firedRef.current = false;
+                if (document.visibilityState === "visible")
+                    resumePage(Date.now());
             }, 500);
         };
 
+        // The clock only runs while the page is showing
         const onVisibilityChange = () => {
-            if (document.visibilityState === "hidden") patch(false);
+            if (document.visibilityState === "hidden") {
+                pausePage(Date.now());
+                patch(false);
+            } else {
+                resumePage(Date.now());
+            }
         };
 
         window.addEventListener("beforeunload", onBeforeUnload);

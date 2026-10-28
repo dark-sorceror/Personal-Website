@@ -21,6 +21,9 @@ export interface Visit {
     edit_token: string;
     session: string | null;
     galleries: string | null;
+    visitor: string | null;
+    duration_ms: number | null;
+    pages: string | null;
     updated_at: string;
 }
 
@@ -87,7 +90,14 @@ export function buildEmbed(visit: Visit, ip: string | null, dev: boolean) {
         ...(visit.via
             ? [{ name: "🎯 Link", value: `\`${visit.via}\``, inline: true }]
             : []),
-        { name: "📊 Session", value: visit.session ?? WAITING, inline: false },
+        {
+            name:
+                visit.duration_ms === null
+                    ? "📊 Session"
+                    : `📊 Session · ${duration(visit.duration_ms)}`,
+            value: visit.session ?? WAITING,
+            inline: false,
+        },
     ];
 
     return {
@@ -102,6 +112,15 @@ export function buildEmbed(visit: Visit, ip: string | null, dev: boolean) {
         },
         timestamp: visit.created_at,
     };
+}
+
+// "42s", "3m 5s", "1h 12m"
+export function duration(ms: number) {
+    const s = Math.max(0, Math.round(ms / 1000));
+    if (s < 60) return `${s}s`;
+    if (s < 3600) return `${Math.floor(s / 60)}m ${s % 60}s`;
+
+    return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m`;
 }
 
 function clip(value: string) {

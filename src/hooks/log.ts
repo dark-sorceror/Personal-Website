@@ -121,6 +121,31 @@ function readVia() {
     return via;
 }
 
+// A random id this browser keeps, so someone who comes back is one visitor
+// on many visits. There's nothing else in it.
+const VISITOR_KEY = "haoyan.visitor";
+
+function visitorId() {
+    try {
+        let id = localStorage.getItem(VISITOR_KEY);
+
+        if (!id) {
+            // randomUUID needs a secure context, which a plain-http address
+            // on the local network isn't
+            id = crypto.randomUUID
+                ? crypto.randomUUID()
+                : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) =>
+                      b.toString(16).padStart(2, "0"),
+                  ).join("");
+            localStorage.setItem(VISITOR_KEY, id);
+        }
+
+        return id;
+    } catch {
+        return null;
+    }
+}
+
 // The Worker reads the location and device from the request itself
 async function logVisit(endpoint: string, via: string | null) {
     try {
@@ -133,6 +158,7 @@ async function logVisit(endpoint: string, via: string | null) {
                 referrer: document.referrer,
                 language: navigator.language,
                 via,
+                visitor: visitorId(),
             }),
         });
 

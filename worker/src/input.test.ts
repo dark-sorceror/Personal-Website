@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { cleanGalleries, cleanVia, referrerHost, text } from "./input";
+import {
+    cleanDuration,
+    cleanGalleries,
+    cleanPages,
+    cleanVia,
+    cleanVisitor,
+    referrerHost,
+    text,
+} from "./input";
 
 describe("cleanVia", () => {
     it("keeps a short plain code, lowercased", () => {
@@ -35,6 +43,43 @@ describe("cleanGalleries", () => {
         expect(cleanGalleries([])).toBeNull();
         expect(cleanGalleries("lumen")).toBeNull();
         expect(cleanGalleries(null)).toBeNull();
+    });
+});
+
+describe("cleanVisitor", () => {
+    it("keeps a random id and nothing else", () => {
+        expect(cleanVisitor("0F8FAD5B-D9CB-469F-A165-70867728950E")).toBe(
+            "0f8fad5b-d9cb-469f-a165-70867728950e",
+        );
+        expect(cleanVisitor("a1b2c3d4e5f60718")).toBe("a1b2c3d4e5f60718");
+        expect(cleanVisitor("short")).toBeNull();
+        expect(cleanVisitor("not hex at all!!")).toBeNull();
+        expect(cleanVisitor(7)).toBeNull();
+    });
+});
+
+describe("cleanDuration", () => {
+    it("rounds, and holds a forgotten tab to a day", () => {
+        expect(cleanDuration(1234.6)).toBe(1235);
+        expect(cleanDuration(9e9)).toBe(86_400_000);
+        expect(cleanDuration(-1)).toBeNull();
+        expect(cleanDuration(NaN)).toBeNull();
+        expect(cleanDuration("5")).toBeNull();
+    });
+});
+
+describe("cleanPages", () => {
+    it("keeps each page that has a path and a time", () => {
+        expect(
+            cleanPages([
+                { path: "/", ms: 35_000 },
+                { path: "https://elsewhere", ms: 1 },
+                { path: "/history" },
+                null,
+            ]),
+        ).toBe('[{"path":"/","ms":35000}]');
+        expect(cleanPages([])).toBeNull();
+        expect(cleanPages("/")).toBeNull();
     });
 });
 

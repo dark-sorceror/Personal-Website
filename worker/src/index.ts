@@ -1,6 +1,14 @@
 import { buildEmbed, type Embed, type Visit } from "./embed";
 import { hashIp } from "./hash";
-import { cleanGalleries, cleanVia, referrerHost, text } from "./input";
+import {
+    cleanDuration,
+    cleanGalleries,
+    cleanPages,
+    cleanVia,
+    cleanVisitor,
+    referrerHost,
+    text,
+} from "./input";
 import { parseUA } from "./ua";
 
 interface Env {
@@ -80,6 +88,7 @@ async function logVisit(request: Request, env: Env) {
         referrer,
         referrer_host: referrerHost(referrer),
         via: cleanVia(body.via),
+        visitor: cleanVisitor(body.visitor),
         edit_token: crypto.randomUUID(),
         updated_at: now.toISOString(),
     };
@@ -122,12 +131,19 @@ async function updateSession(
     if (!visit || body.token !== visit.edit_token)
         return new Response("Forbidden", { status: 403 });
 
+    const duration = cleanDuration(body.duration);
+    // A page from before durations were sent keeps what the row has
     await env.DB.prepare(
-        "UPDATE visits SET session = ?, galleries = ?, updated_at = ? WHERE id = ?",
+        `UPDATE visits SET session = ?, galleries = ?,
+            duration_ms = COALESCE(?, duration_ms), pages = COALESCE(?, pages),
+            updated_at = ?
+         WHERE id = ?`,
     )
         .bind(
             session,
             cleanGalleries(body.galleries),
+            duration,
+            cleanPages(body.pages),
             new Date().toISOString(),
             id,
         )
@@ -136,7 +152,7 @@ async function updateSession(
     // The IP isn't stored, so the embed shows the one this update came
     // from, which is the same visitor's
     const embed = buildEmbed(
-        { ...visit, session },
+        { ...visit, session, duration_ms: duration ?? visit.duration_ms },
         request.headers.get("CF-Connecting-IP"),
         isDev(env),
     );

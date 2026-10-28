@@ -24,6 +24,9 @@ const visit: Visit = {
     edit_token: "token",
     session: null,
     galleries: null,
+    visitor: null,
+    duration_ms: null,
+    pages: null,
     updated_at: "2026-10-27T08:00:00.000Z",
 };
 
@@ -135,6 +138,19 @@ describe("buildEmbed", () => {
             buildEmbed({ ...visit, via: "linkedin" }, null, false).color,
         );
         expect(field(dev, "🎯 Link")).toBe("`linkedin`");
+    });
+
+    it("heads the session with how long the visit has run", () => {
+        const embed = buildEmbed(
+            { ...visit, duration_ms: 185_000 },
+            null,
+            false,
+        );
+
+        expect(embed.fields.at(-1)?.name).toBe("📊 Session · 3m 5s");
+        expect(buildEmbed(visit, null, false).fields.at(-1)?.name).toBe(
+            "📊 Session",
+        );
     });
 
     it("shows the latest session", () => {
