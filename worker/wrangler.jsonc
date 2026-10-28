@@ -35,12 +35,12 @@
                 "ALLOWED_ORIGINS": "https://haoyan.ca",
             },
             // Bindings aren't inherited, so the database is named again,
-            // with the id `wrangler d1 create haoyan-analytics` gives
+            // with the id `wrangler d1 create haoyan-analytics` gave
             "d1_databases": [
                 {
                     "binding": "DB",
                     "database_name": "haoyan-analytics",
-                    "database_id": "00000000-0000-0000-0000-000000000000",
+                    "database_id": "d825a9f9-c78b-4c0a-8932-c80732329fba",
                 },
             ],
         },
