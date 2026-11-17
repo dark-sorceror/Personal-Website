@@ -76,7 +76,8 @@
 }
 
 /* Phones: two by two, so every cover shows without a sideways swipe */
-@media (max-width: 640px) {
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
     .scroller {
         --cover-h: 176px;
         overflow: visible;

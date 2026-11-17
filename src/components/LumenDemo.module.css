@@ -3,7 +3,7 @@
    text is the size of the project summary beside the card, in rem rather
    than scaled with the card, and the map takes what height it leaves.
    Each tile is tinted by where it came from, mixed well toward the
-   background so the map reads as quiet glass in either theme; the tiles the
+   background so the map reads as quiet glass; the tiles the
    reply drew on go to full strength, and the rest recede under a hatch. */
 
 /* A little taller than a cover's 16:10 on a desktop, for room between the
@@ -12,7 +12,8 @@
     --aspect: 3 / 2;
 }
 
-@media (max-width: 640px) {
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
     .card {
         --aspect: 4 / 3;
     }
@@ -95,7 +96,8 @@
     gap: clamp(2px, 0.5cqi, 4px);
 }
 
-@media (max-width: 640px) {
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
     .map {
         grid-template-rows: minmax(min-content, 2fr) minmax(min-content, 3fr);
     }

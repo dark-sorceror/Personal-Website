@@ -1,5 +1,5 @@
-import { HomePage } from "@/components/HomePage";
+import { DeepSpaceHomePage } from "@/components/background/DeepSpaceHomePage";
 
 export default function Home() {
-    return <HomePage />;
+    return <DeepSpaceHomePage />;
 }

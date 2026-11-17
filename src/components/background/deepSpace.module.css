@@ -1,0 +1,101 @@
+.root {
+    position: relative;
+    min-height: 100dvh;
+}
+.canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.content {
+    position: relative;
+}
+.content [data-background-art] {
+    display: contents;
+}
+.appearance {
+    gap: 16px;
+    color: var(--text-muted);
+    font:
+        600 10px/1 system-ui,
+        sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.appearance [data-appearance-location] {
+    margin: 0;
+}
+.appearance button {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    color: inherit;
+}
+.appearance svg {
+    width: 18px;
+    height: 18px;
+}
+.appearance button:focus-visible {
+    outline: 2px solid var(--link-color);
+    outline-offset: 3px;
+}
+@media (width > 640px) and (pointer: fine),
+    (width > 640px) and (pointer: none),
+    (width > 640px) and (height > 500px),
+    (width > 1024px) {
+    .content .appearance {
+        zoom: calc(1 / 0.72);
+    }
+}
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
+    .root {
+        --page-gutter-start: max(24px, env(safe-area-inset-left));
+        --page-gutter-end: max(24px, env(safe-area-inset-right));
+        --art-height: clamp(144px, 44vw, 204px);
+    }
+    .content [data-page-shell] {
+        max-width: 680px;
+        margin-top: max(20px, env(safe-area-inset-top));
+        padding-inline: var(--page-gutter-start) var(--page-gutter-end);
+    }
+    .content main {
+        overflow-wrap: anywhere;
+    }
+    .content [data-home-header] {
+        margin-bottom: 24px;
+    }
+    .content [data-home-identity] {
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+    .content [data-home-identity] > .appearance {
+        margin-left: auto;
+    }
+    .content [data-background-art] {
+        display: block;
+        position: relative;
+        isolation: isolate;
+        height: var(--art-height);
+        margin-top: 8px;
+        margin-inline: calc(-1 * var(--page-gutter-start))
+            calc(-1 * var(--page-gutter-end));
+        pointer-events: none;
+    }
+    .canvas {
+        position: absolute;
+        height: 100%;
+        z-index: 0;
+    }
+    .content .appearance {
+        zoom: 1;
+    }
+}
+@media (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
+    .root {
+        --art-height: 112px;
+    }
+}

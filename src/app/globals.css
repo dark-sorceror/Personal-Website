@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
-/* One phone breakpoint, matching the max-width: 640px the CSS modules and
-   scripts use. Desktop is its exact complement, so no fractional width
-   (say, under browser zoom) falls between the two. Narrow phones come
-   last so their overrides win over the phone ones. */
-@custom-variant phone (@media (width <= 640px));
-@custom-variant desktop (@media (width > 640px));
+/* Compact layouts include short touchscreens in landscape. Match the query
+   in lib/viewport.ts so typography, controls and rendering switch together. */
+@custom-variant phone {
+    @media (width <= 640px),
+        (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
+        @slot;
+    }
+}
+@custom-variant desktop {
+    @media (width > 640px) and (pointer: fine),
+        (width > 640px) and (pointer: none),
+        (width > 640px) and (height > 500px),
+        (width > 1024px) {
+        @slot;
+    }
+}
 @custom-variant narrow (@media (width < 379px));
 
 :root {
@@ -40,7 +50,10 @@ html {
     background-color: var(--bg);
 }
 
-@media (width > 640px) {
+@media (width > 640px) and (pointer: fine),
+    (width > 640px) and (pointer: none),
+    (width > 640px) and (height > 500px),
+    (width > 1024px) {
     html {
         zoom: 0.72;
     }
@@ -99,12 +112,22 @@ body {
     );
 }
 
-@media (max-width: 640px) {
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
     html {
+        zoom: 1;
         font-size: 65%;
+    }
+    html[data-backdrop="space"] {
+        font-size: 87.5%;
+        --text-muted: rgba(255, 255, 255, 0.64);
+    }
+    html[data-backdrop="space"][data-theme="light"] {
+        --text-muted: rgba(0, 0, 0, 0.62);
     }
 
     body {
+        min-height: 100dvh;
         /* Content is taller than the viewport on phones — let it scroll
            instead of clipping the footer, but keep horizontal drift out */
         overflow-x: hidden;
@@ -114,8 +137,8 @@ body {
         display: none;
     }
 
-    /* Reading down the page, the dock shrinks back toward the bottom edge
-       (see DockScroll), still big enough to tap */
+    /* Reading down the page, the dock moves closer to the bottom edge
+       (see DockScroll) while retaining full-size touch targets */
     .sidebar {
         transform-origin: 50% 100%;
         transition:
@@ -124,12 +147,13 @@ body {
     }
 
     html[data-dock-condensed] .sidebar:not(:focus-within) {
-        transform: translateY(6px) scale(0.84);
+        transform: translateY(4px);
         box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.4);
     }
 }
 
-@media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+@media (width <= 640px) and (prefers-reduced-motion: reduce),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) and (prefers-reduced-motion: reduce) {
     .sidebar {
         transition: none;
     }
@@ -367,9 +391,15 @@ body {
     border-color: var(--link-color);
 }
 
-@media (max-width: 640px) {
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
     .lightbox {
         padding: 56px 12px;
+    }
+
+    .lightbox-close {
+        min-width: 44px;
+        min-height: 44px;
     }
 
     .lightbox-frame {

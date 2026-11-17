@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { COMPACT_LAYOUT_QUERY } from "@/lib/viewport";
 
-// The dock stays full size this close to the top or the bottom
+// The dock returns to its resting position near either end
 const EDGE_PX = 96;
 // How far a scroll must run one way before the dock changes, so a jittery
 // thumb doesn't flicker it. Coming back takes a more deliberate pull.
@@ -10,13 +11,13 @@ const DOWN_PX = 24;
 const UP_PX = 56;
 
 /**
- * Phones: condenses the link dock while reading down the page, the way
- * Safari's address bar does, and brings it back on a scroll up or at either
- * end. Sets `data-dock-condensed` on <html>; the CSS does the rest.
+ * Compact layouts: moves the dock toward the bottom edge while reading,
+ * then restores it on an upward scroll or near either end. The CSS keeps
+ * the links at their full touch-target size.
  */
 export function DockScroll() {
     useEffect(() => {
-        const phone = matchMedia("(max-width: 640px)");
+        const phone = matchMedia(COMPACT_LAYOUT_QUERY);
         const root = document.documentElement;
         let last = scrollY;
         // Distance scrolled in the current direction

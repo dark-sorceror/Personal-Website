@@ -21,7 +21,7 @@ export interface TimelineEntry {
     label: string;
     note?: string;
     href: string;
-    // One screenshot per theme, so the preview follows the page's theme
+    // Archived versions retain screenshots of both original appearances.
     thumbnails: Record<Theme, string>;
     live: boolean;
 }

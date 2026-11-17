@@ -16,6 +16,7 @@ const libreBaskerville = Libre_Baskerville({
 export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
+    viewportFit: "cover",
 };
 
 const description = "Hao Yan";

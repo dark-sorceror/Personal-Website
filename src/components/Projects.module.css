@@ -151,7 +151,8 @@
     height: 12.5px;
 }
 
-@media (max-width: 640px) {
+@media (width <= 640px),
+    (width <= 1024px) and (height <= 500px) and (pointer: coarse) {
     .source svg {
         width: 9px;
         height: 9px;

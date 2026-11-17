@@ -8,12 +8,6 @@ import styles from "./Quotes.module.css";
 const SHOW_MS = 120_000;
 const FADE_MS = 700;
 
-// Where in the right-hand margin the quote lands, as fractions of the
-// free space across and down
-type Spot = { x: number; y: number };
-
-const randomSpot = (): Spot => ({ x: Math.random(), y: Math.random() });
-
 // A fresh order each visit, walked through so no quote comes back before
 // the rest have had a turn
 function shuffledOrder() {
@@ -30,12 +24,7 @@ function shuffledOrder() {
 const ORDER = typeof window === "undefined" ? [] : shuffledOrder();
 const subscribe = () => () => {};
 
-/**
- * One quote at a time, in a random order. On wide screens each quote
- * surfaces at a random spot in the empty margin right of the content,
- * fades out, and the next turns up somewhere else; narrower screens keep
- * it in the page flow above the footer. Hovering holds the current quote.
- */
+// Footer quotes rotate in a shuffled order. Hovering pauses the rotation.
 export function Quotes() {
     const order = useSyncExternalStore(
         subscribe,
@@ -43,8 +32,6 @@ export function Quotes() {
         () => null,
     );
     const [index, setIndex] = useState(0);
-    // Fixed first spot, so server and client render the same markup
-    const [spot, setSpot] = useState<Spot>({ x: 0.5, y: 0.2 });
     const [shown, setShown] = useState(true);
     const [held, setHeld] = useState(false);
     // A quote already fading out still brings the next one in, even if a
@@ -62,7 +49,6 @@ export function Quotes() {
             setShown(false);
             swap.current = setTimeout(() => {
                 setIndex((i) => (i + 1) % QUOTES.length);
-                setSpot(randomSpot());
                 setShown(true);
             }, FADE_MS);
         }, SHOW_MS);
@@ -76,12 +62,6 @@ export function Quotes() {
         <figure
             className={styles.quote}
             data-shown={(order && shown) || undefined}
-            style={
-                {
-                    "--x": spot.x,
-                    "--y": spot.y,
-                } as React.CSSProperties
-            }
             aria-live="off"
             onPointerEnter={(e) => e.pointerType === "mouse" && setHeld(true)}
             onPointerLeave={() => setHeld(false)}

@@ -73,6 +73,10 @@ export function DotCanvas() {
         // phones trace the base grid straight onto the canvas, with no
         // second full-size copy to keep around
         const paintStill = () => {
+            if (document.documentElement.hasAttribute("data-backdrop")) {
+                ctx.clearRect(0, 0, width, height);
+                return;
+            }
             if (!phone.matches) {
                 drawGrid(brightness);
 
@@ -203,6 +207,18 @@ export function DotCanvas() {
         };
 
         const resize = () => {
+            // The ASCII renderer owns the background. Release both dormant
+            // fullscreen bitmap stores instead of retaining invisible copies.
+            if (document.documentElement.hasAttribute("data-backdrop")) {
+                cancelAnimationFrame(raf);
+                raf = 0;
+                baseLayer = null;
+                canvas.width = canvas.height = 1;
+                width = height = cols = rows = 0;
+                life = new BitLife(1, 1);
+                brightness = new Float32Array(0);
+                return;
+            }
             // Scale the backing store by devicePixelRatio and root zoom to stay crisp
             const zoom =
                 Number(getComputedStyle(document.documentElement).zoom) || 1;
@@ -339,6 +355,11 @@ export function DotCanvas() {
         };
 
         const draw = (nowMs: number) => {
+            if (document.documentElement.hasAttribute("data-backdrop")) {
+                ctx.clearRect(0, 0, width, height);
+                raf = 0;
+                return;
+            }
             const t = nowMs / 1000;
             const dt = lastMs ? Math.min((nowMs - lastMs) / 1000, 0.1) : 0;
 
@@ -352,13 +373,31 @@ export function DotCanvas() {
         // seeds the board, once
         readColors();
 
-        // Theme switches are the only way the dot colours change. The dots
-        // take the new colours at once rather than fading with the page.
-        const observer = new MutationObserver(readColors);
+        // Theme switches recolor the dots immediately. The ASCII renderer can own
+        // the backdrop temporarily; removing its marker wakes this board.
+        const observer = new MutationObserver((records) => {
+            readColors();
+            if (
+                records.some(
+                    (record) => record.attributeName === "data-backdrop",
+                )
+            ) {
+                resize();
+                return;
+            }
+            if (
+                !document.documentElement.hasAttribute("data-backdrop") &&
+                !raf &&
+                !still()
+            ) {
+                lastMs = 0;
+                raf = requestAnimationFrame(draw);
+            }
+        });
 
         observer.observe(document.documentElement, {
             attributes: true,
-            attributeFilter: ["data-theme"],
+            attributeFilter: ["data-theme", "data-backdrop"],
         });
 
         // Covers window resizes, browser zoom and crossing the phone width
