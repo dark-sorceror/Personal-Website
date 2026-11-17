@@ -89,7 +89,7 @@ export function HomePage({
                         <SectionLabel>On the shelf</SectionLabel>
                         <Bookshelf />
                     </section>
-                    <footer className="flex items-start justify-between gap-[32px] pb-[80px] phone:flex-col phone:gap-[16px] phone:pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
+                    <footer className="flex items-center justify-between gap-[32px] pb-[80px] phone:flex-col phone:items-start phone:gap-[16px] phone:pb-[calc(80px+env(safe-area-inset-bottom,0px))]">
                         <p className="m-0 shrink-0 font-[system-ui] text-xs font-semibold tracking-[0.1em] uppercase text-(--text-muted)">
                             Last updated{" "}
                             {new Date().toLocaleDateString("en-US", {

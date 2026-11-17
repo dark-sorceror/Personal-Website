@@ -1,6 +1,9 @@
 /* Right-aligned footer quotes, with room for the date beside them. */
 
 .quote {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     flex: 1;
     min-width: 0;
     max-width: 420px;

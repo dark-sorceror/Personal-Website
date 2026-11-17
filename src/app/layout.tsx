@@ -51,11 +51,11 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en" data-theme="dark" suppressHydrationWarning>
             <head>
                 <script
                     dangerouslySetInnerHTML={{
-                        __html: `(function(){var t='dark';try{t=localStorage.getItem('theme')||t;}catch(e){}document.documentElement.setAttribute('data-theme',t);})();`,
+                        __html: `(function(){var t='dark';try{if(localStorage.getItem('theme')==='light')t='light';}catch(e){}document.documentElement.setAttribute('data-theme',t);})();`,
                     }}
                 />
             </head>

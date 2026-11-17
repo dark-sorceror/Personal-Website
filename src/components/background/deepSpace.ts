@@ -3,7 +3,7 @@ export const GLYPHS = " .,:;i!+*tfLCOG08#%@";
 export const LOOP_SECONDS = 12;
 
 export const PALETTES = {
-    dark: { dust: "#677f9e", cool: "#9bb8d7", warm: "#edc593" },
+    dark: { dust: "#6e8fb2", cool: "#9fc3e8", warm: "#edc593" },
     light: { dust: "#667686", cool: "#23384f", warm: "#23384f" },
 };
 

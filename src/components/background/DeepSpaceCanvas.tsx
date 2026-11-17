@@ -87,7 +87,7 @@ export function DeepSpaceCanvas() {
                 const alpha = level
                     ? Math.round(
                           255 *
-                              0.8 *
+                              (mode === "dark" ? 0.92 : 0.8) *
                               cell.opacity *
                               Math.min(
                                   1,
@@ -125,7 +125,7 @@ export function DeepSpaceCanvas() {
                     0.85 + 0.15 * Math.sin(phase * TAU + star.seed * TAU);
                 starsCtx.globalAlpha =
                     (star.big ? 0.78 : 0.19 + star.seed * 0.3) *
-                    0.8 *
+                    (mode === "dark" ? 0.88 : 0.8) *
                     breathing *
                     star.opacity;
                 starsCtx.fillStyle =
